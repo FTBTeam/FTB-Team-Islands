@@ -1,17 +1,18 @@
 package com.feed_the_beast.mods.teamislands.commands;
 
+
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
-import net.minecraft.command.CommandSource;
-import net.minecraft.command.Commands;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
 
 public class ListIslandsCommand {
-    public static LiteralArgumentBuilder<CommandSource> register() {
+    public static LiteralArgumentBuilder<CommandSourceStack> register() {
         return Commands.literal("list")
             .executes(ListIslandsCommand::execute);
     }
 
-    private static int execute(CommandContext<CommandSource> context) {
+    private static int execute(CommandContext<CommandSourceStack> context) {
         return 0;
     }
 }
