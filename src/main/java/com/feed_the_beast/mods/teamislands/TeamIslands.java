@@ -5,16 +5,29 @@ import com.feed_the_beast.mods.teamislands.commands.ListIslandsCommand;
 import com.feed_the_beast.mods.teamislands.commands.LobbyCommand;
 import com.feed_the_beast.mods.teamislands.commands.MyIslandCommand;
 import net.minecraft.command.Commands;
+import net.minecraft.world.biome.BiomeGenerationSettings;
+import net.minecraft.world.biome.Biomes;
+import net.minecraft.world.biome.provider.SingleBiomeProvider;
+import net.minecraft.world.gen.ChunkGenerator;
+import net.minecraft.world.gen.DimensionSettings;
+import net.minecraft.world.gen.NoiseChunkGenerator;
+import net.minecraftforge.client.ForgeWorldTypeScreens;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.world.ForgeWorldType;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.ModLoadingContext;
+import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -29,6 +42,11 @@ public class TeamIslands
 
     private static final Logger LOGGER = LogManager.getLogger();
 
+    private static final DeferredRegister<ForgeWorldType> WORLD_TYPES = DeferredRegister.create(ForgeRegistries.WORLD_TYPES, MOD_ID);
+    public static final RegistryObject<ForgeWorldType> VOID_WORLD_TYPE = WORLD_TYPES.register("void", () ->
+        new ForgeWorldType((biomeRegistry, dimensionSettingsRegistry, seed) ->
+            new VoidChunkGenerator(biomeRegistry)));
+
     public TeamIslands() {
         IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
         eventBus.addListener(this::setup);
@@ -38,10 +56,14 @@ public class TeamIslands
 
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);
+
+        WORLD_TYPES.register(eventBus);
     }
 
     private void setup(final FMLCommonSetupEvent event)
     {
+        ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, Config.CLIENT_CONFIG);
+        ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, Config.SERVER_CONFIG);
     }
 
     private void clientSetup(final FMLClientSetupEvent event) {
