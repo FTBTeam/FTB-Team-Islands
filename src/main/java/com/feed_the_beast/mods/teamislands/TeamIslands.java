@@ -33,7 +33,7 @@ public class TeamIslands
     public static final String MOD_NAME = "Team Islands";
     public static final String VERSION = "0.0.0.teamislands";
 
-    private static final Logger LOGGER = LogManager.getLogger();
+    public static final Logger LOGGER = LogManager.getLogger();
 
     private static final DeferredRegister<ForgeWorldType> WORLD_TYPES = DeferredRegister.create(ForgeRegistries.WORLD_TYPES, MOD_ID);
     public static final RegistryObject<ForgeWorldType> VOID_WORLD_TYPE = WORLD_TYPES.register("void", () ->

@@ -1,5 +1,6 @@
 package com.feed_the_beast.mods.teamislands;
 
+import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.common.ForgeConfigSpec;
 
 public class Config {
@@ -28,6 +29,13 @@ public class Config {
 //            voidWorldTypeId = SERVER_BUILDER.define("voidWorldTypeId", "void");
 
             SERVER_BUILDER.pop();
+        }
+
+        /**
+         * TODO: Make sure this works with the new config system
+         */
+        public boolean isEnabled(MinecraftServer server) {
+            return server.isDedicatedServer() ? this.enableMultiplayer.get() : this.enableMultiplayer.get();
         }
     }
 

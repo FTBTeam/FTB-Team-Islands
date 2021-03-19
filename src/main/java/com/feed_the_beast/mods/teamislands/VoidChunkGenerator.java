@@ -21,6 +21,9 @@ import net.minecraft.world.level.levelgen.StructureSettings;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
+/**
+ * Initial world generation modifier, this may need tweaking to support sea levels etc.
+ */
 public class VoidChunkGenerator extends ChunkGenerator {
     public static final Codec<VoidChunkGenerator> CODEC = RegistryLookupCodec.create(Registry.BIOME_REGISTRY)
         .xmap(VoidChunkGenerator::new, VoidChunkGenerator::biomes).stable().codec();
