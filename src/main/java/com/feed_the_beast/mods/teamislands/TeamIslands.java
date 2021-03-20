@@ -4,6 +4,7 @@ import com.feed_the_beast.mods.teamislands.commands.JumpToIslandCommand;
 import com.feed_the_beast.mods.teamislands.commands.ListIslandsCommand;
 import com.feed_the_beast.mods.teamislands.commands.LobbyCommand;
 import com.feed_the_beast.mods.teamislands.commands.MyIslandCommand;
+import com.feed_the_beast.mods.teamislands.network.NetworkManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.commands.Commands;
 import net.minecraftforge.common.MinecraftForge;
@@ -59,6 +60,8 @@ public class TeamIslands
     {
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, Config.CLIENT_CONFIG);
         ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, Config.SERVER_CONFIG);
+
+        NetworkManager.register();
     }
 
     private void clientSetup(final FMLClientSetupEvent event) {
