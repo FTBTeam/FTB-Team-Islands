@@ -4,6 +4,7 @@ import com.feed_the_beast.mods.teamislands.commands.JumpToIslandCommand;
 import com.feed_the_beast.mods.teamislands.commands.ListIslandsCommand;
 import com.feed_the_beast.mods.teamislands.commands.LobbyCommand;
 import com.feed_the_beast.mods.teamislands.commands.MyIslandCommand;
+import net.minecraft.client.Minecraft;
 import net.minecraft.commands.Commands;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.world.ForgeWorldType;
@@ -23,6 +24,7 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.lwjgl.glfw.GLFW;
 
 import java.util.stream.Collectors;
 
@@ -84,5 +86,11 @@ public class TeamIslands
                 .then(LobbyCommand.register())
                 .then(MyIslandCommand.register())
         );
+    }
+
+    // TODO: Remove, helps with breakpoints when Intellij and Linux aren't getting along
+    public static boolean debuggerReleaseControl() {
+        GLFW.glfwSetInputMode(Minecraft.getInstance().getWindow().getWindow(), GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_NORMAL);
+        return true;
     }
 }
