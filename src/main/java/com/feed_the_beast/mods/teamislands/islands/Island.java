@@ -1,17 +1,24 @@
 package com.feed_the_beast.mods.teamislands.islands;
 
+import com.feed_the_beast.mods.teamislands.Config;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.world.level.ChunkPos;
 
+import javax.annotation.Nullable;
 import java.util.UUID;
 
 public class Island {
+    public static final Island LOBBY = new Island(new ChunkPos(0, 0), BlockPos.ZERO.offset(0, Config.islands.height.get(), 0), "lobby", null, false, true);
+
     public ChunkPos pos;
     public BlockPos spawnPos;
     public String templateId;
+
+    @Nullable
     public UUID creator;
+
     public boolean spawned;
     public boolean active; // false = No one owns and is unclaimed
 
@@ -19,7 +26,7 @@ public class Island {
         this(pos, spawnPos, templateId, creator, false, true);
     }
 
-    public Island(ChunkPos pos, BlockPos spawnPos, String templateId, UUID creator, boolean spawned, boolean active) {
+    public Island(ChunkPos pos, BlockPos spawnPos, String templateId, @Nullable UUID creator, boolean spawned, boolean active) {
         this.pos = pos;
         this.spawnPos = spawnPos;
         this.templateId = templateId;
@@ -33,7 +40,9 @@ public class Island {
         compound.put("spawnPos", NbtUtils.writeBlockPos(this.spawnPos));
         compound.putLong("chunkPos", this.pos.toLong());
         compound.putString("templateId", this.templateId);
-        compound.putUUID("creator", this.creator);
+        if (this.creator != null) {
+            compound.putUUID("creator", this.creator);
+        }
         compound.putBoolean("spawned", this.spawned);
         compound.putBoolean("active", this.active);
         return compound;
@@ -44,7 +53,7 @@ public class Island {
             new ChunkPos(compound.getLong("chunkPos")),
             NbtUtils.readBlockPos(compound.getCompound("spawnPos")),
             compound.getString("templateId"),
-            compound.getUUID("creator"),
+            compound.contains("creator") ? compound.getUUID("creator") : null,
             compound.getBoolean("spawned"),
             compound.getBoolean("active")
         );

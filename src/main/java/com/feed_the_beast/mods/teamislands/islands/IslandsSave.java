@@ -16,7 +16,7 @@ import java.util.Set;
 public class IslandsSave extends SavedData {
     private static final String SAVE_NAME = TeamIslands.MOD_NAME + "_islandsave";
 
-    public Set<Island> islands = new HashSet<>();
+    private Set<Island> islands = new HashSet<>();
 
     private IslandsSave() {
         super(SAVE_NAME);
@@ -26,11 +26,11 @@ public class IslandsSave extends SavedData {
         return ((ServerLevel) level).getDataStorage().computeIfAbsent(IslandsSave::new, SAVE_NAME);
     }
 
-    public boolean registerIsland(Team team, BlockPos pos) {
+    public boolean registerIsland(Team team, Island pos) {
         return true;
     }
 
-    public boolean markUnclaimed(BlockPos pos) {
+    public boolean markUnclaimed(Island pos) {
         return true;
     }
 

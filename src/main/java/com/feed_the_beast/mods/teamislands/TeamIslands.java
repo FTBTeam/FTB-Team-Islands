@@ -29,9 +29,8 @@ import org.lwjgl.glfw.GLFW;
 
 import java.util.stream.Collectors;
 
-@Mod("teamislands")
-public class TeamIslands
-{
+@Mod(TeamIslands.MOD_ID)
+public class TeamIslands {
     public static final String MOD_ID = "teamislands";
     public static final String MOD_NAME = "Team Islands";
     public static final String VERSION = "0.0.0.teamislands";
@@ -45,10 +44,11 @@ public class TeamIslands
 
     public TeamIslands() {
         IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
+
         eventBus.addListener(this::setup);
+        eventBus.addListener(this::clientSetup);
         eventBus.addListener(this::enqueueIMC);
         eventBus.addListener(this::processIMC);
-        eventBus.addListener(this::clientSetup);
 
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);
@@ -56,8 +56,7 @@ public class TeamIslands
         WORLD_TYPES.register(eventBus);
     }
 
-    private void setup(final FMLCommonSetupEvent event)
-    {
+    private void setup(final FMLCommonSetupEvent event) {
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, Config.CLIENT_CONFIG);
         ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, Config.SERVER_CONFIG);
 
@@ -67,16 +66,14 @@ public class TeamIslands
     private void clientSetup(final FMLClientSetupEvent event) {
     }
 
-    private void enqueueIMC(final InterModEnqueueEvent event)
-    {
+    private void enqueueIMC(final InterModEnqueueEvent event) {
     }
 
-    private void processIMC(final InterModProcessEvent event)
-    {
+    private void processIMC(final InterModProcessEvent event) {
         // some example code to receive and process InterModComms from other mods
-        LOGGER.info("Got IMC {}", event.getIMCStream().
-                map(m->m.getMessageSupplier().get()).
-                collect(Collectors.toList()));
+        LOGGER.info("Got IMC {}", event.getIMCStream()
+            .map(m -> m.getMessageSupplier().get())
+            .collect(Collectors.toList()));
     }
 
     // You can use SubscribeEvent and let the Event Bus discover methods to call

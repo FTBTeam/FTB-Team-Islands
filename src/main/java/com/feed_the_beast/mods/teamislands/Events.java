@@ -3,10 +3,6 @@ package com.feed_the_beast.mods.teamislands;
 import com.feed_the_beast.mods.ftbteams.event.PlayerJoinedTeamEvent;
 import com.feed_the_beast.mods.ftbteams.event.PlayerLeftTeamEvent;
 import com.feed_the_beast.mods.ftbteams.event.TeamDeletedEvent;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
-import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -22,13 +18,6 @@ public class Events {
             return;
 
         TeamIslands.LOGGER.info("Player joined Team");
-
-        // Check for existing island
-        if (true) {
-            StructureTemplate template = event.getPlayer().getServer().getStructureManager().get(new ResourceLocation(TeamIslands.MOD_ID, "teamislands_island"));
-            assert template != null;
-            template.placeInWorldChunk(event.getPlayer().getServer().getLevel(Level.OVERWORLD), event.getPlayer().blockPosition(), new StructurePlaceSettings(), event.getPlayer().getServer().overworld().getRandom());
-        }
     }
 
     /**
