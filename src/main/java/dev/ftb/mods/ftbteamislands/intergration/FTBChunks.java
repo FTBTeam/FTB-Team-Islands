@@ -1,4 +1,4 @@
-package dev.ftb.mods.teamislands.intergration;
+package dev.ftb.mods.ftbteamislands.intergration;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;

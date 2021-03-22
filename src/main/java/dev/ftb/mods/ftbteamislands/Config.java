@@ -1,4 +1,4 @@
-package dev.ftb.mods.teamislands;
+package dev.ftb.mods.ftbteamislands;
 
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.common.ForgeConfigSpec;

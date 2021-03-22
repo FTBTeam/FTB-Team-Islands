@@ -1,4 +1,4 @@
-//package com.feed_the_beast.mods.teamislands;
+//package com.feed_the_beast.mods.ftbteamislands;
 //
 //import net.minecraft.data.DataGenerator;
 //import net.minecraftforge.common.data.ExistingFileHelper;
@@ -25,7 +25,7 @@
 //
 //        @Override
 //        protected void addTranslations() {
-//            this.add("generator.teamislands.void", "Void World");
+//            this.add("generator.ftbteamislands.void", "Void World");
 //        }
 //    }
 //}

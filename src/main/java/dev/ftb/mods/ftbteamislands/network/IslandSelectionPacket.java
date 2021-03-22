@@ -1,4 +1,4 @@
-package dev.ftb.mods.teamislands.network;
+package dev.ftb.mods.ftbteamislands.network;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
@@ -6,10 +6,10 @@ import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
-public class OpenSelectionScreenPacket {
-    private final BlockPos pos;
+public class IslandSelectionPacket {
+    BlockPos pos;
 
-    public OpenSelectionScreenPacket(FriendlyByteBuf buffer) {
+    public IslandSelectionPacket(FriendlyByteBuf buffer) {
         this.pos = buffer.readBlockPos();
     }
 

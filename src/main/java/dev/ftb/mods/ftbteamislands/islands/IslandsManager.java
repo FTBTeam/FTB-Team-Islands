@@ -1,8 +1,8 @@
-package dev.ftb.mods.teamislands.islands;
+package dev.ftb.mods.ftbteamislands.islands;
 
 import com.feed_the_beast.mods.ftbteams.data.Team;
-import dev.ftb.mods.teamislands.Config;
-import dev.ftb.mods.teamislands.TeamIslands;
+import dev.ftb.mods.ftbteamislands.Config;
+import dev.ftb.mods.ftbteamislands.FTBTeamIslands;
 import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -18,7 +18,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class IslandsManager extends SavedData {
-    private static final String SAVE_NAME = TeamIslands.MOD_ID + "_islandsave";
+    private static final String SAVE_NAME = FTBTeamIslands.MOD_ID + "_islandsave";
 
     private final HashMap<UUID, Island> islands = new HashMap<>();
 

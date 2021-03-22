@@ -1,10 +1,9 @@
-package dev.ftb.mods.teamislands;
+package dev.ftb.mods.ftbteamislands;
 
 import com.feed_the_beast.mods.ftbteams.event.PlayerChangedTeamEvent;
 import com.feed_the_beast.mods.ftbteams.event.TeamDeletedEvent;
-import com.feed_the_beast.mods.teamislands.commands.*;
-import dev.ftb.mods.teamislands.commands.*;
-import dev.ftb.mods.teamislands.network.NetworkManager;
+import dev.ftb.mods.ftbteamislands.commands.*;
+import dev.ftb.mods.ftbteamislands.network.NetworkManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.commands.Commands;
 import net.minecraftforge.common.MinecraftForge;
@@ -23,12 +22,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwjgl.glfw.GLFW;
 
-@Mod(TeamIslands.MOD_ID)
-public class TeamIslands {
-    public static final String MOD_ID = "teamislands";
+@Mod(FTBTeamIslands.MOD_ID)
+public class FTBTeamIslands {
+    public static final String MOD_ID = "ftbteamislands";
     public static final Logger LOGGER = LogManager.getLogger();
 
-    public TeamIslands() {
+    public FTBTeamIslands() {
         IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
         eventBus.addListener(this::setup);

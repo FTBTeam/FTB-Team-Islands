@@ -1,6 +1,6 @@
-package dev.ftb.mods.teamislands.network;
+package dev.ftb.mods.ftbteamislands.network;
 
-import dev.ftb.mods.teamislands.TeamIslands;
+import dev.ftb.mods.ftbteamislands.FTBTeamIslands;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.common.util.FakePlayer;
@@ -13,7 +13,7 @@ public class NetworkManager {
     private static final String PROTOCOL_VERSION = Integer.toString(1);
 
     public static final SimpleChannel OUR_CHANNEL = NetworkRegistry.newSimpleChannel(
-        new ResourceLocation(TeamIslands.MOD_ID, "main"),
+        new ResourceLocation(FTBTeamIslands.MOD_ID, "main"),
         () -> PROTOCOL_VERSION,
         PROTOCOL_VERSION::equals,
         PROTOCOL_VERSION::equals

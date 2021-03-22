@@ -1,4 +1,4 @@
-package dev.ftb.mods.teamislands.commands;
+package dev.ftb.mods.ftbteamislands.commands;
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
@@ -6,12 +6,13 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 
 /**
- * Teleport admin to players team by finding team
+ * Delete region of island
  */
-public class JumpToIslandCommand {
+public class DeleteUnusedIslandsCommand {
     public static LiteralArgumentBuilder<CommandSourceStack> register() {
-        return Commands.literal("islands")
-            .executes(JumpToIslandCommand::execute);
+        return Commands.literal("delete")
+            .requires(commandSource -> commandSource.hasPermission(2))
+            .executes(DeleteUnusedIslandsCommand::execute);
     }
 
     private static int execute(CommandContext<CommandSourceStack> context) {

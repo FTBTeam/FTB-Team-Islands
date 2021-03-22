@@ -1,6 +1,6 @@
-package dev.ftb.mods.teamislands.islands;
+package dev.ftb.mods.ftbteamislands.islands;
 
-import dev.ftb.mods.teamislands.Config;
+import dev.ftb.mods.ftbteamislands.Config;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;

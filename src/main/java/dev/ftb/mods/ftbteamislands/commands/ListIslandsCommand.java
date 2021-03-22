@@ -1,4 +1,4 @@
-package dev.ftb.mods.teamislands.commands;
+package dev.ftb.mods.ftbteamislands.commands;
 
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;

@@ -1,14 +1,14 @@
-package dev.ftb.mods.teamislands.commands;
+package dev.ftb.mods.ftbteamislands.commands;
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 
-public class MyIslandCommand {
+public class LobbyCommand {
     public static LiteralArgumentBuilder<CommandSourceStack> register() {
-        return Commands.literal("myisland")
-            .executes(MyIslandCommand::execute);
+        return Commands.literal("lobby")
+            .executes(LobbyCommand::execute);
     }
 
     private static int execute(CommandContext<CommandSourceStack> context) {
