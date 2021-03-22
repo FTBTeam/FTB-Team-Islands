@@ -1,4 +1,4 @@
-package com.feed_the_beast.mods.teamislands;
+package dev.ftb.mods.teamislands;
 
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.common.ForgeConfigSpec;
@@ -16,7 +16,8 @@ public class Config {
         public final ForgeConfigSpec.BooleanValue enableMultiplayer;
         public final ForgeConfigSpec.BooleanValue enableMyIslandCommand;
         public final ForgeConfigSpec.BooleanValue clearInvWhenTeamLeft;
-//        public final ForgeConfigSpec.ConfigValue<String> voidWorldTypeId;
+        public final ForgeConfigSpec.ConfigValue<String> targetIslandLevel;
+            //        public final ForgeConfigSpec.ConfigValue<String> voidWorldTypeId;
 
         General() {
             SERVER_BUILDER.push("general");
@@ -25,6 +26,7 @@ public class Config {
             enableMultiplayer = SERVER_BUILDER.define("enableMultiplayer", true);
             clearInvWhenTeamLeft = SERVER_BUILDER.define("clearInvWhenTeamLeft", true);
             enableMyIslandCommand = SERVER_BUILDER.define("enableMyIslandCommand", true);
+            targetIslandLevel = SERVER_BUILDER.define("targetIslandLevel", "minecraft:overworld");
 
 //            voidWorldTypeId = SERVER_BUILDER.define("voidWorldTypeId", "void");
 
@@ -48,6 +50,7 @@ public class Config {
             autoTeleportToIsland = SERVER_BUILDER
                 .comment("Auto-teleports player to their island once they join a team.")
                 .define("autoTeleportToIsland", true);
+
 
             SERVER_BUILDER.pop();
         }
@@ -82,7 +85,7 @@ public class Config {
 
             distanceBetweenIslands = SERVER_BUILDER
                 .comment("Distance put between new islands in regions, 1 being a single region")
-                .defineInRange("distanceBetweenIslandsInRegions", 1, 1, 100);
+                .defineInRange("distanceBetweenIslandsInRegions", 3, 3, 100);
 
             SERVER_BUILDER.pop();
         }

@@ -1,9 +1,13 @@
-package com.feed_the_beast.mods.teamislands.islands;
+package dev.ftb.mods.teamislands.islands;
 
 import com.feed_the_beast.mods.ftbteams.data.Team;
-import com.feed_the_beast.mods.teamislands.TeamIslands;
+import dev.ftb.mods.teamislands.Config;
+import dev.ftb.mods.teamislands.TeamIslands;
+import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.saveddata.SavedData;
@@ -13,7 +17,7 @@ import javax.annotation.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class IslandsSave extends SavedData {
+public class IslandsManager extends SavedData {
     private static final String SAVE_NAME = TeamIslands.MOD_ID + "_islandsave";
 
     private final HashMap<UUID, Island> islands = new HashMap<>();
@@ -21,12 +25,12 @@ public class IslandsSave extends SavedData {
     @Nullable
     private Island lobby;
 
-    private IslandsSave() {
+    private IslandsManager() {
         super(SAVE_NAME);
     }
 
-    public static IslandsSave get(Level level) {
-        return ((ServerLevel) level).getDataStorage().computeIfAbsent(IslandsSave::new, SAVE_NAME);
+    public static IslandsManager get(Level level) {
+        return ((ServerLevel) level).getDataStorage().computeIfAbsent(IslandsManager::new, SAVE_NAME);
     }
 
     public boolean registerIsland(Team team, Island island) {
@@ -108,5 +112,9 @@ public class IslandsSave extends SavedData {
 
     public HashMap<UUID, Island> getIslands() {
         return this.islands;
+    }
+
+    public static ResourceKey<Level> getTargetIsland() {
+        return ResourceKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(Config.general.targetIslandLevel.get()));
     }
 }

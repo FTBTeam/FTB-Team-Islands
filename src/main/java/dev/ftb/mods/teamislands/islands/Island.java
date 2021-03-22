@@ -1,6 +1,6 @@
-package com.feed_the_beast.mods.teamislands.islands;
+package dev.ftb.mods.teamislands.islands;
 
-import com.feed_the_beast.mods.teamislands.Config;
+import dev.ftb.mods.teamislands.Config;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;

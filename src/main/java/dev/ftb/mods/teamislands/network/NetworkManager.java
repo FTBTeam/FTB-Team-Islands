@@ -1,6 +1,6 @@
-package com.feed_the_beast.mods.teamislands.network;
+package dev.ftb.mods.teamislands.network;
 
-import com.feed_the_beast.mods.teamislands.TeamIslands;
+import dev.ftb.mods.teamislands.TeamIslands;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.common.util.FakePlayer;

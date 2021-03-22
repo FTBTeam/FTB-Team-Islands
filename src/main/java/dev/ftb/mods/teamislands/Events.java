@@ -1,12 +1,11 @@
-package com.feed_the_beast.mods.teamislands;
+package dev.ftb.mods.teamislands;
 
 import com.feed_the_beast.mods.ftbteams.data.Team;
 import com.feed_the_beast.mods.ftbteams.data.TeamManager;
 import com.feed_the_beast.mods.ftbteams.event.PlayerChangedTeamEvent;
-import com.feed_the_beast.mods.ftbteams.event.TeamCreatedEvent;
 import com.feed_the_beast.mods.ftbteams.event.TeamDeletedEvent;
-import com.feed_the_beast.mods.teamislands.islands.Island;
-import com.feed_the_beast.mods.teamislands.islands.IslandsSave;
+import dev.ftb.mods.teamislands.islands.Island;
+import dev.ftb.mods.teamislands.islands.IslandsManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
@@ -24,47 +23,6 @@ import net.minecraftforge.fml.common.Mod;
 @Mod.EventBusSubscriber(modid = TeamIslands.MOD_ID)
 public class Events {
     /**
-     * Upon a player joining a team, we assume that we're running
-     */
-    public static void onTeamCreated(TeamCreatedEvent event) {
-//        Team team = event.getTeam();
-//        MinecraftServer server = team.manager.getServer();
-//
-//        if (!Config.general.isEnabled(server))
-//            return;
-//
-//        TeamIslands.LOGGER.info("Player joined Team");
-//
-//        // Single player logic
-//        IslandsSave islandsSave = IslandsSave.get(Objects.requireNonNull(event.getTeam().getOwnerPlayer()).level);
-//
-//        int index = islandsSave.getIslands().size() + 1;
-//        int distanceInRegions = Config.islands.distanceBetweenIslands.get();
-//        ChunkPos chunkPos = new ChunkPos(256 + ((index * distanceInRegions * 512) % 1024), 256 + ((index * distanceInRegions * 512) / 1024));
-//
-//        // Get or create a new island for the player, it's most likely going to be create.
-//        Island island = islandsSave.getIsland(team).orElse(new Island(
-//            chunkPos,
-//            chunkPos.getWorldPosition(),
-//            "template",
-//            team.getOwnerPlayer().getUUID()
-//        ));
-//
-//        StructureTemplate template = team.getOwnerPlayer().getServer().getStructureManager().getOrCreate(new ResourceLocation(TeamIslands.MOD_ID, "teamislands_island"));
-//        template.placeInWorldChunk((ServerLevelAccessor) team.getOwnerPlayer().level, team.getOwnerPlayer().blockPosition(), new StructurePlaceSettings(), new Random());
-//        //        server.getStructureManager();
-//
-//        //        if (!server.isDedicatedServer()) {
-//        //            if (island.isPresent()) {
-//        //                event.getPlayer().tel;
-//        //            }
-//        //            return;
-//        //        }
-//
-//        // MP logic
-    }
-
-    /**
      * Clear the players inventory upon leaving and reset their spawn chunk to the lobby.
      */
     public static void onChangedTeamEvent(PlayerChangedTeamEvent event) {
@@ -75,15 +33,14 @@ public class Events {
         if (!Config.general.isEnabled(server))
             return;
 
-        ServerLevel level = team.manager.getServer().getLevel(Level.OVERWORLD);
-        IslandsSave islandsSave = IslandsSave.get(level);
-        if (islandsSave == null || level == null) {
+        ServerLevel level = team.manager.getServer().getLevel(IslandsManager.getTargetIsland());
+        IslandsManager islandsManager = IslandsManager.get(level);
+        if (islandsManager == null || level == null) {
             return;
         }
 
         // No lobby? Spawn one :D
-        if (islandsSave.getLobby() == null) {
-            System.out.println("Attempting to spawn lobby");
+        if (islandsManager.getLobby() == null) {
             // TODO: Support loading from config
             StructureTemplate template = level.getStructureManager().get(new ResourceLocation(TeamIslands.MOD_ID, "default_lobby"));
             BlockPos centerOfWorld = new BlockPos(0, Config.islands.height.get(), 0);
@@ -91,7 +48,7 @@ public class Events {
 
             template.placeInWorldChunk(level, centerOfWorld.offset(-boundingBox.x1 / 2, 0, -boundingBox.z1 / 2), new StructurePlaceSettings(), level.getRandom());
 
-            islandsSave.setLobby(new Island(
+            islandsManager.setLobby(new Island(
                 new ChunkPos(centerOfWorld),
                 centerOfWorld.above(2),
                 "lobby",
@@ -100,7 +57,7 @@ public class Events {
                 true
             ));
 
-            islandsSave.setDirty();
+            islandsManager.setDirty();
 
             ServerPlayer ownerPlayer = team.getOwnerPlayer();
             if (ownerPlayer == null) {
@@ -139,11 +96,11 @@ public class Events {
         if (playerTeam == null)
             return;
 
-        IslandsSave islandsSave = IslandsSave.get(event.getPlayer().getServer().getLevel(Level.OVERWORLD));
+        IslandsManager islandsManager = IslandsManager.get(event.getPlayer().getServer().getLevel(Level.OVERWORLD));
         BlockPos respawnPos = event.getPlayer().getSleepingPos()
-            .orElse(islandsSave.getIsland(playerTeam)
+            .orElse(islandsManager.getIsland(playerTeam)
                 .map(Island::getSpawnPos)
-                .orElse(islandsSave.getLobby() == null ? new BlockPos(0, Config.islands.height.get(), 0) : islandsSave.getLobby().spawnPos));
+                .orElse(islandsManager.getLobby() == null ? new BlockPos(0, Config.islands.height.get(), 0) : islandsManager.getLobby().spawnPos));
 
         event.getPlayer().teleportTo(respawnPos.getX() + .5D, respawnPos.getY() + 2, respawnPos.getZ() + .5D);
     }
