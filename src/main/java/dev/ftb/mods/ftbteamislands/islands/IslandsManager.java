@@ -21,6 +21,7 @@ public class IslandsManager extends SavedData {
     private static final String SAVE_NAME = FTBTeamIslands.MOD_ID + "_islandsave";
 
     private final HashMap<UUID, Island> islands = new HashMap<>();
+    private final Set<SpawnableIsland> availableIslands = new HashSet<>();
 
     @Nullable
     private Island lobby;
@@ -112,6 +113,10 @@ public class IslandsManager extends SavedData {
 
     public HashMap<UUID, Island> getIslands() {
         return this.islands;
+    }
+
+    public Set<SpawnableIsland> getAvailableIslands() {
+        return availableIslands;
     }
 
     public static ResourceKey<Level> getTargetIsland() {

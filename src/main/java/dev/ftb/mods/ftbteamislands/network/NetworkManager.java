@@ -21,7 +21,7 @@ public class NetworkManager {
 
     public static void register() {
         int index = 0;
-        OUR_CHANNEL.registerMessage(index++, OpenSelectionScreenPacket.class, OpenSelectionScreenPacket::encode, OpenSelectionScreenPacket::new, OpenSelectionScreenPacket::handle);
+        OUR_CHANNEL.registerMessage(index++, OpenSelectionScreenPacket.class, OpenSelectionScreenPacket::encode, OpenSelectionScreenPacket::decode, OpenSelectionScreenPacket::handle);
         OUR_CHANNEL.registerMessage(index++, IslandSelectionPacket.class, IslandSelectionPacket::encode, IslandSelectionPacket::new, IslandSelectionPacket::handle);
     }
 

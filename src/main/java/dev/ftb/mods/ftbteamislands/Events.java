@@ -5,20 +5,17 @@ import com.feed_the_beast.mods.ftbteams.data.TeamManager;
 import com.feed_the_beast.mods.ftbteams.event.PlayerChangedTeamEvent;
 import com.feed_the_beast.mods.ftbteams.event.TeamDeletedEvent;
 import dev.ftb.mods.ftbteamislands.islands.Island;
+import dev.ftb.mods.ftbteamislands.islands.IslandSpawner;
 import dev.ftb.mods.ftbteamislands.islands.IslandsManager;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.levelgen.structure.BoundingBox;
-import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
-import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+
+import java.util.Optional;
 
 @Mod.EventBusSubscriber(modid = FTBTeamIslands.MOD_ID)
 public class Events {
@@ -39,37 +36,22 @@ public class Events {
             return;
         }
 
-        // No lobby? Spawn one :D
-        if (islandsManager.getLobby() == null) {
-            // TODO: Support loading from config
-            StructureTemplate template = level.getStructureManager().get(new ResourceLocation(FTBTeamIslands.MOD_ID, "default_lobby"));
-            BlockPos centerOfWorld = new BlockPos(0, Config.islands.height.get(), 0);
-            BoundingBox boundingBox = template.getBoundingBox(new StructurePlaceSettings(), centerOfWorld);
+        // If we're a server, attempt to spawn a lobby
+        if (server.isDedicatedServer()) {
+            FTBTeamIslands.LOGGER.info("Attempting to spawn lobby");
+            if (islandsManager.getLobby() == null)
+                IslandSpawner.spawnLobby(islandsManager, team.manager.getServer(), level, team);
 
-            template.placeInWorldChunk(level, centerOfWorld.offset(-boundingBox.x1 / 2, 0, -boundingBox.z1 / 2), new StructurePlaceSettings(), level.getRandom());
-
-            islandsManager.setLobby(new Island(
-                new ChunkPos(centerOfWorld),
-                centerOfWorld.above(2),
-                "lobby",
-                null,
-                true,
-                true
-            ));
-
-            islandsManager.setDirty();
-
-            ServerPlayer ownerPlayer = team.getOwnerPlayer();
-            if (ownerPlayer == null) {
-                return;
-            }
-
-            if (ownerPlayer.level.dimension() != level.dimension()) {
-                ownerPlayer.changeDimension(level);
-            }
-
-            ownerPlayer.teleportTo(centerOfWorld.getX(), centerOfWorld.getY() + 4, centerOfWorld.getZ());
+            return;
         }
+
+        // If we're in single player, attempt to spawn an island if we don't already have one
+        Optional<Island> island = islandsManager.getIsland(team);
+        if (island.isPresent()) {
+            return;
+        }
+
+        IslandSpawner.spawnIsland(islandsManager, level, team, team.getOnlineMembers().get(0));
     }
 
     /**

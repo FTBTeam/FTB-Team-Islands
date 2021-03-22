@@ -25,7 +25,7 @@ import org.lwjgl.glfw.GLFW;
 @Mod(FTBTeamIslands.MOD_ID)
 public class FTBTeamIslands {
     public static final String MOD_ID = "ftbteamislands";
-    public static final Logger LOGGER = LogManager.getLogger();
+    public static final Logger LOGGER = LogManager.getLogger("FTB Team Islands");
 
     public FTBTeamIslands() {
         IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
