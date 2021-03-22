@@ -35,6 +35,23 @@ public class Island {
         this.active = active;
     }
 
+    public BlockPos getSpawnPos() {
+        return spawnPos;
+    }
+
+    @Nullable
+    public UUID getCreator() {
+        return creator;
+    }
+
+    public boolean isSpawned() {
+        return spawned;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
     public CompoundTag write() {
         CompoundTag compound = new CompoundTag();
         compound.put("spawnPos", NbtUtils.writeBlockPos(this.spawnPos));
