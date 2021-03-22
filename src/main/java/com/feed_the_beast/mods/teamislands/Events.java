@@ -1,31 +1,54 @@
 package com.feed_the_beast.mods.teamislands;
 
-import com.feed_the_beast.mods.ftbteams.event.PlayerJoinedTeamEvent;
-import com.feed_the_beast.mods.ftbteams.event.PlayerLeftTeamEvent;
+import com.feed_the_beast.mods.ftbteams.data.Team;
+import com.feed_the_beast.mods.ftbteams.event.PlayerChangedTeamEvent;
+import com.feed_the_beast.mods.ftbteams.event.TeamCreatedEvent;
 import com.feed_the_beast.mods.ftbteams.event.TeamDeletedEvent;
+import com.feed_the_beast.mods.teamislands.islands.Island;
+import com.feed_the_beast.mods.teamislands.islands.IslandsSave;
+import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+
+import java.util.Objects;
+import java.util.Optional;
 
 @Mod.EventBusSubscriber(modid = TeamIslands.MOD_ID)
 public class Events {
     /**
      * Upon a player joining a team, we assume that we're running
      */
-    @SubscribeEvent
-    public static void onPlayerJoinTeam(PlayerJoinedTeamEvent event) {
-        if (!Config.general.isEnabled(event.getTeam().getManager().server))
+    public static void onTeamCreated(TeamCreatedEvent event) {
+        Team team = event.getTeam();
+        MinecraftServer server = team.manager.getServer();
+
+        if (!Config.general.isEnabled(server))
             return;
 
         TeamIslands.LOGGER.info("Player joined Team");
+
+        // Single player logic
+        IslandsSave islandsSave = IslandsSave.get(Objects.requireNonNull(event.getTeam().getOwnerPlayer()).level);
+        Optional<Island> island = islandsSave.getIsland(team);
+
+//        server.getStructureManager();
+
+//        if (!server.isDedicatedServer()) {
+//            if (island.isPresent()) {
+//                event.getPlayer().tel;
+//            }
+//            return;
+//        }
+
+        // MP logic
     }
 
     /**
      * Clear the players inventory upon leaving and reset their spawn chunk to the lobby.
      */
-    @SubscribeEvent
-    public static void onPlayerLeftTeam(PlayerLeftTeamEvent event) {
-        if (!Config.general.isEnabled(event.getTeam().getManager().server))
+    public static void onChangedTeamEvent(PlayerChangedTeamEvent event) {
+        if (!Config.general.isEnabled(event.getTeam().manager.getServer()))
             return;
 
         TeamIslands.LOGGER.info("Player left team");
@@ -34,9 +57,8 @@ public class Events {
     /**
      * Upon deletion, validate against any existing islands and mark them as unused.
      */
-    @SubscribeEvent
     public static void onTeamDeleted(TeamDeletedEvent event) {
-        if (!Config.general.isEnabled(event.getTeam().getManager().server))
+        if (!Config.general.isEnabled(event.getTeam().manager.getServer()))
             return;
 
         TeamIslands.LOGGER.info("Team deleted");

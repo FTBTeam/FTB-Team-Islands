@@ -58,6 +58,7 @@ public class Config {
 //        public final ForgeConfigSpec.ConfigValue<String[]> structureFiles;
         public final ForgeConfigSpec.IntValue autoClaimChunkRadius;
         public final ForgeConfigSpec.BooleanValue selectIslands;
+        public final ForgeConfigSpec.IntValue distanceBetweenIslands;
 
         Islands() {
             SERVER_BUILDER.push("general");
@@ -78,6 +79,10 @@ public class Config {
             selectIslands = SERVER_BUILDER
                 .comment("Allow selection of the island type, if set to false, then islands will be randomized.")
                 .define("selectIslands", true);
+
+            distanceBetweenIslands = SERVER_BUILDER
+                .comment("Distance put between new islands in regions, 1 being a single region")
+                .defineInRange("distanceBetweenIslandsInRegions", 1, 1, 100);
 
             SERVER_BUILDER.pop();
         }

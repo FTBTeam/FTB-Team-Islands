@@ -32,6 +32,7 @@ loom {
 
 repositories {
     maven { url "https://www.cursemaven.com" }
+    maven { url "https://maven.latvian.dev" }
 }
 
 dependencies {
@@ -47,8 +48,8 @@ dependencies {
 
     modCompile "curse.maven:ftb-gui-library-404465:3237039"
     modCompile "curse.maven:ftb-chunks-314906:3236808"
-    modCompile "curse.maven:ftb-teams-404468:3237174"
     modCompile "curse.maven:architectury-forge-419699:3243901"
+    modCompile "com.feed_the_beast.mods:ftb-teams-forge:1605.2.0-build.17"
 }
 
 processResources {

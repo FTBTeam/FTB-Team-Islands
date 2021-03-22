@@ -6,10 +6,10 @@ import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
-public class OpenSelectionScreenPacket {
-    private final BlockPos pos;
+public class IslandSelectionPacket {
+    BlockPos pos;
 
-    public OpenSelectionScreenPacket(FriendlyByteBuf buffer) {
+    public IslandSelectionPacket(FriendlyByteBuf buffer) {
         this.pos = buffer.readBlockPos();
     }
 

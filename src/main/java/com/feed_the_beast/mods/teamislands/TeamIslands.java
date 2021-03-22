@@ -1,9 +1,9 @@
 package com.feed_the_beast.mods.teamislands;
 
-import com.feed_the_beast.mods.teamislands.commands.JumpToIslandCommand;
-import com.feed_the_beast.mods.teamislands.commands.ListIslandsCommand;
-import com.feed_the_beast.mods.teamislands.commands.LobbyCommand;
-import com.feed_the_beast.mods.teamislands.commands.MyIslandCommand;
+import com.feed_the_beast.mods.ftbteams.event.PlayerChangedTeamEvent;
+import com.feed_the_beast.mods.ftbteams.event.TeamCreatedEvent;
+import com.feed_the_beast.mods.ftbteams.event.TeamDeletedEvent;
+import com.feed_the_beast.mods.teamislands.commands.*;
 import com.feed_the_beast.mods.teamislands.network.NetworkManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.commands.Commands;
@@ -32,15 +32,12 @@ import java.util.stream.Collectors;
 @Mod(TeamIslands.MOD_ID)
 public class TeamIslands {
     public static final String MOD_ID = "teamislands";
-    public static final String MOD_NAME = "Team Islands";
-    public static final String VERSION = "0.0.0.teamislands";
-
     public static final Logger LOGGER = LogManager.getLogger();
 
     private static final DeferredRegister<ForgeWorldType> WORLD_TYPES = DeferredRegister.create(ForgeRegistries.WORLD_TYPES, MOD_ID);
     public static final RegistryObject<ForgeWorldType> VOID_WORLD_TYPE = WORLD_TYPES.register("void", () ->
-        new ForgeWorldType((biomeRegistry, dimensionSettingsRegistry, seed) ->
-            new VoidChunkGenerator(biomeRegistry)));
+        new ForgeWorldType((biomeRegistry, dimensionSettingsRegistry, seed) -> new VoidChunkGenerator(biomeRegistry))
+    );
 
     public TeamIslands() {
         IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
@@ -54,6 +51,10 @@ public class TeamIslands {
         MinecraftForge.EVENT_BUS.register(this);
 
         WORLD_TYPES.register(eventBus);
+
+        TeamCreatedEvent.EVENT.register(Events::onTeamCreated);
+        TeamDeletedEvent.EVENT.register(Events::onTeamDeleted);
+        PlayerChangedTeamEvent.EVENT.register(Events::onChangedTeamEvent);
     }
 
     private void setup(final FMLCommonSetupEvent event) {
@@ -64,6 +65,7 @@ public class TeamIslands {
     }
 
     private void clientSetup(final FMLClientSetupEvent event) {
+
     }
 
     private void enqueueIMC(final InterModEnqueueEvent event) {
@@ -85,6 +87,7 @@ public class TeamIslands {
                 .then(ListIslandsCommand.register())
                 .then(LobbyCommand.register())
                 .then(MyIslandCommand.register())
+                .then(DeleteUnusedIslandsCommand.register())
         );
     }
 
