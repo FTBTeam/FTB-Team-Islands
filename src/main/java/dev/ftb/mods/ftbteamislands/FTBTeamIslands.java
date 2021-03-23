@@ -76,6 +76,7 @@ public class FTBTeamIslands {
                 .then(LobbyCommand.register())
                 .then(MyIslandCommand.register())
                 .then(DeleteUnusedIslandsCommand.register())
+                .then(CreateIslandCommand.register())
         );
     }
 
