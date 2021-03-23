@@ -4,6 +4,9 @@ import dev.ftb.mods.ftbteamislands.Config;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.ChunkPos;
 
 import javax.annotation.Nullable;
@@ -50,6 +53,16 @@ public class Island {
 
     public boolean isActive() {
         return active;
+    }
+
+    public void teleportPlayerTo(ServerPlayer player, MinecraftServer server) {
+        ServerLevel level = server.getLevel(IslandsManager.getTargetIsland());
+
+        if (player.level.dimension() != IslandsManager.getTargetIsland())
+            player.changeDimension(level);
+
+        BlockPos spawnPos = this.getSpawnPos();
+        player.teleportTo(spawnPos.getX(), spawnPos.getY(), spawnPos.getZ());
     }
 
     public CompoundTag write() {

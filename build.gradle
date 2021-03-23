@@ -39,10 +39,11 @@ dependencies {
     mappings minecraft.officialMojangMappings()
     forge "net.minecraftforge:forge:${project.minecraft_version}-${project.forge_version}"
 
-    modCompile "curse.maven:ftb-chunks-314906:3236808"
-    modCompile "com.feed_the_beast.mods:ftb-teams-forge:1605.2.0-build.17"
-    modCompile "com.feed_the_beast.mods:ftb-gui-library-forge:1605.2.1-build.45"
+    modCompile "dev.ftb.mods:ftb-teams-forge:$ftb_mods_teams"
+    modCompile "com.feed_the_beast.mods:ftb-gui-library-forge:$ftb_mods_guilib"
+
     modCompile "curse.maven:architectury-forge-419699:3243901"
+    modCompile "curse.maven:ftb-chunks-314906:3236808"
 }
 
 processResources {

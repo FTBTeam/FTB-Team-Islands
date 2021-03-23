@@ -13,6 +13,7 @@ public class ListIslandsCommand {
     }
 
     private static int execute(CommandContext<CommandSourceStack> context) {
+
         return 0;
     }
 }

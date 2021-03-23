@@ -1,0 +1,5 @@
+{
+  "commands.ftbteamislands.error.no_island": "You do not have an Island yet.",
+  "commands.ftbteamislands.error.no_lobby_in_sp": "There is not a lobby in single player",
+  "commands.ftbteamislands.error.no_lobby_found": "No lobby found!"
+}

@@ -1,10 +1,10 @@
 package dev.ftb.mods.ftbteamislands.islands;
 
-import com.feed_the_beast.mods.ftbteams.data.Team;
 import dev.ftb.mods.ftbteamislands.Config;
 import dev.ftb.mods.ftbteamislands.FTBTeamIslands;
 import dev.ftb.mods.ftbteamislands.network.NetworkManager;
 import dev.ftb.mods.ftbteamislands.network.OpenSelectionScreenPacket;
+import dev.ftb.mods.ftbteams.data.Team;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;

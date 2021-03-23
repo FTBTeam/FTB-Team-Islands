@@ -1,16 +1,16 @@
 package dev.ftb.mods.ftbteamislands;
 
-import com.feed_the_beast.mods.ftbteams.data.Team;
-import com.feed_the_beast.mods.ftbteams.data.TeamManager;
-import com.feed_the_beast.mods.ftbteams.event.PlayerChangedTeamEvent;
-import com.feed_the_beast.mods.ftbteams.event.TeamDeletedEvent;
 import dev.ftb.mods.ftbteamislands.islands.Island;
 import dev.ftb.mods.ftbteamislands.islands.IslandSpawner;
 import dev.ftb.mods.ftbteamislands.islands.IslandsManager;
+import dev.ftb.mods.ftbteams.data.Team;
+import dev.ftb.mods.ftbteams.data.TeamManager;
+import dev.ftb.mods.ftbteams.event.PlayerChangedTeamEvent;
+import dev.ftb.mods.ftbteams.event.TeamCreatedEvent;
+import dev.ftb.mods.ftbteams.event.TeamDeletedEvent;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.level.Level;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -19,6 +19,10 @@ import java.util.Optional;
 
 @Mod.EventBusSubscriber(modid = FTBTeamIslands.MOD_ID)
 public class Events {
+    public static void onTeamCreated(TeamCreatedEvent event) {
+
+    }
+
     /**
      * Clear the players inventory upon leaving and reset their spawn chunk to the lobby.
      */
@@ -78,7 +82,7 @@ public class Events {
         if (playerTeam == null)
             return;
 
-        IslandsManager islandsManager = IslandsManager.get(event.getPlayer().getServer().getLevel(Level.OVERWORLD));
+        IslandsManager islandsManager = IslandsManager.get(event.getPlayer().getServer().getLevel(IslandsManager.getTargetIsland()));
         BlockPos respawnPos = event.getPlayer().getSleepingPos()
             .orElse(islandsManager.getIsland(playerTeam)
                 .map(Island::getSpawnPos)

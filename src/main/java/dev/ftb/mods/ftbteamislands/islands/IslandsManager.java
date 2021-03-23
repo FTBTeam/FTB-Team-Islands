@@ -1,8 +1,8 @@
 package dev.ftb.mods.ftbteamislands.islands;
 
-import com.feed_the_beast.mods.ftbteams.data.Team;
 import dev.ftb.mods.ftbteamislands.Config;
 import dev.ftb.mods.ftbteamislands.FTBTeamIslands;
+import dev.ftb.mods.ftbteams.data.Team;
 import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
