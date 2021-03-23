@@ -30,7 +30,7 @@ public class LobbyCommand {
             throw NO_LOBBY_IN_SP.create();
 
         // Find the lobby and teleport them to it
-        Island lobby = IslandsManager.get(server.getLevel(IslandsManager.getTargetIsland())).getLobby();
+        Island lobby = IslandsManager.get().getLobby();
         if (lobby == null)
             throw NO_LOBBY_FOUND.create();
 

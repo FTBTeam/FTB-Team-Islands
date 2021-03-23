@@ -26,9 +26,7 @@ public class MyIslandCommand {
         ServerPlayer player = context.getSource().getPlayerOrException();
 
         // Find the island
-        Optional<Island> island = IslandsManager
-            .get(context.getSource().getServer().getLevel(IslandsManager.getTargetIsland()))
-            .getIsland(TeamManager.INSTANCE.getPlayerTeam(player));
+        Optional<Island> island = IslandsManager.get().getIsland(TeamManager.INSTANCE.getPlayerTeam(player));
 
         // If not present error
         if (!island.isPresent())

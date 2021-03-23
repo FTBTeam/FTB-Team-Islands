@@ -35,7 +35,6 @@ public class IslandSpawner {
         );
 
         manager.setLobby(lobby);
-        manager.setDirty();
 
         level.setDefaultSpawnPos(lobby.getSpawnPos(), 90f);
     }

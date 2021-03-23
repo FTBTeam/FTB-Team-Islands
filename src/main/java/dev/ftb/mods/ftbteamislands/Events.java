@@ -35,7 +35,7 @@ public class Events {
             return;
 
         ServerLevel level = team.manager.getServer().getLevel(IslandsManager.getTargetIsland());
-        IslandsManager islandsManager = IslandsManager.get(level);
+        IslandsManager islandsManager = IslandsManager.get();
         if (islandsManager == null || level == null) {
             return;
         }
@@ -82,7 +82,7 @@ public class Events {
         if (playerTeam == null)
             return;
 
-        IslandsManager islandsManager = IslandsManager.get(event.getPlayer().getServer().getLevel(IslandsManager.getTargetIsland()));
+        IslandsManager islandsManager = IslandsManager.get();
         BlockPos respawnPos = event.getPlayer().getSleepingPos()
             .orElse(islandsManager.getIsland(playerTeam)
                 .map(Island::getSpawnPos)

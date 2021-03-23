@@ -1,37 +1,49 @@
 package dev.ftb.mods.ftbteamislands.islands;
 
 import dev.ftb.mods.ftbteamislands.Config;
-import dev.ftb.mods.ftbteamislands.FTBTeamIslands;
 import dev.ftb.mods.ftbteams.data.Team;
 import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtIo;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.saveddata.SavedData;
+import net.minecraft.world.level.storage.LevelResource;
 import net.minecraftforge.common.util.Constants;
 
 import javax.annotation.Nullable;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class IslandsManager extends SavedData {
-    private static final String SAVE_NAME = FTBTeamIslands.MOD_ID + "_islandsave";
+public class IslandsManager {
+    public static final LevelResource FOLDER_NAME = new LevelResource("ftbteamislands");
+    private static IslandsManager INSTANCE;
 
+    public final MinecraftServer server;
     private final HashMap<UUID, Island> islands = new HashMap<>();
     private final Set<SpawnableIsland> availableIslands = new HashSet<>();
+    private boolean shouldSave;
 
     @Nullable
     private Island lobby;
 
-    private IslandsManager() {
-        super(SAVE_NAME);
+    private IslandsManager(MinecraftServer server) {
+        this.server = server;
     }
 
-    public static IslandsManager get(Level level) {
-        return ((ServerLevel) level).getDataStorage().computeIfAbsent(IslandsManager::new, SAVE_NAME);
+    public static IslandsManager get() {
+        return INSTANCE;
+    }
+
+    public static void setup(MinecraftServer server) {
+        INSTANCE = new IslandsManager(server);
+        INSTANCE.load();
     }
 
     public boolean registerIsland(Team team, Island island) {
@@ -78,39 +90,6 @@ public class IslandsManager extends SavedData {
         this.lobby = lobby;
     }
 
-    @Override
-    public void load(CompoundTag compound) {
-        if (compound.contains("islands")) {
-            ListTag islands = compound.getList("islands", Constants.NBT.TAG_COMPOUND);
-            islands.forEach(island -> this.islands.put(((CompoundTag) island).getUUID("key"), Island.read(((CompoundTag) island).getCompound("island"))));
-        }
-
-        if (compound.contains("lobby")) {
-            this.lobby = Island.read(compound.getCompound("lobby"));
-        }
-    }
-
-    @Override
-    public CompoundTag save(CompoundTag compound) {
-        if (this.lobby != null)
-            compound.put("lobby", this.lobby.write());
-
-        if (this.islands.size() > 0) {
-            ListTag list = new ListTag();
-
-            for (Map.Entry<UUID, Island> island : this.islands.entrySet()) {
-                CompoundTag tag = new CompoundTag();
-                tag.putUUID("key", island.getKey());
-                tag.put("island", island.getValue().write());
-
-                list.add(tag);
-            }
-
-            compound.put("islands", list);
-        }
-        return compound;
-    }
-
     public HashMap<UUID, Island> getIslands() {
         return this.islands;
     }
@@ -121,5 +100,81 @@ public class IslandsManager extends SavedData {
 
     public static ResourceKey<Level> getTargetIsland() {
         return ResourceKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(Config.general.targetIslandLevel.get()));
+    }
+
+    public void load() {
+        CompoundTag compound = this.getSaveCompound();
+
+        if (compound.contains("islands")) {
+            ListTag islands = compound.getList("islands", Constants.NBT.TAG_COMPOUND);
+            islands.forEach(island -> this.islands.put(((CompoundTag) island).getUUID("key"), Island.read(((CompoundTag) island).getCompound("island"))));
+        }
+
+        if (compound.contains("lobby")) {
+            this.lobby = Island.read(compound.getCompound("lobby"));
+        }
+    }
+
+    public void save() {
+        shouldSave = true;
+    }
+
+    public void saveNow() {
+        Path directory = server.getWorldPath(FOLDER_NAME);
+
+        if (Files.notExists(directory)) {
+            try {
+                Files.createDirectories(directory);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+
+        if (shouldSave) {
+            try (OutputStream stream = Files.newOutputStream(directory.resolve("ftbteams.nbt"))) {
+                CompoundTag compound = new CompoundTag();
+                if (this.lobby != null)
+                    compound.put("lobby", this.lobby.write());
+
+                if (this.islands.size() > 0) {
+                    ListTag list = new ListTag();
+
+                    for (Map.Entry<UUID, Island> island : this.islands.entrySet()) {
+                        CompoundTag tag = new CompoundTag();
+                        tag.putUUID("key", island.getKey());
+                        tag.put("island", island.getValue().write());
+
+                        list.add(tag);
+                    }
+
+                    compound.put("islands", list);
+                }
+
+                NbtIo.writeCompressed(compound, stream);
+                shouldSave = false;
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+    }
+
+    public CompoundTag getSaveCompound() {
+        Path directory = server.getWorldPath(FOLDER_NAME);
+
+        if (Files.notExists(directory) || !Files.isDirectory(directory)) {
+            return new CompoundTag();
+        }
+
+        Path dataFile = directory.resolve("ftbteamislands.nbt");
+
+        if (Files.exists(dataFile)) {
+            try (InputStream stream = Files.newInputStream(dataFile)) {
+                return Objects.requireNonNull(NbtIo.readCompressed(stream));
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+
+        return new CompoundTag();
     }
 }

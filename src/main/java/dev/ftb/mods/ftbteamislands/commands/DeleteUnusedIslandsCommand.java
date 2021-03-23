@@ -5,7 +5,6 @@ import com.mojang.brigadier.context.CommandContext;
 import dev.ftb.mods.ftbteamislands.islands.IslandsManager;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
-import net.minecraft.server.level.ServerLevel;
 
 import java.util.Set;
 import java.util.UUID;
@@ -21,10 +20,8 @@ public class DeleteUnusedIslandsCommand {
     }
 
     private static int execute(CommandContext<CommandSourceStack> context) {
-        ServerLevel level = context.getSource().getServer().getLevel(IslandsManager.getTargetIsland());
-        Set<UUID> unclaimedIslands = IslandsManager.get(level).getUnclaimedIslands();
+        Set<UUID> unclaimedIslands = IslandsManager.get().getUnclaimedIslands();
         int islandsToDelete = unclaimedIslands.size();
-
 
 
         return 0;

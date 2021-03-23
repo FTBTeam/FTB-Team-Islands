@@ -1,6 +1,7 @@
 package dev.ftb.mods.ftbteamislands;
 
 import dev.ftb.mods.ftbteamislands.commands.*;
+import dev.ftb.mods.ftbteamislands.islands.IslandsManager;
 import dev.ftb.mods.ftbteamislands.network.NetworkManager;
 import dev.ftb.mods.ftbteams.event.PlayerChangedTeamEvent;
 import dev.ftb.mods.ftbteams.event.TeamCreatedEvent;
@@ -8,6 +9,7 @@ import dev.ftb.mods.ftbteams.event.TeamDeletedEvent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.commands.Commands;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModLoadingContext;
@@ -17,6 +19,7 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
+import net.minecraftforge.fml.event.server.FMLServerAboutToStartEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
@@ -74,6 +77,16 @@ public class FTBTeamIslands {
                 .then(MyIslandCommand.register())
                 .then(DeleteUnusedIslandsCommand.register())
         );
+    }
+
+    @SubscribeEvent
+    public void onServerAboutToStart(FMLServerAboutToStartEvent event) {
+        IslandsManager.setup(event.getServer());
+    }
+
+    @SubscribeEvent
+    public void onWorldSave(WorldEvent.Save event) {
+        IslandsManager.get().save();
     }
 
     // TODO: Remove, helps with breakpoints when Intellij and Linux aren't getting along
