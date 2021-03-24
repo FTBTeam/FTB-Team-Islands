@@ -100,7 +100,6 @@ public class IslandSpawner {
         return new Island(
             new ChunkPos(spawnPos),
             playerSpawnPoint,
-            structureLoc.getPath(),
             null,
             true,
             true

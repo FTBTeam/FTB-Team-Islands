@@ -14,7 +14,7 @@ import java.util.UUID;
 public class Island {
     public ChunkPos pos;
     public BlockPos spawnPos;
-    public String templateId;
+    public UUID templateId;
 
     @Nullable
     public UUID creator;
@@ -23,13 +23,13 @@ public class Island {
     public boolean active; // false = No one owns and is unclaimed
 
     public Island(ChunkPos pos, BlockPos spawnPos, String templateId, UUID creator) {
-        this(pos, spawnPos, templateId, creator, false, true);
+        this(pos, spawnPos, creator, false, true);
     }
 
-    public Island(ChunkPos pos, BlockPos spawnPos, String templateId, @Nullable UUID creator, boolean spawned, boolean active) {
+    public Island(ChunkPos pos, BlockPos spawnPos, @Nullable UUID creator, boolean spawned, boolean active) {
+        this.templateId = UUID.randomUUID();
         this.pos = pos;
         this.spawnPos = spawnPos;
-        this.templateId = templateId;
         this.creator = creator;
         this.spawned = spawned;
         this.active = active;
@@ -67,7 +67,7 @@ public class Island {
         CompoundTag compound = new CompoundTag();
         compound.put("spawnPos", NbtUtils.writeBlockPos(this.spawnPos));
         compound.putLong("chunkPos", this.pos.toLong());
-        compound.putString("templateId", this.templateId);
+        compound.putUUID("templateId", this.templateId);
         if (this.creator != null) {
             compound.putUUID("creator", this.creator);
         }
@@ -77,13 +77,17 @@ public class Island {
     }
 
     public static Island read(CompoundTag compound) {
-        return new Island(
+        Island island = new Island(
             new ChunkPos(compound.getLong("chunkPos")),
             NbtUtils.readBlockPos(compound.getCompound("spawnPos")),
-            compound.getString("templateId"),
-            compound.contains("creator") ? compound.getUUID("creator") : null,
+            compound.contains("creator")
+                ? compound.getUUID("creator")
+                : null,
             compound.getBoolean("spawned"),
             compound.getBoolean("active")
         );
+
+        island.templateId = compound.getUUID("templateId");
+        return island;
     }
 }

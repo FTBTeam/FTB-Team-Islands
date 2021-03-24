@@ -1,6 +1,12 @@
 package dev.ftb.mods.ftbteamislands.islands;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonIOException;
+import com.google.gson.JsonSyntaxException;
+import com.google.gson.reflect.TypeToken;
 import dev.ftb.mods.ftbteamislands.Config;
+import dev.ftb.mods.ftbteamislands.FTBTeamIslands;
 import dev.ftb.mods.ftbteams.data.Team;
 import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
@@ -14,8 +20,11 @@ import net.minecraft.world.level.storage.LevelResource;
 import net.minecraftforge.common.util.Constants;
 
 import javax.annotation.Nullable;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
@@ -23,11 +32,12 @@ import java.util.stream.Collectors;
 
 public class IslandsManager {
     public static final LevelResource FOLDER_NAME = new LevelResource("ftbteamislands");
+    private static final String PREBUILT_ISLANDS_PATH = "/config/ftbteamislands/islands.json";
     private static IslandsManager INSTANCE;
 
     public final MinecraftServer server;
     private final HashMap<UUID, Island> islands = new HashMap<>();
-    private final Set<SpawnableIsland> availableIslands = new HashSet<>();
+    private final List<PrebuiltIslands> availableIslands = new ArrayList<>();
     private boolean shouldSave;
 
     @Nullable
@@ -44,6 +54,32 @@ public class IslandsManager {
     public static void setup(MinecraftServer server) {
         INSTANCE = new IslandsManager(server);
         INSTANCE.load();
+        INSTANCE.findAndLoadPrebuilts();
+    }
+
+    /**
+     * Loads and populates the availableIslands from the json
+     */
+    private void findAndLoadPrebuilts() {
+        FTBTeamIslands.LOGGER.info("Prebuilts: Searching for prebuilt islands in {}", PREBUILT_ISLANDS_PATH);
+        Gson gson = new GsonBuilder()
+            .registerTypeAdapter(PrebuiltIslands.PrebuiltIsland.class, new PrebuiltIslands.PrebuiltIsland.Deserializer())
+            .create();
+
+        System.out.println(server.getServerDirectory().getAbsolutePath());
+        Type prebuiltIslandsType = new TypeToken<List<PrebuiltIslands>>(){}.getType();
+        try {
+            try {
+                List<PrebuiltIslands> islands = gson.fromJson(new FileReader(server.getServerDirectory().getAbsolutePath() + PREBUILT_ISLANDS_PATH), prebuiltIslandsType);
+                this.availableIslands.addAll(islands);
+
+                FTBTeamIslands.LOGGER.info("Prebuilts: found {} islands in {}", this.availableIslands.stream().mapToInt(e -> e.getIslands().size()).count(), PREBUILT_ISLANDS_PATH);
+            } catch (JsonIOException | JsonSyntaxException e) {
+                FTBTeamIslands.LOGGER.error("Prebuilts: Failed to read json data in {}", PREBUILT_ISLANDS_PATH);
+            }
+        } catch (FileNotFoundException e) {
+            FTBTeamIslands.LOGGER.info("Prebuilts: No islands found in {}", PREBUILT_ISLANDS_PATH);
+        }
     }
 
     public void registerIsland(Team team, Island island) {
@@ -99,7 +135,7 @@ public class IslandsManager {
         return this.islands;
     }
 
-    public Set<SpawnableIsland> getAvailableIslands() {
+    public List<PrebuiltIslands> getAvailableIslands() {
         return availableIslands;
     }
 
