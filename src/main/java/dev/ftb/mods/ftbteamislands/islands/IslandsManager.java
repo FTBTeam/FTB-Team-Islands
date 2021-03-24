@@ -46,9 +46,9 @@ public class IslandsManager {
         INSTANCE.load();
     }
 
-    public boolean registerIsland(Team team, Island island) {
+    public void registerIsland(Team team, Island island) {
         this.islands.put(team.getId(), island);
-        return true;
+        this.save();
     }
 
     public Optional<Island> getIsland(Team team) {
@@ -59,14 +59,20 @@ public class IslandsManager {
     /**
      * Marks and island as inactive / unclaimed and removes the creator from the island.
      */
-    public void markUnclaimed(UUID islandId) {
-        Island island = this.islands.get(islandId);
+    public void markUnclaimed(UUID teamId) {
+        if (!this.islands.containsKey(teamId))
+            return;
+
+        Island island = this.islands.get(teamId);
         island.creator = null;
         island.active = false;
+
+        this.save();
     }
 
-    public void removeIsland(UUID islandId) {
-        this.islands.remove(islandId);
+    public void removeIsland(UUID teamId) {
+        this.islands.remove(teamId);
+        this.save();
     }
 
     /**
@@ -81,9 +87,8 @@ public class IslandsManager {
             .collect(Collectors.toSet());
     }
 
-    @Nullable
-    public Island getLobby() {
-        return lobby;
+    public Optional<Island> getLobby() {
+        return lobby != null ? Optional.of(lobby) : Optional.empty();
     }
 
     public void setLobby(@Nullable Island lobby) {
@@ -131,7 +136,7 @@ public class IslandsManager {
         }
 
         if (shouldSave) {
-            try (OutputStream stream = Files.newOutputStream(directory.resolve("ftbteams.nbt"))) {
+            try (OutputStream stream = Files.newOutputStream(directory.resolve("ftbteamislands.nbt"))) {
                 CompoundTag compound = new CompoundTag();
                 if (this.lobby != null)
                     compound.put("lobby", this.lobby.write());

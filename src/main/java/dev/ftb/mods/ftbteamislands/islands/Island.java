@@ -1,6 +1,5 @@
 package dev.ftb.mods.ftbteamislands.islands;
 
-import dev.ftb.mods.ftbteamislands.Config;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
@@ -13,8 +12,6 @@ import javax.annotation.Nullable;
 import java.util.UUID;
 
 public class Island {
-    public static final Island LOBBY = new Island(new ChunkPos(0, 0), BlockPos.ZERO.offset(0, Config.islands.height.get(), 0), "lobby", null, false, true);
-
     public ChunkPos pos;
     public BlockPos spawnPos;
     public String templateId;
@@ -55,6 +52,7 @@ public class Island {
         return active;
     }
 
+    // TODO: add safe spawning logic
     public void teleportPlayerTo(ServerPlayer player, MinecraftServer server) {
         ServerLevel level = server.getLevel(IslandsManager.getTargetIsland());
 

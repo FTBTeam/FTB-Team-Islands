@@ -12,8 +12,9 @@ import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 
+import java.util.Optional;
+
 public class LobbyCommand {
-    private static final SimpleCommandExceptionType NO_LOBBY_IN_SP = new SimpleCommandExceptionType(new TranslatableComponent("commands.ftbteamislands.error.no_lobby_in_sp"));
     private static final SimpleCommandExceptionType NO_LOBBY_FOUND = new SimpleCommandExceptionType(new TranslatableComponent("commands.ftbteamislands.error.no_lobby_found"));
 
     public static LiteralArgumentBuilder<CommandSourceStack> register() {
@@ -25,16 +26,12 @@ public class LobbyCommand {
         MinecraftServer server = context.getSource().getServer();
         ServerPlayer player = context.getSource().getPlayerOrException();
 
-        // The lobby can't exist on SSP
-        if (!server.isDedicatedServer())
-            throw NO_LOBBY_IN_SP.create();
-
         // Find the lobby and teleport them to it
-        Island lobby = IslandsManager.get().getLobby();
-        if (lobby == null)
+        Optional<Island> lobby = IslandsManager.get().getLobby();
+        if (!lobby.isPresent())
             throw NO_LOBBY_FOUND.create();
 
-        lobby.teleportPlayerTo(player, server);
+        lobby.get().teleportPlayerTo(player, server);
         return 0;
     }
 }

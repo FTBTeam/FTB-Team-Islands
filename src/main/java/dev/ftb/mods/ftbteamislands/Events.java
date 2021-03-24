@@ -5,12 +5,13 @@ import dev.ftb.mods.ftbteamislands.islands.IslandSpawner;
 import dev.ftb.mods.ftbteamislands.islands.IslandsManager;
 import dev.ftb.mods.ftbteams.data.Team;
 import dev.ftb.mods.ftbteams.data.TeamManager;
+import dev.ftb.mods.ftbteams.data.TeamType;
 import dev.ftb.mods.ftbteams.event.PlayerChangedTeamEvent;
 import dev.ftb.mods.ftbteams.event.TeamCreatedEvent;
 import dev.ftb.mods.ftbteams.event.TeamDeletedEvent;
-import net.minecraft.core.BlockPos;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -20,7 +21,29 @@ import java.util.Optional;
 @Mod.EventBusSubscriber(modid = FTBTeamIslands.MOD_ID)
 public class Events {
     public static void onTeamCreated(TeamCreatedEvent event) {
+        Team team = event.getTeam();
+        MinecraftServer server = team.manager.getServer();
 
+        // Don't run if the mod is disabled
+        if (!Config.general.isEnabled(server))
+            return;
+
+        ServerLevel level = team.manager.getServer().getLevel(IslandsManager.getTargetIsland());
+        IslandsManager islandsManager = IslandsManager.get();
+        if (islandsManager == null || level == null)
+            return;
+
+        // If we're a server, attempt to spawn a lobby
+        // Bypass lobby spawning if we're spawning into a single player world and there is only a single island
+        if (!islandsManager.getLobby().isPresent() && (server.isDedicatedServer() || IslandsManager.get().getAvailableIslands().size() > 0))
+            IslandSpawner.spawnLobby(level);
+
+        // If we're in single player, attempt to spawn an island if we don't already have one
+        Optional<Island> island = islandsManager.getIsland(team);
+        if (island.isPresent() || server.isDedicatedServer())
+            return;
+
+        IslandSpawner.spawnIslandSinglePlayer(level, team, event.getCreator(), server);
     }
 
     /**
@@ -33,39 +56,18 @@ public class Events {
         // Don't run if the mod is disabled
         if (!Config.general.isEnabled(server))
             return;
-
-        ServerLevel level = team.manager.getServer().getLevel(IslandsManager.getTargetIsland());
-        IslandsManager islandsManager = IslandsManager.get();
-        if (islandsManager == null || level == null) {
-            return;
-        }
-
-        // If we're a server, attempt to spawn a lobby
-        if (server.isDedicatedServer()) {
-            FTBTeamIslands.LOGGER.info("Attempting to spawn lobby");
-            if (islandsManager.getLobby() == null)
-                IslandSpawner.spawnLobby(islandsManager, team.manager.getServer(), level, team);
-
-            return;
-        }
-
-        // If we're in single player, attempt to spawn an island if we don't already have one
-        Optional<Island> island = islandsManager.getIsland(team);
-        if (island.isPresent()) {
-            return;
-        }
-
-        IslandSpawner.spawnIsland(islandsManager, level, team, team.getOnlineMembers().get(0));
     }
 
     /**
      * Upon deletion, validate against any existing islands and mark them as unused.
      */
     public static void onTeamDeleted(TeamDeletedEvent event) {
-        if (!Config.general.isEnabled(event.getTeam().manager.getServer()))
+        Team team = event.getTeam();
+        if (!Config.general.isEnabled(team.manager.getServer()) || event.getTeam().getType() != TeamType.PARTY)
             return;
 
-        FTBTeamIslands.LOGGER.info("Team deleted");
+        // Flag unused
+        IslandsManager.get().markUnclaimed(team.getId());
     }
 
     /**
@@ -82,12 +84,19 @@ public class Events {
         if (playerTeam == null)
             return;
 
+        // Handle custom respawn logic
         IslandsManager islandsManager = IslandsManager.get();
-        BlockPos respawnPos = event.getPlayer().getSleepingPos()
-            .orElse(islandsManager.getIsland(playerTeam)
-                .map(Island::getSpawnPos)
-                .orElse(islandsManager.getLobby() == null ? new BlockPos(0, Config.islands.height.get(), 0) : islandsManager.getLobby().spawnPos));
+        if (event.getPlayer().getSleepingPos().isPresent()) {
+            // If the player already has a sleeping position, just use it and return.
+            return;
+        }
 
-        event.getPlayer().teleportTo(respawnPos.getX() + .5D, respawnPos.getY() + 2, respawnPos.getZ() + .5D);
+        Island island = islandsManager.getIsland(playerTeam).orElse(islandsManager.getLobby().orElse(null));
+        if (island == null) {
+            FTBTeamIslands.LOGGER.info("No island or lobby found!");
+            return; // Default back to the stand handling. No lobby or Island found!
+        }
+
+        island.teleportPlayerTo((ServerPlayer) event.getPlayer(), event.getPlayer().getServer());
     }
 }

@@ -54,7 +54,6 @@ public class FTBTeamIslands {
     }
 
     private void clientSetup(final FMLClientSetupEvent event) {
-
     }
 
     private void enqueueIMC(final InterModEnqueueEvent event) {
@@ -87,7 +86,7 @@ public class FTBTeamIslands {
 
     @SubscribeEvent
     public void onWorldSave(WorldEvent.Save event) {
-        IslandsManager.get().save();
+        IslandsManager.get().saveNow();
     }
 
     // TODO: Remove, helps with breakpoints when Intellij and Linux aren't getting along

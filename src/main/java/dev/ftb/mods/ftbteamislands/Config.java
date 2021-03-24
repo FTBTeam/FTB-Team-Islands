@@ -17,7 +17,6 @@ public class Config {
         public final ForgeConfigSpec.BooleanValue enableMyIslandCommand;
         public final ForgeConfigSpec.BooleanValue clearInvWhenTeamLeft;
         public final ForgeConfigSpec.ConfigValue<String> targetIslandLevel;
-            //        public final ForgeConfigSpec.ConfigValue<String> voidWorldTypeId;
 
         General() {
             SERVER_BUILDER.push("general");
@@ -27,8 +26,6 @@ public class Config {
             clearInvWhenTeamLeft = SERVER_BUILDER.define("clearInvWhenTeamLeft", true);
             enableMyIslandCommand = SERVER_BUILDER.define("enableMyIslandCommand", true);
             targetIslandLevel = SERVER_BUILDER.define("targetIslandLevel", "minecraft:overworld");
-
-//            voidWorldTypeId = SERVER_BUILDER.define("voidWorldTypeId", "void");
 
             SERVER_BUILDER.pop();
         }
@@ -43,6 +40,7 @@ public class Config {
 
     public static class Lobby {
         public final ForgeConfigSpec.BooleanValue autoTeleportToIsland;
+        public final ForgeConfigSpec.ConfigValue<String> lobbyIslandFile;
 
         Lobby() {
             SERVER_BUILDER.push("lobby");
@@ -51,6 +49,9 @@ public class Config {
                 .comment("Auto-teleports player to their island once they join a team.")
                 .define("autoTeleportToIsland", true);
 
+            lobbyIslandFile = SERVER_BUILDER
+                .comment("The lobby island spawned automatically on server ")
+                .define("lobbyStructureFile", "default_lobby");
 
             SERVER_BUILDER.pop();
         }
@@ -58,7 +59,6 @@ public class Config {
 
     public static class Islands {
         public final ForgeConfigSpec.IntValue height;
-//        public final ForgeConfigSpec.ConfigValue<String[]> structureFiles;
         public final ForgeConfigSpec.IntValue autoClaimChunkRadius;
         public final ForgeConfigSpec.BooleanValue selectIslands;
         public final ForgeConfigSpec.IntValue distanceBetweenIslands;
@@ -69,11 +69,6 @@ public class Config {
             height = SERVER_BUILDER
                 .comment("Height at which the islands will generate.", "-1 = auto, on top of highest block in world")
                 .defineInRange("height", 80, -1, 255);
-
-//            structureFiles = SERVER_BUILDER
-//                .comment("Structure files will be loaded from config/x file.", "If not set, builtin island will be used.")
-//                .worldRestart()
-//                .define("structureFiles", new String[]{});
 
             autoClaimChunkRadius = SERVER_BUILDER
                 .comment("Radius of the chunks to automatically claim if FTBUtilities is installed.", "-1 = disabled", "0 = 1x1", "1 = 3x3", "4 = 9x9")

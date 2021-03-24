@@ -27,7 +27,7 @@ public class OpenSelectionScreenPacket {
                 return;
             }
 
-            FTBTeamIslands.LOGGER.fatal("Open gui packet sent to server!");
+            FTBTeamIslands.LOGGER.error("Open gui packet sent to server!");
         });
         ctx.setPacketHandled(true);
     }
