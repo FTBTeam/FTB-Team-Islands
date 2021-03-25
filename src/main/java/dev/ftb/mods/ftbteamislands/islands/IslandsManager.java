@@ -66,7 +66,6 @@ public class IslandsManager {
             .registerTypeAdapter(PrebuiltIslands.PrebuiltIsland.class, new PrebuiltIslands.PrebuiltIsland.Deserializer())
             .create();
 
-        System.out.println(server.getServerDirectory().getAbsolutePath());
         Type prebuiltIslandsType = new TypeToken<List<PrebuiltIslands>>(){}.getType();
         try {
             try {

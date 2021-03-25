@@ -79,7 +79,6 @@ public class Events {
         if (event.getPlayer().getServer() == null || !Config.general.isEnabled(event.getPlayer().getServer()))
             return;
 
-        FTBTeamIslands.LOGGER.info("Player death / respawned");
         Team playerTeam = TeamManager.INSTANCE.getPlayerTeam(event.getPlayer().getUUID());
         if (playerTeam == null)
             return;

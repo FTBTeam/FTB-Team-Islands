@@ -48,7 +48,7 @@ public class IslandSpawner {
 
         IslandsManager manager = IslandsManager.get();
         if (manager.getAvailableIslands().size() > 0) {
-            NetworkManager.sendTo(new OpenSelectionScreenPacket(), player);
+            NetworkManager.sendTo(new OpenSelectionScreenPacket(manager.getAvailableIslands()), player);
             return;
         }
 

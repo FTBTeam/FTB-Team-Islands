@@ -1,10 +1,14 @@
 package dev.ftb.mods.ftbteamislands.islands;
 
 import com.google.gson.*;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.common.util.Constants;
 
 import java.lang.reflect.Type;
 import java.util.List;
+import java.util.stream.Collectors;
 
 // Wrapper for our json format to help with reading and deserializing
 public class PrebuiltIslands {
@@ -36,6 +40,28 @@ public class PrebuiltIslands {
         return islands;
     }
 
+    public CompoundTag write() {
+        CompoundTag compound = new CompoundTag();
+        compound.putString("name", this.name);
+        compound.putString("desc", this.desc);
+        compound.putString("author", this.author);
+        ListTag list = new ListTag();
+        this.islands.forEach(island -> list.add(island.write()));
+        compound.put("islands", list);
+        return compound;
+    }
+
+    public static PrebuiltIslands read(CompoundTag compound) {
+        return new PrebuiltIslands(
+            compound.getString("name"),
+            compound.getString("desc"),
+            compound.getString("author"),
+            compound.getList("islands", Constants.NBT.TAG_COMPOUND).stream()
+                .map(tag -> PrebuiltIsland.read((CompoundTag) tag))
+                .collect(Collectors.toList())
+        );
+    }
+
     public static class PrebuiltIsland {
         private final String name;
         private final String desc;
@@ -63,6 +89,24 @@ public class PrebuiltIslands {
 
         public ResourceLocation getImage() {
             return image;
+        }
+
+        public CompoundTag write() {
+            CompoundTag compound = new CompoundTag();
+            compound.putString("name", this.name);
+            compound.putString("desc", this.desc);
+            compound.putString("structure", this.structureFileLocation);
+            compound.putString("image", this.image.toString());
+            return compound;
+        }
+
+        public static PrebuiltIsland read(CompoundTag compound) {
+            return new PrebuiltIsland(
+                compound.getString("name"),
+                compound.getString("desc"),
+                compound.getString("structure"),
+                new ResourceLocation(compound.getString("image"))
+            );
         }
 
         public static class Deserializer implements JsonDeserializer<PrebuiltIsland> {
