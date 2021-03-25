@@ -4,11 +4,11 @@ license="All rights reserved"
 [[mods]] #mandatory
 modId="ftbteamislands" #mandatory
 version="${version}" #mandatory
-displayName="Example Mod" #mandatory
+displayName="FTB Team Islands" #mandatory
 logoFile="examplemod.png" #optional
-credits="Thanks for this example mod goes to Java" #optional
-authors="Love, Cheese and small house plants" #optional
+authors="FTB Team" #optional
 description='''
+Void world island management mod
 '''
 
 [[dependencies.ftbteamislands]] #optional

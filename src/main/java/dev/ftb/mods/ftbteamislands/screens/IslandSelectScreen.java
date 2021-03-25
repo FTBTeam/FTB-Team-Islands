@@ -1,10 +1,137 @@
 package dev.ftb.mods.ftbteamislands.screens;
 
+import com.mojang.blaze3d.vertex.PoseStack;
+import dev.ftb.mods.ftbteamislands.islands.PrebuiltIslands;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.components.AbstractSelectionList;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class IslandSelectScreen extends Screen {
-    public IslandSelectScreen() {
+    // Store this so we don't have to ask the server for it again in-case we need to go back.
+    private final List<PrebuiltIslands> previousScreenData;
+    private final PrebuiltIslands selectedIslandDir;
+
+    private IslandList islandList;
+    private EditBox searchBox;
+
+    public IslandSelectScreen(PrebuiltIslands selected, List<PrebuiltIslands> previousScreenData) {
         super(TextComponent.EMPTY);
+
+        this.selectedIslandDir = selected;
+        this.previousScreenData = previousScreenData;
+    }
+
+    @Override
+    protected void init() {
+        super.init();
+
+        this.islandList = new IslandList(getMinecraft(), width, height, 80, height - 40, this.selectedIslandDir);
+        this.searchBox = new EditBox(font, width / 2 - 160 / 2, 40, 160, 20, TextComponent.EMPTY);
+        this.searchBox.setResponder(this.islandList::searchList);
+
+        this.addButton(new Button(width / 2 - 120, height - 30, 100, 20, new TranslatableComponent("screens.ftbteamislands.back"), btn -> {
+            this.onClose();
+            Minecraft.getInstance().setScreen(new IslandDirectoryScreen(this.previousScreenData));
+        }));
+
+        this.addButton(new Button(width / 2 , height - 30, 150, 20, new TranslatableComponent("screens.ftbteamislands.create"), btn -> {
+            this.onClose();
+
+            System.out.println("Do something");
+        }));
+
+        this.children.add(this.searchBox);
+        this.children.add(this.islandList);
+
+        this.setInitialFocus(this.searchBox);
+    }
+
+    @Override
+    public void render(PoseStack matrices, int mouseX, int mouseY, float partialTick) {
+        this.renderBackground(matrices);
+
+        this.islandList.render(matrices, mouseX, mouseY, partialTick);
+        super.render(matrices, mouseX, mouseY, partialTick);
+        this.searchBox.render(matrices, mouseX, mouseY, partialTick);
+
+        String value = new TranslatableComponent("screens.ftbteamislands.select_island").getString();
+        font.drawShadow(matrices, value, width / 2f - font.width(value) / 2f, 20, 0xFFFFFF);
+    }
+
+    public static class IslandList extends AbstractSelectionList<IslandList.Entry> {
+        private final PrebuiltIslands islands;
+
+        public IslandList(Minecraft minecraft, int width, int height, int top, int bottom, PrebuiltIslands entries) {
+            super(minecraft, width, height, top, bottom, 50); // 30 = item height
+
+            this.islands = entries;
+            this.children().addAll(entries.getIslands().stream().map(IslandList.Entry::new).collect(Collectors.toList()));
+        }
+
+        @Override
+        public int getRowWidth() {
+            return 340;
+        }
+
+        @Override
+        protected int getScrollbarPosition() {
+            return this.width / 2 + 170;
+        }
+
+        public void searchList(String value) {
+            this.children().clear();
+
+            String lowerValue = value.toLowerCase();
+            if (lowerValue.equals("")) {
+                this.children().addAll(this.islands.getIslands().stream()
+                    .map(IslandList.Entry::new)
+                    .collect(Collectors.toList())
+                );
+                return;
+            }
+
+            this.children().addAll(this.islands.getIslands().stream()
+                .filter(island -> island.getName().toLowerCase().contains(lowerValue) || island.getDesc().toLowerCase().contains(lowerValue))
+                .map(IslandList.Entry::new)
+                .collect(Collectors.toList())
+            );
+        }
+
+        public class Entry extends AbstractSelectionList.Entry<IslandList.Entry> {
+            private final PrebuiltIslands.PrebuiltIsland islandDir;
+
+            public Entry(PrebuiltIslands.PrebuiltIsland island) {
+                this.islandDir = island;
+            }
+
+            @Override
+            public boolean mouseClicked(double x, double y, int partialTick) {
+                IslandList.this.setSelected(this);
+                return super.mouseClicked(x, y, partialTick);
+            }
+
+            @Override
+            public void render(PoseStack matrices, int entryId, int top, int left, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean bl, float partialTicks) {
+                Font font = Minecraft.getInstance().font;
+
+                int startX = left + 50;
+                font.drawShadow(matrices, islandDir.getName(), startX, top + 8, 0xFFFFFF);
+                font.drawShadow(matrices, islandDir.getDesc(), startX, top + 24, 0xFFFFFF);
+//
+//                Minecraft.getInstance().textureManager.bind(fileIcon);
+//                blit(matrices, left + 5, top + 8, 0f, 0f, 32, 32, 32, 32);
+//
+//                String islandCount = String.valueOf(islandDir.getIslands().size());
+//                font.drawShadow(matrices, islandCount, left + 22 - font.width(islandCount) / 2f, top + 22, 0xFFFFFF);
+            }
+        }
     }
 }

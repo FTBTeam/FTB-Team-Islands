@@ -1,4 +1,10 @@
 {
   "commands.ftbteamislands.error.no_island": "You do not have an Island yet.",
-  "commands.ftbteamislands.error.no_lobby_found": "No lobby found!"
+  "commands.ftbteamislands.error.no_lobby_found": "No lobby found!",
+
+  "screens.ftbteamislands.select_island_category": "Select an island category",
+  "screens.ftbteamislands.select_island": "Select an island",
+  "screens.ftbteamislands.by": "By: %s",
+  "screens.ftbteamislands.back": "Back",
+  "screens.ftbteamislands.create": "Create"
 }
