@@ -54,8 +54,8 @@ public class PrebuiltIslands {
     public static PrebuiltIslands read(CompoundTag compound) {
         return new PrebuiltIslands(
             compound.getString("name"),
-            compound.getString("desc"),
             compound.getString("author"),
+            compound.getString("desc"),
             compound.getList("islands", Constants.NBT.TAG_COMPOUND).stream()
                 .map(tag -> PrebuiltIsland.read((CompoundTag) tag))
                 .collect(Collectors.toList())
