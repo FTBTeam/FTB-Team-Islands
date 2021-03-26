@@ -20,8 +20,9 @@ import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlac
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
 import net.minecraftforge.fml.ModList;
 
-import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Iterator;
 import java.util.function.Consumer;
 
@@ -57,6 +58,7 @@ public class IslandSpawner {
         boolean result = worker
             .setSpawnAt(new BlockPos(256 + ((index * distanceInRegions * 512) % 1024), Config.islands.height.get(), 256 + ((index * distanceInRegions * 512) / 1024)))
             .setGlobalSpawns(!IslandsManager.get().getLobby().isPresent() && IslandsManager.get().getIslands().size() == 0)
+            .claimChunks(true)
             .onCreation((island -> IslandsManager.get().registerIsland(team, island)))
             .create(server, player);
 
@@ -67,8 +69,8 @@ public class IslandSpawner {
 
     public static void spawnIsland(String islandName, ServerLevel level, Team team, ServerPlayer player, MinecraftServer server) {
         try {
-            File file = new File(server.getServerDirectory().getAbsolutePath() + IslandsManager.PREBUILT_ISLANDS_PATH + "structures/" + islandName);
-            CompoundTag compoundTag = NbtIo.read(file);
+            InputStream file = new FileInputStream(server.getServerDirectory().getAbsolutePath() + IslandsManager.PREBUILT_ISLANDS_PATH + "structures/" + islandName);
+            CompoundTag compoundTag = NbtIo.readCompressed(file);
             if (compoundTag == null) {
                 FTBTeamIslands.LOGGER.error("Failed to read `{}` island", islandName);
                 return;
@@ -172,7 +174,7 @@ public class IslandSpawner {
 
             // If chunks is loaded and the chunks can be claimed, try and claim them.
             if (ModList.get().isLoaded("ftbchunks") && this.claimChunks) {
-                FTBChunks.claimChunks(player, server.getLevel(IslandsManager.getTargetIsland()), island.pos);
+                FTBChunks.claimChunks(player, player.getLevel(), island.pos);
             }
 
             // Return true and call a finishing up consumer
