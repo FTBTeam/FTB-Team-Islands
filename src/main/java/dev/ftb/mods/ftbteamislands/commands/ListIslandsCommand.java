@@ -38,6 +38,7 @@ public class ListIslandsCommand {
             text.getStyle().withClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, String.format("%s islands %s", FTBTeamIslands.MOD_ID, islandTeam.getDisplayName())));
             context.getSource().sendSuccess(text, true);
         }
+
         return 0;
     }
 }

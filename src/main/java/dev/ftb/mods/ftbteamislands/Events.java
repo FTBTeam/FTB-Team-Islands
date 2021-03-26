@@ -26,7 +26,7 @@ public class Events {
         MinecraftServer server = team.manager.getServer();
 
         // Don't run if the mod is disabled
-        if (!Config.general.isEnabled(server)) {
+        if (!IslandsManager.isEnabled(server) || event.getTeam().getType() != TeamType.PARTY) {
             return;
         }
 
@@ -55,14 +55,28 @@ public class Events {
 
     /**
      * Clear the players inventory upon leaving and reset their spawn chunk to the lobby.
+     * <p>
+     * Player team -> Party team = Left player team
+     * If all party team members leave, party team is removed.
      */
     public static void onChangedTeamEvent(PlayerChangedTeamEvent event) {
         Team team = event.getTeam();
         MinecraftServer server = team.manager.getServer();
 
         // Don't run if the mod is disabled
-        if (!Config.general.isEnabled(server)) {
+        if (!IslandsManager.isEnabled(server)) {
             return;
+        }
+
+        // Don't act if this is their first team.
+        ServerPlayer player = event.getPlayer();
+        if (!event.getPreviousTeam().isPresent() || player == null) {
+            return;
+        }
+
+        // Clear the inventory if the player leaves their team (island)
+        if (Config.general.clearInvWhenTeamLeft.get()) {
+            player.inventory.clearContent();
         }
     }
 
@@ -71,7 +85,7 @@ public class Events {
      */
     public static void onTeamDeleted(TeamDeletedEvent event) {
         Team team = event.getTeam();
-        if (!Config.general.isEnabled(team.manager.getServer()) || event.getTeam().getType() != TeamType.PARTY) {
+        if (!IslandsManager.isEnabled(team.manager.getServer()) || event.getTeam().getType() != TeamType.PARTY) {
             return;
         }
 
@@ -85,7 +99,7 @@ public class Events {
      */
     @SubscribeEvent
     public static void onPlayerDeath(PlayerEvent.PlayerRespawnEvent event) {
-        if (event.getPlayer().getServer() == null || !Config.general.isEnabled(event.getPlayer().getServer())) {
+        if (event.getPlayer().getServer() == null || !IslandsManager.isEnabled(event.getPlayer().getServer())) {
             return;
         }
 

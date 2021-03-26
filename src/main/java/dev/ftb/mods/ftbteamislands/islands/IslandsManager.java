@@ -63,6 +63,12 @@ public class IslandsManager {
         return ResourceKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(Config.general.targetIslandLevel.get()));
     }
 
+    public static boolean isEnabled(MinecraftServer server) {
+        return server.isDedicatedServer()
+            ? Config.general.enableMultiplayer.get()
+            : Config.general.enableMultiplayer.get();
+    }
+
     /**
      * Loads and populates the availableIslands from the json
      */

@@ -14,6 +14,8 @@ import java.util.Optional;
 
 /**
  * Teleport admin to players team by finding team
+ *
+ * @implNote Waiting on lat to finish is part of this.
  */
 public class JumpToIslandCommand {
     public static LiteralArgumentBuilder<CommandSourceStack> register() {

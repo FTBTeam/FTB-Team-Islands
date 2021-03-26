@@ -1,7 +1,8 @@
 {
   "commands.ftbteamislands.error.no_island": "You do not have an Island yet.",
   "commands.ftbteamislands.error.no_lobby_found": "No lobby found!",
-
+  "commands.ftbteamislands.error.already_have_island": "You already have an Island!",
+  "commands.ftbteamislands.error.must_be_party": "You must be in a party before you can create an island",
   "screens.ftbteamislands.select_island_category": "Select an island category",
   "screens.ftbteamislands.select_island": "Select an island",
   "screens.ftbteamislands.by": "By: %s",

@@ -35,7 +35,7 @@ repositories {
     maven { url "https://maven.latvian.dev" }
 
     maven {
-        url "https://git.ftb.dev/api/v4/groups/162/-/packages/maven"
+        url "https://git.ftb.dev/api/v4/groups/156/-/packages/maven"
         credentials(HttpHeaderCredentials) {
             name = 'Private-Token'
             value = ftbMavenToken

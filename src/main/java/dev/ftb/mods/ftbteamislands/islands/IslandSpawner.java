@@ -173,7 +173,7 @@ public class IslandSpawner {
             }
 
             // If chunks is loaded and the chunks can be claimed, try and claim them.
-            if (ModList.get().isLoaded("ftbchunks") && this.claimChunks) {
+            if (ModList.get().isLoaded("ftbchunks") && this.claimChunks && Config.islands.autoClaimChunkRadius.get() != -1) {
                 FTBChunks.claimChunks(player, player.getLevel(), island.pos);
             }
 
