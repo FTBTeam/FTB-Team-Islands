@@ -10,14 +10,14 @@ import net.minecraft.world.level.Level;
 
 public class FTBChunks {
 
-    // FIXME: this doesn't work yet (blame lat)
     public static void claimChunks(ServerPlayer player, Level level, ChunkPos pos) {
+        System.out.println(pos);
         int claimRadius = Config.islands.autoClaimChunkRadius.get();
         int startX = pos.x - claimRadius / 2;
         int startZ = pos.z - claimRadius / 2;
 
-        for (int x = startX; x < startX + claimRadius / 2; x++) {
-            for (int z = startZ; z < startZ + claimRadius / 2; z++) {
+        for (int x = startX; x < startX + claimRadius; x++) {
+            for (int z = startZ; z < startZ + claimRadius; z++) {
                 ClaimResult claimResult = FTBChunksAPI.claimAsPlayer(player, level.dimension(), new ChunkPos(x, z), false);
                 if (claimResult == ClaimResults.NOT_ENOUGH_POWER || claimResult == ClaimResults.DIMENSION_FORBIDDEN) {
                     return; // Stop dead if no chunks could be auto claimed
