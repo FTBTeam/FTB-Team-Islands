@@ -3,6 +3,8 @@ plugins {
     id 'maven-publish'
 }
 
+apply from: 'private.gradle'
+
 sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
 
@@ -31,6 +33,17 @@ loom {
 repositories {
     maven { url "https://www.cursemaven.com" }
     maven { url "https://maven.latvian.dev" }
+
+    maven {
+        url "https://git.ftb.dev/api/v4/groups/162/-/packages/maven"
+        credentials(HttpHeaderCredentials) {
+            name = 'Private-Token'
+            value = ftbMavenToken
+        }
+        authentication {
+            header(HttpHeaderAuthentication)
+        }
+    }
 }
 
 dependencies {
@@ -39,11 +52,11 @@ dependencies {
     mappings minecraft.officialMojangMappings()
     forge "net.minecraftforge:forge:${project.minecraft_version}-${project.forge_version}"
 
+    modCompile "dev.ftb.mods:ftb-chunks:$ftb_mods_chunks"
     modCompile "dev.ftb.mods:ftb-teams-forge:$ftb_mods_teams"
     modCompile "com.feed_the_beast.mods:ftb-gui-library-forge:$ftb_mods_guilib"
 
     modCompile "curse.maven:architectury-forge-419699:3243901"
-    modCompile "curse.maven:ftb-chunks-314906:3236808"
 }
 
 processResources {
