@@ -32,7 +32,9 @@ import java.util.stream.Collectors;
 
 public class IslandsManager {
     public static final LevelResource FOLDER_NAME = new LevelResource("ftbteamislands");
-    private static final String PREBUILT_ISLANDS_PATH = "/config/ftbteamislands/islands.json";
+
+    public static final String PREBUILT_ISLANDS_PATH = "/config/ftbteamislands/";
+    private static final String PREBUILT_ISLANDS_JSON = PREBUILT_ISLANDS_PATH + "/islands.json";
     private static IslandsManager INSTANCE;
 
     public final MinecraftServer server;
@@ -57,27 +59,32 @@ public class IslandsManager {
         INSTANCE.findAndLoadPrebuilts();
     }
 
+    public static ResourceKey<Level> getTargetIsland() {
+        return ResourceKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(Config.general.targetIslandLevel.get()));
+    }
+
     /**
      * Loads and populates the availableIslands from the json
      */
     private void findAndLoadPrebuilts() {
-        FTBTeamIslands.LOGGER.info("Prebuilts: Searching for prebuilt islands in {}", PREBUILT_ISLANDS_PATH);
+        FTBTeamIslands.LOGGER.info("Prebuilts: Searching for prebuilt islands in {}", PREBUILT_ISLANDS_JSON);
         Gson gson = new GsonBuilder()
             .registerTypeAdapter(PrebuiltIslands.PrebuiltIsland.class, new PrebuiltIslands.PrebuiltIsland.Deserializer())
             .create();
 
-        Type prebuiltIslandsType = new TypeToken<List<PrebuiltIslands>>(){}.getType();
+        Type prebuiltIslandsType = new TypeToken<List<PrebuiltIslands>>() {
+        }.getType();
         try {
             try {
-                List<PrebuiltIslands> islands = gson.fromJson(new FileReader(server.getServerDirectory().getAbsolutePath() + PREBUILT_ISLANDS_PATH), prebuiltIslandsType);
+                List<PrebuiltIslands> islands = gson.fromJson(new FileReader(this.server.getServerDirectory().getAbsolutePath() + PREBUILT_ISLANDS_JSON), prebuiltIslandsType);
                 this.availableIslands.addAll(islands);
 
-                FTBTeamIslands.LOGGER.info("Prebuilts: found {} islands in {}", this.availableIslands.stream().mapToInt(e -> e.getIslands().size()).count(), PREBUILT_ISLANDS_PATH);
+                FTBTeamIslands.LOGGER.info("Prebuilts: found {} islands in {}", this.availableIslands.stream().mapToInt(e -> e.getIslands().size()).count(), PREBUILT_ISLANDS_JSON);
             } catch (JsonIOException | JsonSyntaxException e) {
-                FTBTeamIslands.LOGGER.error("Prebuilts: Failed to read json data in {}", PREBUILT_ISLANDS_PATH);
+                FTBTeamIslands.LOGGER.error("Prebuilts: Failed to read json data in {}", PREBUILT_ISLANDS_JSON);
             }
         } catch (FileNotFoundException e) {
-            FTBTeamIslands.LOGGER.info("Prebuilts: No islands found in {}", PREBUILT_ISLANDS_PATH);
+            FTBTeamIslands.LOGGER.info("Prebuilts: No islands found in {}", PREBUILT_ISLANDS_JSON);
         }
     }
 
@@ -88,15 +95,18 @@ public class IslandsManager {
 
     public Optional<Island> getIsland(Team team) {
         Island island = this.islands.get(team.getId());
-        return island == null ? Optional.empty() : Optional.of(island);
+        return island == null
+            ? Optional.empty()
+            : Optional.of(island);
     }
 
     /**
      * Marks and island as inactive / unclaimed and removes the creator from the island.
      */
     public void markUnclaimed(UUID teamId) {
-        if (!this.islands.containsKey(teamId))
+        if (!this.islands.containsKey(teamId)) {
             return;
+        }
 
         Island island = this.islands.get(teamId);
         island.creator = null;
@@ -123,7 +133,9 @@ public class IslandsManager {
     }
 
     public Optional<Island> getLobby() {
-        return lobby != null ? Optional.of(lobby) : Optional.empty();
+        return this.lobby != null
+            ? Optional.of(this.lobby)
+            : Optional.empty();
     }
 
     public void setLobby(@Nullable Island lobby) {
@@ -135,11 +147,7 @@ public class IslandsManager {
     }
 
     public List<PrebuiltIslands> getAvailableIslands() {
-        return availableIslands;
-    }
-
-    public static ResourceKey<Level> getTargetIsland() {
-        return ResourceKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(Config.general.targetIslandLevel.get()));
+        return this.availableIslands;
     }
 
     public void load() {
@@ -156,11 +164,11 @@ public class IslandsManager {
     }
 
     public void save() {
-        shouldSave = true;
+        this.shouldSave = true;
     }
 
     public void saveNow() {
-        Path directory = server.getWorldPath(FOLDER_NAME);
+        Path directory = this.server.getWorldPath(FOLDER_NAME);
 
         if (Files.notExists(directory)) {
             try {
@@ -170,11 +178,12 @@ public class IslandsManager {
             }
         }
 
-        if (shouldSave) {
+        if (this.shouldSave) {
             try (OutputStream stream = Files.newOutputStream(directory.resolve("ftbteamislands.nbt"))) {
                 CompoundTag compound = new CompoundTag();
-                if (this.lobby != null)
+                if (this.lobby != null) {
                     compound.put("lobby", this.lobby.write());
+                }
 
                 if (this.islands.size() > 0) {
                     ListTag list = new ListTag();
@@ -191,7 +200,7 @@ public class IslandsManager {
                 }
 
                 NbtIo.writeCompressed(compound, stream);
-                shouldSave = false;
+                this.shouldSave = false;
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -199,7 +208,7 @@ public class IslandsManager {
     }
 
     public CompoundTag getSaveCompound() {
-        Path directory = server.getWorldPath(FOLDER_NAME);
+        Path directory = this.server.getWorldPath(FOLDER_NAME);
 
         if (Files.notExists(directory) || !Files.isDirectory(directory)) {
             return new CompoundTag();

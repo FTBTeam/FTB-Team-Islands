@@ -1,26 +1,51 @@
 package dev.ftb.mods.ftbteamislands.network;
 
-import net.minecraft.core.BlockPos;
+import dev.ftb.mods.ftbteamislands.FTBTeamIslands;
+import dev.ftb.mods.ftbteamislands.islands.IslandSpawner;
+import dev.ftb.mods.ftbteamislands.islands.IslandsManager;
+import dev.ftb.mods.ftbteams.data.TeamManager;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraftforge.fml.network.NetworkDirection;
 import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
 public class IslandSelectionPacket {
-    BlockPos pos;
+    String islandNbtFile;
 
-    public IslandSelectionPacket(FriendlyByteBuf buffer) {
-        this.pos = buffer.readBlockPos();
+    public IslandSelectionPacket(String islandNbtFile) {
+        this.islandNbtFile = islandNbtFile;
+    }
+
+    public static IslandSelectionPacket decode(FriendlyByteBuf buffer) {
+        return new IslandSelectionPacket(buffer.readUtf(Short.MAX_VALUE));
     }
 
     public void encode(FriendlyByteBuf buffer) {
-        buffer.writeBlockPos(pos);
+        buffer.writeUtf(this.islandNbtFile);
     }
 
     public void handle(Supplier<NetworkEvent.Context> contextSupplier) {
         NetworkEvent.Context ctx = contextSupplier.get();
         ctx.enqueueWork(() -> {
+            if (ctx.getDirection() == NetworkDirection.PLAY_TO_CLIENT) {
+                FTBTeamIslands.LOGGER.error("Selection packet fired on incorrect side");
+                return;
+            }
 
+            ServerPlayer player = ctx.getSender();
+            if (player == null || player.getServer() == null) {
+                return;
+            }
+
+            IslandSpawner.spawnIsland(
+                this.islandNbtFile,
+                player.getServer().getLevel(IslandsManager.getTargetIsland()),
+                TeamManager.INSTANCE.getPlayerTeam(player),
+                player,
+                player.getServer()
+            );
         });
         ctx.setPacketHandled(true);
     }

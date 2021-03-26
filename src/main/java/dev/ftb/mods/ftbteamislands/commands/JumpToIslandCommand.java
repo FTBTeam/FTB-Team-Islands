@@ -5,7 +5,6 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import dev.ftb.mods.ftbteamislands.islands.Island;
 import dev.ftb.mods.ftbteamislands.islands.IslandsManager;
-import dev.ftb.mods.ftbteams.FTBTeamsAPI;
 import dev.ftb.mods.ftbteams.data.Team;
 import dev.ftb.mods.ftbteams.data.TeamArgument;
 import net.minecraft.commands.CommandSourceStack;
@@ -20,7 +19,7 @@ public class JumpToIslandCommand {
     public static LiteralArgumentBuilder<CommandSourceStack> register() {
         return Commands.literal("islands")
             .requires(commandSourceStack -> commandSourceStack.hasPermission(2))
-            .then(Commands.argument("team", FTBTeamsAPI.argument())
+            .then(Commands.argument("team", TeamArgument.create())
                 .executes(JumpToIslandCommand::execute)
             );
     }
