@@ -1,5 +1,7 @@
 {
+  "commands.ftbteamislands.error.disabled_in": "FTB Team Islands is disabled in %s",
   "commands.ftbteamislands.error.no_island": "You do not have an Island yet.",
+  "commands.ftbteamislands.error.my_island_disabled": "The myisland command is disabled",
   "commands.ftbteamislands.error.no_lobby_found": "No lobby found!",
   "commands.ftbteamislands.error.already_have_island": "You already have an Island!",
   "commands.ftbteamislands.error.must_be_party": "You must be in a party before you can create an island",

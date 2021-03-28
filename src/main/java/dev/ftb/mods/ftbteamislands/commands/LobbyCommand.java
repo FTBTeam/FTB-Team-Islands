@@ -23,13 +23,16 @@ public class LobbyCommand {
     }
 
     private static int execute(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+        CommandsHelper.exceptionIfDisabled(context); // throw if the mod is not enabled
+
         MinecraftServer server = context.getSource().getServer();
         ServerPlayer player = context.getSource().getPlayerOrException();
 
         // Find the lobby and teleport them to it
         Optional<Island> lobby = IslandsManager.get().getLobby();
-        if (!lobby.isPresent())
+        if (!lobby.isPresent()) {
             throw NO_LOBBY_FOUND.create();
+        }
 
         lobby.get().teleportPlayerTo(player, server);
         return 0;

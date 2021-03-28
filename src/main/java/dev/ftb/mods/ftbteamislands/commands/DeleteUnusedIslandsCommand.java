@@ -24,6 +24,8 @@ public class DeleteUnusedIslandsCommand {
     }
 
     private static int execute(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+        CommandsHelper.exceptionIfDisabled(context); // throw if the mod is not enabled
+        
         //        Set<Map.Entry<UUID, Island>> unclaimedIslands = IslandsManager.get().getUnclaimedIslands();
         //        int islandsToDelete = unclaimedIslands.size();
         //

@@ -28,6 +28,8 @@ public class CreateIslandCommand {
     }
 
     private static int execute(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+        CommandsHelper.exceptionIfDisabled(context); // throw if the mod is not enabled
+
         IslandsManager manager = IslandsManager.get();
         ServerPlayer player = context.getSource().getPlayerOrException();
 
