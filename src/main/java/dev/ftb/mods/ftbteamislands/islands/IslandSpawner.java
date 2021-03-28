@@ -81,7 +81,6 @@ public class IslandSpawner {
             spawnIsland(new Worker(level, compoundTag), team, player, server);
         } catch (IOException e) {
             FTBTeamIslands.LOGGER.error("Failed to find `{}` island in the prebuilt structures folder `{}/structures`", islandName, IslandsManager.PREBUILT_ISLANDS_PATH);
-            e.printStackTrace();
         }
     }
 
