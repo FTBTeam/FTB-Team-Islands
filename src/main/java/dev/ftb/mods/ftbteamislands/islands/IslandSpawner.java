@@ -35,7 +35,7 @@ public class IslandSpawner {
      */
     public static void spawnLobby(ServerLevel level, ServerPlayer creator) {
         boolean result = new Worker(level, new ResourceLocation(Config.lobby.lobbyIslandFile.get()))
-            .setSpawnAt(new BlockPos(0, Config.islands.height.get(), 0))
+            .setSpawnAt(new BlockPos(256, Config.islands.height.get(), 256))
             .setGlobalSpawns(true)
             .claimChunks(false)
             .onCreation(island -> IslandsManager.get().setLobby(island))
