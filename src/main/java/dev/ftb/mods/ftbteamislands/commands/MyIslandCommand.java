@@ -25,6 +25,8 @@ public class MyIslandCommand {
     }
 
     private static int execute(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+        CommandsHelper.exceptionIfDisabled(context); // throw if the mod is not enabled
+
         if (!Config.general.enableMyIslandCommand.get()) {
             throw DISABLED.create();
         }

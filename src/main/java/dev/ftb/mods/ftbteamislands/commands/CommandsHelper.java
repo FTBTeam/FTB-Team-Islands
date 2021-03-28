@@ -8,7 +8,7 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.TranslatableComponent;
 
 public class CommandsHelper {
-    public static final DynamicCommandExceptionType DISABLED_IN = new DynamicCommandExceptionType((obj) -> new TranslatableComponent("commands.ftbteamislands.error.already_have_island", obj));
+    public static final DynamicCommandExceptionType DISABLED_IN = new DynamicCommandExceptionType((obj) -> new TranslatableComponent("commands.ftbteamislands.error.disabled_in", obj));
 
     public static void exceptionIfDisabled(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         if (!IslandsManager.isEnabled(context.getSource().getServer())) {

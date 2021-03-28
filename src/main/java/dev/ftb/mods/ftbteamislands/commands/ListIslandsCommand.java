@@ -8,10 +8,12 @@ import dev.ftb.mods.ftbteamislands.islands.Island;
 import dev.ftb.mods.ftbteamislands.islands.IslandsManager;
 import dev.ftb.mods.ftbteams.data.Team;
 import dev.ftb.mods.ftbteams.data.TeamManager;
+import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 
 import java.util.HashMap;
@@ -35,16 +37,15 @@ public class ListIslandsCommand {
 
         for (Team islandTeam : islandTeams) {
             Island island = islands.get(islandTeam.getId());
-            MutableComponent clickName = islandTeam.getName().copy();
             MutableComponent text = new TranslatableComponent("commands.ftbteamislands.response.islands")
-                .append(clickName)
+                .append(new TextComponent(islandTeam.getDisplayName()).withStyle(ChatFormatting.LIGHT_PURPLE))
                 .append(new TranslatableComponent("commands.ftbteamislands.response.found_at", island.spawnPos.toShortString()));
 
             if (!island.active) {
                 text.append(new TranslatableComponent("commands.ftbteamislands.response.is_inactive"));
             }
 
-            text.getStyle().withClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, String.format("%s islands %s", FTBTeamIslands.MOD_ID, islandTeam.getDisplayName())));
+            text.setStyle(text.getStyle().withClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, String.format("/%s islands %s", FTBTeamIslands.MOD_ID, islandTeam.getDisplayName()))));
             context.getSource().sendSuccess(text, false);
         }
 
