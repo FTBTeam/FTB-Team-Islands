@@ -156,7 +156,7 @@ public class IslandSpawner {
                 BlockPos next = iterator.next();
                 if (this.level.getBlockState(next).getBlock() instanceof StructureBlock) {
                     BlockEntity blockEntity = this.level.getBlockEntity(next);
-                    if (blockEntity instanceof StructureBlockEntity && ((StructureBlockEntity) blockEntity).getMetaData().startsWith("SPAWN_POINT")) {
+                    if (blockEntity instanceof StructureBlockEntity && blockEntity.save(new CompoundTag()).getString("metadata").startsWith("SPAWN_POINT")) {
                         playerSpawnPoint = next.mutable();
                         this.level.removeBlock(next, false);
 

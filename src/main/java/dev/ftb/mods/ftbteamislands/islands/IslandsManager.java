@@ -38,7 +38,7 @@ public class IslandsManager {
     public final MinecraftServer server;
     private final HashMap<UUID, Island> islands = new HashMap<>();
     private final List<PrebuiltIslands> availableIslands = new ArrayList<>();
-    private int islandsEverCreated = 0;
+    private int islandsEverCreated = 1;
     private boolean shouldSave;
 
     @Nullable
@@ -126,6 +126,7 @@ public class IslandsManager {
 
     public void registerIsland(Team team, Island island) {
         this.islands.put(team.getId(), island);
+        this.islandsEverCreated++;
         this.save();
     }
 
