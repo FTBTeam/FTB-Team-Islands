@@ -4,7 +4,7 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
-import dev.ftb.mods.ftbteamislands.FTBTeamIslands;
+import dev.ftb.mods.ftbteamislands.Config;
 import dev.ftb.mods.ftbteamislands.islands.IslandSpawner;
 import dev.ftb.mods.ftbteamislands.islands.IslandsManager;
 import dev.ftb.mods.ftbteamislands.network.NetworkManager;
@@ -48,7 +48,7 @@ public class CreateIslandCommand {
 
         MinecraftServer server = context.getSource().getServer();
         IslandSpawner.spawnIsland(
-            new ResourceLocation(FTBTeamIslands.MOD_ID, "teamislands_island"),
+            new ResourceLocation(Config.islands.defaultIslandResource.get()),
             server.getLevel(IslandsManager.getTargetIsland()),
             playerTeam,
             player,

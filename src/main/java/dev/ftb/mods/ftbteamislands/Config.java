@@ -56,8 +56,8 @@ public class Config {
                 .define("autoTeleportToIsland", true);
 
             this.lobbyIslandFile = SERVER_BUILDER
-                .comment("The lobby island spawned automatically on server ")
-                .define("lobbyStructureFile", "default_lobby");
+                .comment("The lobby island spawned automatically on servers.", "Must be resource location and within the structures folder of data")
+                .define("lobbyStructureFile", "ftbteamislands:default_lobby");
 
             SERVER_BUILDER.pop();
         }
@@ -68,9 +68,10 @@ public class Config {
         public final ForgeConfigSpec.IntValue autoClaimChunkRadius;
         public final ForgeConfigSpec.BooleanValue selectIslands;
         public final ForgeConfigSpec.IntValue distanceBetweenIslands;
+        public final ForgeConfigSpec.ConfigValue<String> defaultIslandResource;
 
         Islands() {
-            SERVER_BUILDER.push("general");
+            SERVER_BUILDER.push("islands");
 
             this.height = SERVER_BUILDER
                 .comment("Height at which the islands will generate.", "-1 = auto, on top of highest block in world")
@@ -87,6 +88,10 @@ public class Config {
             this.distanceBetweenIslands = SERVER_BUILDER
                 .comment("Distance put between new islands in regions, 1 being a single region")
                 .defineInRange("distanceBetweenIslandsInRegions", 3, 3, 100);
+
+            this.defaultIslandResource = SERVER_BUILDER
+                .comment("The default island.", "Must be resource location and within the structures folder of data")
+                .define("defaultIslands", "ftbteamislands:teamislands_island");
 
             SERVER_BUILDER.pop();
         }

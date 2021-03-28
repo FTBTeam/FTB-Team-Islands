@@ -32,7 +32,7 @@ public class IslandSpawner {
      * Island spawner logic for the lobby
      */
     public static void spawnLobby(ServerLevel level, ServerPlayer creator) {
-        boolean result = new Worker(level, new ResourceLocation(FTBTeamIslands.MOD_ID, Config.lobby.lobbyIslandFile.get()))
+        boolean result = new Worker(level, new ResourceLocation(Config.lobby.lobbyIslandFile.get()))
             .setSpawnAt(new BlockPos(0, Config.islands.height.get(), 0))
             .setGlobalSpawns(true)
             .claimChunks(false)
