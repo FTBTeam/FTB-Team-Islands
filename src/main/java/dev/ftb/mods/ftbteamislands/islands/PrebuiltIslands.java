@@ -24,20 +24,31 @@ public class PrebuiltIslands {
         this.islands = islands;
     }
 
+    public static PrebuiltIslands read(CompoundTag compound) {
+        return new PrebuiltIslands(
+            compound.getString("name"),
+            compound.getString("author"),
+            compound.getString("desc"),
+            compound.getList("islands", Constants.NBT.TAG_COMPOUND).stream()
+                .map(tag -> PrebuiltIsland.read((CompoundTag) tag))
+                .collect(Collectors.toList())
+        );
+    }
+
     public String getName() {
-        return name;
+        return this.name;
     }
 
     public String getAuthor() {
-        return author;
+        return this.author;
     }
 
     public String getDesc() {
-        return desc;
+        return this.desc;
     }
 
     public List<PrebuiltIsland> getIslands() {
-        return islands;
+        return this.islands;
     }
 
     public CompoundTag write() {
@@ -51,44 +62,49 @@ public class PrebuiltIslands {
         return compound;
     }
 
-    public static PrebuiltIslands read(CompoundTag compound) {
-        return new PrebuiltIslands(
-            compound.getString("name"),
-            compound.getString("author"),
-            compound.getString("desc"),
-            compound.getList("islands", Constants.NBT.TAG_COMPOUND).stream()
-                .map(tag -> PrebuiltIsland.read((CompoundTag) tag))
-                .collect(Collectors.toList())
-        );
-    }
-
     public static class PrebuiltIsland {
         private final String name;
         private final String desc;
         private final String structureFileLocation;
         private final ResourceLocation image;
+        private final int yOffset;
 
         public PrebuiltIsland(String name, String desc, String structureFileLocation, ResourceLocation image) {
+            this(name, desc, structureFileLocation, image, 0);
+        }
+
+        public PrebuiltIsland(String name, String desc, String structureFileLocation, ResourceLocation image, int yOffset) {
             this.name = name;
             this.desc = desc;
             this.structureFileLocation = structureFileLocation;
             this.image = image;
+            this.yOffset = yOffset;
+        }
+
+        public static PrebuiltIsland read(CompoundTag compound) {
+            return new PrebuiltIsland(
+                compound.getString("name"),
+                compound.getString("desc"),
+                compound.getString("structure"),
+                new ResourceLocation(compound.getString("image")),
+                compound.getInt("yOffset")
+            );
         }
 
         public String getName() {
-            return name;
+            return this.name;
         }
 
         public String getDesc() {
-            return desc;
+            return this.desc;
         }
 
         public String getStructureFileLocation() {
-            return structureFileLocation;
+            return this.structureFileLocation;
         }
 
         public ResourceLocation getImage() {
-            return image;
+            return this.image;
         }
 
         public CompoundTag write() {
@@ -97,16 +113,12 @@ public class PrebuiltIslands {
             compound.putString("desc", this.desc);
             compound.putString("structure", this.structureFileLocation);
             compound.putString("image", this.image.toString());
+            compound.putInt("yOffset", this.yOffset);
             return compound;
         }
 
-        public static PrebuiltIsland read(CompoundTag compound) {
-            return new PrebuiltIsland(
-                compound.getString("name"),
-                compound.getString("desc"),
-                compound.getString("structure"),
-                new ResourceLocation(compound.getString("image"))
-            );
+        public int yOffset() {
+            return this.yOffset;
         }
 
         public static class Deserializer implements JsonDeserializer<PrebuiltIsland> {
@@ -117,7 +129,10 @@ public class PrebuiltIslands {
                     obj.get("name").getAsString(),
                     obj.get("desc").getAsString(),
                     obj.get("structure").getAsString(),
-                    new ResourceLocation(obj.get("image").getAsString())
+                    new ResourceLocation(obj.get("image").getAsString()),
+                    obj.has("yOffset")
+                        ? obj.get("yOffset").getAsInt()
+                        : 0
                 );
             }
         }

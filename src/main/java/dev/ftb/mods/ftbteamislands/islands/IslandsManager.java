@@ -38,6 +38,7 @@ public class IslandsManager {
     public final MinecraftServer server;
     private final HashMap<UUID, Island> islands = new HashMap<>();
     private final List<PrebuiltIslands> availableIslands = new ArrayList<>();
+    private int islandsEverCreated = 0;
     private boolean shouldSave;
 
     @Nullable
@@ -195,6 +196,8 @@ public class IslandsManager {
         if (compound.contains("lobby")) {
             this.lobby = Island.read(compound.getCompound("lobby"));
         }
+
+        this.islandsEverCreated = compound.getInt("islandsEverCreated");
     }
 
     public void save() {
@@ -218,6 +221,8 @@ public class IslandsManager {
                 if (this.lobby != null) {
                     compound.put("lobby", this.lobby.write());
                 }
+
+                compound.putInt("islandsEverCreated", this.islandsEverCreated);
 
                 if (this.islands.size() > 0) {
                     ListTag list = new ListTag();
@@ -259,5 +264,9 @@ public class IslandsManager {
         }
 
         return new CompoundTag();
+    }
+
+    public int getIslandsEverCreated() {
+        return this.islandsEverCreated;
     }
 }

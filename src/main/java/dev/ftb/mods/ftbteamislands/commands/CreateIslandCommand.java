@@ -54,7 +54,8 @@ public class CreateIslandCommand {
             server.getLevel(IslandsManager.getTargetIsland()),
             playerTeam,
             player,
-            server
+            server,
+            Config.islands.defaultIslandResourceYOffset.get()
         );
 
         return 0;

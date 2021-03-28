@@ -49,16 +49,17 @@ public class IslandSpawner {
     /**
      * Island spawner logic for single player initial setup
      */
-    public static void spawnIsland(Worker worker, Team team, ServerPlayer player, MinecraftServer server) {
+    public static void spawnIsland(Worker worker, Team team, ServerPlayer player, MinecraftServer server, int yOffset) {
         if (player == null) {
             return;
         }
 
-        int index = Math.max(1, IslandsManager.get().getIslands().size());
+        int index = Math.max(1, IslandsManager.get().getIslandsEverCreated());
         int distanceInRegions = Config.islands.distanceBetweenIslands.get();
 
         boolean result = worker
             .setSpawnAt(new BlockPos(256 + ((index * distanceInRegions * 512) % 1024), Config.islands.height.get(), 256 + ((index * distanceInRegions * 512) / 1024)))
+            .yOffset(yOffset)
             .setGlobalSpawns(!IslandsManager.get().getLobby().isPresent() && IslandsManager.get().getIslands().size() == 0)
             .claimChunks(true)
             .onCreation((island -> IslandsManager.get().registerIsland(team, island)))
@@ -69,7 +70,7 @@ public class IslandSpawner {
         }
     }
 
-    public static void spawnIsland(String islandName, ServerLevel level, Team team, ServerPlayer player, MinecraftServer server) {
+    public static void spawnIsland(String islandName, ServerLevel level, Team team, ServerPlayer player, MinecraftServer server, int yOffset) {
         try {
             InputStream file = new FileInputStream(server.getServerDirectory().getAbsolutePath() + IslandsManager.PREBUILT_ISLANDS_PATH + "structures/" + islandName);
             CompoundTag compoundTag = NbtIo.readCompressed(file);
@@ -78,14 +79,14 @@ public class IslandSpawner {
                 return;
             }
 
-            spawnIsland(new Worker(level, compoundTag), team, player, server);
+            spawnIsland(new Worker(level, compoundTag), team, player, server, yOffset);
         } catch (IOException e) {
             FTBTeamIslands.LOGGER.error("Failed to find `{}` island in the prebuilt structures folder `{}/structures`", islandName, IslandsManager.PREBUILT_ISLANDS_PATH);
         }
     }
 
-    public static void spawnIsland(ResourceLocation islandName, ServerLevel level, Team team, ServerPlayer player, MinecraftServer server) {
-        spawnIsland(new Worker(level, islandName), team, player, server);
+    public static void spawnIsland(ResourceLocation islandName, ServerLevel level, Team team, ServerPlayer player, MinecraftServer server, int yOffset) {
+        spawnIsland(new Worker(level, islandName), team, player, server, yOffset);
     }
 
     public static class Worker {
@@ -97,6 +98,7 @@ public class IslandSpawner {
         private boolean claimChunks = true;
         private Consumer<Island> onCreation = island -> {
         };
+        private int yOffset = 0;
 
         public Worker(ServerLevel level, ResourceLocation nbtLocation) {
             this.template = level.getStructureManager().get(nbtLocation);
@@ -118,6 +120,11 @@ public class IslandSpawner {
             return this;
         }
 
+        public Worker yOffset(int yOffset) {
+            this.yOffset = yOffset;
+            return this;
+        }
+
         public Worker claimChunks(boolean claimChunks) {
             this.claimChunks = claimChunks;
             return this;
@@ -136,10 +143,10 @@ public class IslandSpawner {
 
             // Create a ZERO based bounding box and an in-world bounding box for future selections
             BoundingBox boundingBox = this.template.getBoundingBox(new StructurePlaceSettings(), BlockPos.ZERO);
-            BoundingBox inWorldBoundingBox = this.template.getBoundingBox(new StructurePlaceSettings(), this.spawnAt.offset(-boundingBox.x1 / 2, 0, -boundingBox.z1 / 2));
+            BoundingBox inWorldBoundingBox = this.template.getBoundingBox(new StructurePlaceSettings(), this.spawnAt.offset(-boundingBox.x1 / 2, this.yOffset, -boundingBox.z1 / 2));
 
             // Spawn the template in the world at the offered block pos.
-            this.template.placeInWorldChunk(this.level, this.spawnAt.offset(-boundingBox.x1 / 2, 0, -boundingBox.z1 / 2), new StructurePlaceSettings(), this.level.getRandom());
+            this.template.placeInWorldChunk(this.level, this.spawnAt.offset(-boundingBox.x1 / 2, this.yOffset, -boundingBox.z1 / 2), new StructurePlaceSettings(), this.level.getRandom());
 
             // TODO: find a better way of doing this!
             // Find the spawn pos and remove any remaining structure blocks

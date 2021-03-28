@@ -52,7 +52,7 @@ public class IslandSelectScreen extends Screen {
             }
 
             this.onClose();
-            NetworkManager.sendToServer(new IslandSelectionPacket(this.islandList.getSelected().islandDir.getStructureFileLocation()));
+            NetworkManager.sendToServer(new IslandSelectionPacket(this.islandList.getSelected().islandDir.getStructureFileLocation(), this.islandList.getSelected().islandDir.yOffset()));
         }));
 
         this.createButton.active = false;
@@ -134,7 +134,7 @@ public class IslandSelectScreen extends Screen {
 
                 if (Util.getMillis() - this.lastClickTime < 250L) {
                     IslandSelectScreen.this.onClose();
-                    NetworkManager.sendToServer(new IslandSelectionPacket(this.islandDir.getStructureFileLocation()));
+                    NetworkManager.sendToServer(new IslandSelectionPacket(this.islandDir.getStructureFileLocation(), this.islandDir.yOffset()));
                     return true;
                 } else {
                     this.lastClickTime = Util.getMillis();

@@ -13,17 +13,20 @@ import java.util.function.Supplier;
 
 public class IslandSelectionPacket {
     String islandNbtFile;
+    int yOffset;
 
-    public IslandSelectionPacket(String islandNbtFile) {
+    public IslandSelectionPacket(String islandNbtFile, int yOffset) {
         this.islandNbtFile = islandNbtFile;
+        this.yOffset = yOffset;
     }
 
     public static IslandSelectionPacket decode(FriendlyByteBuf buffer) {
-        return new IslandSelectionPacket(buffer.readUtf(Short.MAX_VALUE));
+        return new IslandSelectionPacket(buffer.readUtf(Short.MAX_VALUE), buffer.readInt());
     }
 
     public void encode(FriendlyByteBuf buffer) {
         buffer.writeUtf(this.islandNbtFile);
+        buffer.writeInt(this.yOffset);
     }
 
     public void handle(Supplier<NetworkEvent.Context> contextSupplier) {
@@ -44,7 +47,8 @@ public class IslandSelectionPacket {
                 player.getServer().getLevel(IslandsManager.getTargetIsland()),
                 TeamManager.INSTANCE.getPlayerTeam(player),
                 player,
-                player.getServer()
+                player.getServer(),
+                this.yOffset
             );
         });
         ctx.setPacketHandled(true);

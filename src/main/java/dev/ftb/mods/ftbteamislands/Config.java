@@ -65,6 +65,7 @@ public class Config {
         public final ForgeConfigSpec.BooleanValue selectIslands;
         public final ForgeConfigSpec.IntValue distanceBetweenIslands;
         public final ForgeConfigSpec.ConfigValue<String> defaultIslandResource;
+        public final ForgeConfigSpec.IntValue defaultIslandResourceYOffset;
 
         Islands() {
             COMMON_BUILDER.push("islands");
@@ -88,6 +89,10 @@ public class Config {
             this.defaultIslandResource = COMMON_BUILDER
                 .comment("The default island.", "Must be resource location and within the structures folder of data")
                 .define("defaultIslands", "ftbteamislands:teamislands_island");
+
+            this.defaultIslandResourceYOffset = COMMON_BUILDER
+                .comment("The default islands spawning Y offset")
+                .defineInRange("defaultIslandResourceYOffset", 0, Integer.MIN_VALUE, Integer.MAX_VALUE);
 
             COMMON_BUILDER.pop();
         }
