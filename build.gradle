@@ -9,7 +9,7 @@ sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
 
 def ENV = System.getenv()
-version = "${mod_version}-build.${ENV.BUILD_NUMBER ?: 9999}"
+version = "${mod_version}${ENV.BUILD_NUMBER ? "-build.${ENV.BUILD_NUMBER}" : "-snapshot"}"
 archivesBaseName = project.archives_base_name
 group = project.maven_group
 
@@ -135,7 +135,7 @@ publishing {
 //    }
 //}
 
-jar.finalizedBy('reobfJar')
+//jar.finalizedBy('reobfJar')
 publishing {
     publications {
         mavenJava(MavenPublication) {
