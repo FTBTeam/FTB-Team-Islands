@@ -198,7 +198,9 @@ public class IslandsManager {
             this.lobby = Island.read(compound.getCompound("lobby"));
         }
 
-        this.islandsEverCreated = compound.getInt("islandsEverCreated");
+        this.islandsEverCreated = compound.contains("islandsEverCreated")
+            ? compound.getInt("islandsEverCreated")
+            : 1;
     }
 
     public void save() {
