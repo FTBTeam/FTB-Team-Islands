@@ -66,7 +66,7 @@ public class IslandsManager {
     public static boolean isEnabled(MinecraftServer server) {
         return server.isDedicatedServer()
             ? Config.general.enableMultiplayer.get()
-            : Config.general.enableMultiplayer.get();
+            : Config.general.enableSinglePlayer.get();
     }
 
     /**
