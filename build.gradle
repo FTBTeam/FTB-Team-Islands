@@ -52,18 +52,19 @@ dependencies {
     mappings minecraft.officialMojangMappings()
     forge "net.minecraftforge:forge:${project.minecraft_version}-${project.forge_version}"
 
+    modRuntime "dev.ftb.mods:ftb-chunks:$ftb_mods_chunks"
     modCompile "dev.ftb.mods:ftb-chunks:$ftb_mods_chunks"
     modCompile "dev.ftb.mods:ftb-teams-forge:$ftb_mods_teams"
-    modCompile "com.feed_the_beast.mods:ftb-gui-library-forge:$ftb_mods_guilib"
 
     modCompile "curse.maven:architectury-forge-419699:3243901"
 }
 
 processResources {
     inputs.property "version", project.version
+    inputs.property "teams_version", ftb_mods_teams
 
     filesMatching("META-INF/mods.toml") {
-        expand "version": project.version
+        expand "version": project.version, "team_version": ftb_mods_teams
     }
 }
 

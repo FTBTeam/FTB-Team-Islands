@@ -46,6 +46,12 @@ public class FTBTeamIslands {
         TeamDeletedEvent.EVENT.register(Events::onTeamDeleted);
     }
 
+    // TODO: Remove, helps with breakpoints when Intellij and Linux aren't getting along
+    public static boolean debuggerReleaseControl() {
+        GLFW.glfwSetInputMode(Minecraft.getInstance().getWindow().getWindow(), GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_NORMAL);
+        return true;
+    }
+
     private void setup(final FMLCommonSetupEvent event) {
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, Config.CLIENT_CONFIG);
         ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, Config.SERVER_CONFIG);
@@ -60,9 +66,9 @@ public class FTBTeamIslands {
     }
 
     private void processIMC(final InterModProcessEvent event) {
-//        LOGGER.info("Got IMC {}", event.getIMCStream()
-//            .map(m -> m.getMessageSupplier().get())
-//            .collect(Collectors.toList()));
+        //        LOGGER.info("Got IMC {}", event.getIMCStream()
+        //            .map(m -> m.getMessageSupplier().get())
+        //            .collect(Collectors.toList()));
     }
 
     // You can use SubscribeEvent and let the Event Bus discover methods to call
@@ -76,6 +82,7 @@ public class FTBTeamIslands {
                 .then(MyIslandCommand.register())
                 .then(DeleteUnusedIslandsCommand.register())
                 .then(CreateIslandCommand.register())
+                .then(ReloadIslandsJsonCommand.register())
         );
     }
 
@@ -87,11 +94,5 @@ public class FTBTeamIslands {
     @SubscribeEvent
     public void onWorldSave(WorldEvent.Save event) {
         IslandsManager.get().saveNow();
-    }
-
-    // TODO: Remove, helps with breakpoints when Intellij and Linux aren't getting along
-    public static boolean debuggerReleaseControl() {
-        GLFW.glfwSetInputMode(Minecraft.getInstance().getWindow().getWindow(), GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_NORMAL);
-        return true;
     }
 }

@@ -1,19 +1,26 @@
-modLoader="javafml" #mandatory
-loaderVersion="[36,)" #mandatory This is typically bumped every Minecraft version by Forge. See our download page for lists of versions.
-license="All rights reserved"
+modLoader = "javafml" #mandatory
+loaderVersion = "[36,)" #mandatory This is typically bumped every Minecraft version by Forge. See our download page for lists of versions.
+license = "All rights reserved"
 [[mods]] #mandatory
-modId="ftbteamislands" #mandatory
-version="${version}" #mandatory
-displayName="FTB Team Islands" #mandatory
-logoFile="examplemod.png" #optional
-authors="FTB Team" #optional
-description='''
+modId = "ftbteamislands" #mandatory
+version = "${version}" #mandatory
+displayName = "FTB Team Islands" #mandatory
+logoFile = "examplemod.png" #optional
+authors = "FTB Team" #optional
+description = '''
 Void world island management mod
 '''
 
 [[dependencies.ftbteamislands]] #optional
-    modId="forge" #mandatory
-    mandatory=true #mandatory
-    versionRange="[36,)" #mandatory
-    ordering="NONE"
-    side="BOTH"
+modId = "forge" #mandatory
+mandatory = true #mandatory
+versionRange = "[36,)" #mandatory
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.ftbteamislands]] #optional
+modId = "ftbteams" #mandatory
+mandatory = true #mandatory
+versionRange = "[${team_version},)" #mandatory
+ordering = "NONE"
+side = "BOTH"

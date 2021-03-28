@@ -94,6 +94,11 @@ public class IslandsManager {
         }
     }
 
+    public void reloadPrebuilts() {
+        this.availableIslands.clear();
+        this.findAndLoadPrebuilts();
+    }
+
     public void registerIsland(Team team, Island island) {
         this.islands.put(team.getId(), island);
         this.save();
@@ -131,10 +136,9 @@ public class IslandsManager {
      *
      * @return a set of island UUID's
      */
-    public Set<UUID> getUnclaimedIslands() {
+    public Set<Map.Entry<UUID, Island>> getUnclaimedIslands() {
         return this.islands.entrySet().stream()
             .filter(island -> !island.getValue().isActive())
-            .map(Map.Entry::getKey)
             .collect(Collectors.toSet());
     }
 

@@ -90,6 +90,7 @@ public class Events {
         }
 
         // Flag unused
+        // TODO: FIXME: broken. won't remove from the list rip...
         IslandsManager.get().markUnclaimed(team.getId());
     }
 

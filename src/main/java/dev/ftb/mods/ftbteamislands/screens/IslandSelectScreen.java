@@ -1,6 +1,7 @@
 package dev.ftb.mods.ftbteamislands.screens;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import dev.ftb.mods.ftbteamislands.FTBTeamIslands;
 import dev.ftb.mods.ftbteamislands.islands.PrebuiltIslands;
 import dev.ftb.mods.ftbteamislands.network.IslandSelectionPacket;
 import dev.ftb.mods.ftbteamislands.network.NetworkManager;
@@ -41,12 +42,12 @@ public class IslandSelectScreen extends Screen {
         this.searchBox = new EditBox(this.font, this.width / 2 - 160 / 2, 40, 160, 20, TextComponent.EMPTY);
         this.searchBox.setResponder(this.islandList::searchList);
 
-        this.addButton(new Button(this.width / 2 - 120, this.height - 30, 100, 20, new TranslatableComponent("screens.ftbteamislands.back"), btn -> {
+        this.addButton(new Button(this.width / 2 - 130, this.height - 30, 100, 20, new TranslatableComponent("screens.ftbteamislands.back"), btn -> {
             this.onClose();
             Minecraft.getInstance().setScreen(new IslandDirectoryScreen(this.previousScreenData));
         }));
 
-        this.addButton(this.createButton = new Button(this.width / 2, this.height - 30, 150, 20, new TranslatableComponent("screens.ftbteamislands.create"), btn -> {
+        this.addButton(this.createButton = new Button(this.width / 2 - 20, this.height - 30, 150, 20, new TranslatableComponent("screens.ftbteamislands.create"), btn -> {
             if (this.islandList.getSelected() == null) {
                 return;
             }
@@ -137,15 +138,16 @@ public class IslandSelectScreen extends Screen {
             public void render(PoseStack matrices, int entryId, int top, int left, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean bl, float partialTicks) {
                 Font font = Minecraft.getInstance().font;
 
-                int startX = left + 50;
-                font.drawShadow(matrices, this.islandDir.getName(), startX, top + 8, 0xFFFFFF);
-                font.drawShadow(matrices, this.islandDir.getDesc(), startX, top + 24, 0xFFFFFF);
-                //
-                //                Minecraft.getInstance().textureManager.bind(fileIcon);
-                //                blit(matrices, left + 5, top + 8, 0f, 0f, 32, 32, 32, 32);
-                //
-                //                String islandCount = String.valueOf(islandDir.getIslands().size());
-                //                font.drawShadow(matrices, islandCount, left + 22 - font.width(islandCount) / 2f, top + 22, 0xFFFFFF);
+                int startX = left + 80;
+                font.drawShadow(matrices, this.islandDir.getName(), startX, top + 10, 0xFFFFFF);
+                font.drawShadow(matrices, this.islandDir.getDesc(), startX, top + 26, 0xFFFFFF);
+
+                try {
+                    Minecraft.getInstance().textureManager.bind(this.islandDir.getImage());
+                    blit(matrices, left + 7, top + 7, 0f, 0f, 56, 32, 56, 32);
+                } catch (Exception ex) {
+                    FTBTeamIslands.LOGGER.warn("{} not found in resources", this.islandDir.getImage());
+                }
             }
         }
     }

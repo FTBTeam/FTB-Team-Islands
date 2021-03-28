@@ -3,13 +3,26 @@ package dev.ftb.mods.ftbteamislands;
 import net.minecraftforge.common.ForgeConfigSpec;
 
 public class Config {
-    public static final General general = new General();
-    public static final Lobby lobby = new Lobby();
-    public static final Islands islands = new Islands();
-    private static final ForgeConfigSpec.Builder SERVER_BUILDER = new ForgeConfigSpec.Builder();
-    public static final ForgeConfigSpec SERVER_CONFIG = SERVER_BUILDER.build();
-    private static final ForgeConfigSpec.Builder CLIENT_BUILDER = new ForgeConfigSpec.Builder();
-    public static final ForgeConfigSpec CLIENT_CONFIG = CLIENT_BUILDER.build();
+    public static final General general;
+    public static final Lobby lobby;
+    public static final Islands islands;
+    public static final ForgeConfigSpec SERVER_CONFIG;
+    public static final ForgeConfigSpec CLIENT_CONFIG;
+    private static final ForgeConfigSpec.Builder SERVER_BUILDER;
+    private static final ForgeConfigSpec.Builder CLIENT_BUILDER;
+
+    // Don't judge me! It's because of auto formatting moving the order around!
+    static {
+        SERVER_BUILDER = new ForgeConfigSpec.Builder();
+        CLIENT_BUILDER = new ForgeConfigSpec.Builder();
+
+        general = new General();
+        lobby = new Lobby();
+        islands = new Islands();
+
+        SERVER_CONFIG = SERVER_BUILDER.build();
+        CLIENT_CONFIG = CLIENT_BUILDER.build();
+    }
 
     public static class General {
         public final ForgeConfigSpec.BooleanValue enableSinglePlayer;

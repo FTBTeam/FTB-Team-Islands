@@ -3,9 +3,15 @@
   "commands.ftbteamislands.error.no_lobby_found": "No lobby found!",
   "commands.ftbteamislands.error.already_have_island": "You already have an Island!",
   "commands.ftbteamislands.error.must_be_party": "You must be in a party before you can create an island",
+  "commands.ftbteamislands.success.json_updated": "Islands json has been updated, check logs for any errors.",
+  "commands.ftbteamislands.response.islands": "Island: ",
+  "commands.ftbteamislands.response.found_at": " found at (%s)",
+  "commands.ftbteamislands.response.is_inactive": " and is inactive",
   "screens.ftbteamislands.select_island_category": "Select an island category",
   "screens.ftbteamislands.select_island": "Select an island",
   "screens.ftbteamislands.by": "By: %s",
   "screens.ftbteamislands.back": "Back",
-  "screens.ftbteamislands.create": "Create"
+  "screens.ftbteamislands.create": "Create",
+  "screens.ftbteamislands.select": "Select",
+  "screens.ftbteamislands.close": "Close"
 }

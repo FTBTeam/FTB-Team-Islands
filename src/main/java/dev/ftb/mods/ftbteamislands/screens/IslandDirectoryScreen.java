@@ -6,11 +6,13 @@ import dev.ftb.mods.ftbteamislands.islands.PrebuiltIslands;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.AbstractSelectionList;
+import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,6 +22,7 @@ public class IslandDirectoryScreen extends Screen {
     public DirectoryList islandDirectoryList;
 
     private EditBox searchBox;
+    private Button selectButton;
 
     public IslandDirectoryScreen(List<PrebuiltIslands> islands) {
         super(TextComponent.EMPTY);
@@ -30,9 +33,22 @@ public class IslandDirectoryScreen extends Screen {
     protected void init() {
         super.init();
 
-        this.islandDirectoryList = new DirectoryList(getMinecraft(), this.width, this.height, 80, this.height - 35, this.islands);
-        this.searchBox = new EditBox(font, width / 2 - 160 / 2, 40, 160, 20, TextComponent.EMPTY);
+        this.islandDirectoryList = new DirectoryList(this.getMinecraft(), this.width, this.height, 80, this.height - 35, this.islands);
+        this.searchBox = new EditBox(this.font, this.width / 2 - 160 / 2, 40, 160, 20, TextComponent.EMPTY);
         this.searchBox.setResponder(value -> this.islandDirectoryList.searchList(value));
+
+        this.addButton(new Button(this.width / 2 - 130, this.height - 30, 100, 20, new TranslatableComponent("screens.ftbteamislands.close"), btn -> {
+            this.onClose();
+        }));
+
+        this.addButton(this.selectButton = new Button(this.width / 2 - 20, this.height - 30, 150, 20, new TranslatableComponent("screens.ftbteamislands.select"), btn -> {
+            if (this.islandDirectoryList.getSelected() == null) {
+                return;
+            }
+
+            this.onClose();
+            Minecraft.getInstance().setScreen(new IslandSelectScreen(this.islandDirectoryList.getSelected().islandDir, IslandDirectoryScreen.this.islands));
+        }));
 
         this.children.add(this.searchBox);
         this.children.add(this.islandDirectoryList);
@@ -42,13 +58,14 @@ public class IslandDirectoryScreen extends Screen {
     @Override
     public void render(PoseStack matrices, int mouseX, int mouseY, float partialTicks) {
         this.renderBackground(matrices);
-        super.render(matrices, mouseX, mouseY, partialTicks);
 
         this.islandDirectoryList.render(matrices, mouseX, mouseY, partialTicks);
         this.searchBox.render(matrices, mouseX, mouseY, partialTicks);
 
+        super.render(matrices, mouseX, mouseY, partialTicks);
+
         String value = new TranslatableComponent("screens.ftbteamislands.select_island_category").getString();
-        font.drawShadow(matrices, value, width / 2f - font.width(value) / 2f, 20, 0xFFFFFF);
+        this.font.drawShadow(matrices, value, this.width / 2f - this.font.width(value) / 2f, 20, 0xFFFFFF);
     }
 
     @Override
@@ -82,8 +99,8 @@ public class IslandDirectoryScreen extends Screen {
             String lowerValue = value.toLowerCase();
             if (lowerValue.equals("")) {
                 this.children().addAll(this.islands.stream()
-                        .map(DirectoryEntry::new)
-                        .collect(Collectors.toList())
+                    .map(DirectoryEntry::new)
+                    .collect(Collectors.toList())
                 );
                 return;
             }
@@ -95,24 +112,23 @@ public class IslandDirectoryScreen extends Screen {
             );
         }
 
+        @Override
+        public void setSelected(@Nullable IslandDirectoryScreen.DirectoryList.DirectoryEntry entry) {
+            IslandDirectoryScreen.this.selectButton.active = entry != null;
+
+            super.setSelected(entry);
+        }
+
         public class DirectoryEntry extends AbstractSelectionList.Entry<DirectoryList.DirectoryEntry> {
             private final ResourceLocation fileIcon = new ResourceLocation(FTBTeamIslands.MOD_ID, "textures/screens/foldericon.png");
             private final PrebuiltIslands islandDir;
 
             public DirectoryEntry(PrebuiltIslands islandDir) {
                 this.islandDir = islandDir;
-
             }
 
             @Override
             public boolean mouseClicked(double x, double y, int partialTick) {
-                // This marks a second click
-                if (DirectoryList.this.getSelected() == this) {
-                    Minecraft.getInstance().setScreen(null);
-                    Minecraft.getInstance().setScreen(new IslandSelectScreen(this.islandDir, IslandDirectoryScreen.this.islands));
-                    return false;
-                }
-
                 DirectoryList.this.setSelected(this);
                 return super.mouseClicked(x, y, partialTick);
             }
@@ -122,14 +138,14 @@ public class IslandDirectoryScreen extends Screen {
                 Font font = Minecraft.getInstance().font;
 
                 int startX = left + 50;
-                font.drawShadow(matrices, islandDir.getName(), startX, top + 8, 0xFFFFFF);
-                font.drawShadow(matrices, new TranslatableComponent("screens.ftbteamislands.by", islandDir.getAuthor()), startX + font.width(islandDir.getName()) + 10, top + 8, 0xD3D3D3);
-                font.drawShadow(matrices, islandDir.getDesc(), startX, top + 24, 0xFFFFFF);
+                font.drawShadow(matrices, this.islandDir.getName(), startX, top + 8, 0xFFFFFF);
+                font.drawShadow(matrices, new TranslatableComponent("screens.ftbteamislands.by", this.islandDir.getAuthor()), startX + font.width(this.islandDir.getName()) + 10, top + 8, 0xD3D3D3);
+                font.drawShadow(matrices, this.islandDir.getDesc(), startX, top + 24, 0xFFFFFF);
 
-                Minecraft.getInstance().textureManager.bind(fileIcon);
+                Minecraft.getInstance().textureManager.bind(this.fileIcon);
                 blit(matrices, left + 5, top + 8, 0f, 0f, 32, 32, 32, 32);
 
-                String islandCount = String.valueOf(islandDir.getIslands().size());
+                String islandCount = String.valueOf(this.islandDir.getIslands().size());
                 font.drawShadow(matrices, islandCount, left + 22 - font.width(islandCount) / 2f, top + 22, 0xFFFFFF);
             }
         }
