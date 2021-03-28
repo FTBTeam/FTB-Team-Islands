@@ -12,12 +12,14 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.StructureBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.StructureBlockEntity;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.ModList;
 
 import java.io.FileInputStream;
@@ -150,9 +152,15 @@ public class IslandSpawner {
                     BlockEntity blockEntity = this.level.getBlockEntity(next);
                     if (blockEntity instanceof StructureBlockEntity && ((StructureBlockEntity) blockEntity).getMetaData().startsWith("SPAWN_POINT")) {
                         playerSpawnPoint = next.mutable();
-                    }
+                        this.level.removeBlock(next, false);
 
-                    this.level.removeBlock(next, false);
+                        // Fix dirt if the structure block removed it's grass
+                        if (this.level.getBlockState(next.below()).getBlock() == Blocks.DIRT) {
+                            this.level.setBlock(next.below(), Blocks.GRASS_BLOCK.defaultBlockState(), Constants.BlockFlags.DEFAULT);
+                        }
+                    } else {
+                        this.level.removeBlock(next, false);
+                    }
                 }
             }
 

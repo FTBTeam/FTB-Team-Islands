@@ -9,6 +9,7 @@ import dev.ftb.mods.ftbteams.event.TeamDeletedEvent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.commands.Commands;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -20,7 +21,6 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
 import net.minecraftforge.fml.event.server.FMLServerAboutToStartEvent;
-import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -32,6 +32,8 @@ public class FTBTeamIslands {
     public static final Logger LOGGER = LogManager.getLogger("FTB Team Islands");
 
     public FTBTeamIslands() {
+        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.COMMON_CONFIG);
+
         IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
         eventBus.addListener(this::setup);
@@ -53,9 +55,7 @@ public class FTBTeamIslands {
     }
 
     private void setup(final FMLCommonSetupEvent event) {
-        ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, Config.CLIENT_CONFIG);
-        ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, Config.SERVER_CONFIG);
-
+        IslandsManager.createEmptyJson();
         NetworkManager.register();
     }
 
@@ -73,8 +73,8 @@ public class FTBTeamIslands {
 
     // You can use SubscribeEvent and let the Event Bus discover methods to call
     @SubscribeEvent
-    public void onServerStarting(FMLServerStartingEvent event) {
-        event.getServer().getCommands().getDispatcher().register(
+    public void registerCommands(RegisterCommandsEvent event) {
+        event.getDispatcher().register(
             Commands.literal(MOD_ID)
                 .then(JumpToIslandCommand.register())
                 .then(ListIslandsCommand.register())

@@ -6,22 +6,18 @@ public class Config {
     public static final General general;
     public static final Lobby lobby;
     public static final Islands islands;
-    public static final ForgeConfigSpec SERVER_CONFIG;
-    public static final ForgeConfigSpec CLIENT_CONFIG;
-    private static final ForgeConfigSpec.Builder SERVER_BUILDER;
-    private static final ForgeConfigSpec.Builder CLIENT_BUILDER;
+    public static final ForgeConfigSpec COMMON_CONFIG;
+    private static final ForgeConfigSpec.Builder COMMON_BUILDER;
 
     // Don't judge me! It's because of auto formatting moving the order around!
     static {
-        SERVER_BUILDER = new ForgeConfigSpec.Builder();
-        CLIENT_BUILDER = new ForgeConfigSpec.Builder();
+        COMMON_BUILDER = new ForgeConfigSpec.Builder();
 
         general = new General();
         lobby = new Lobby();
         islands = new Islands();
 
-        SERVER_CONFIG = SERVER_BUILDER.build();
-        CLIENT_CONFIG = CLIENT_BUILDER.build();
+        COMMON_CONFIG = COMMON_BUILDER.build();
     }
 
     public static class General {
@@ -32,15 +28,15 @@ public class Config {
         public final ForgeConfigSpec.ConfigValue<String> targetIslandLevel;
 
         General() {
-            SERVER_BUILDER.push("general");
+            COMMON_BUILDER.push("general");
 
-            this.enableSinglePlayer = SERVER_BUILDER.define("enableSingleplayer", false);
-            this.enableMultiplayer = SERVER_BUILDER.define("enableMultiplayer", true);
-            this.clearInvWhenTeamLeft = SERVER_BUILDER.define("clearInvWhenTeamLeft", true);
-            this.enableMyIslandCommand = SERVER_BUILDER.define("enableMyIslandCommand", true);
-            this.targetIslandLevel = SERVER_BUILDER.define("targetIslandLevel", "minecraft:overworld");
+            this.enableSinglePlayer = COMMON_BUILDER.define("enableSingleplayer", false);
+            this.enableMultiplayer = COMMON_BUILDER.define("enableMultiplayer", true);
+            this.clearInvWhenTeamLeft = COMMON_BUILDER.define("clearInvWhenTeamLeft", true);
+            this.enableMyIslandCommand = COMMON_BUILDER.define("enableMyIslandCommand", true);
+            this.targetIslandLevel = COMMON_BUILDER.define("targetIslandLevel", "minecraft:overworld");
 
-            SERVER_BUILDER.pop();
+            COMMON_BUILDER.pop();
         }
     }
 
@@ -49,17 +45,17 @@ public class Config {
         public final ForgeConfigSpec.ConfigValue<String> lobbyIslandFile;
 
         Lobby() {
-            SERVER_BUILDER.push("lobby");
+            COMMON_BUILDER.push("lobby");
 
-            this.autoTeleportToIsland = SERVER_BUILDER
+            this.autoTeleportToIsland = COMMON_BUILDER
                 .comment("Auto-teleports player to their island once they join a team.")
                 .define("autoTeleportToIsland", true);
 
-            this.lobbyIslandFile = SERVER_BUILDER
+            this.lobbyIslandFile = COMMON_BUILDER
                 .comment("The lobby island spawned automatically on servers.", "Must be resource location and within the structures folder of data")
                 .define("lobbyStructureFile", "ftbteamislands:default_lobby");
 
-            SERVER_BUILDER.pop();
+            COMMON_BUILDER.pop();
         }
     }
 
@@ -71,29 +67,29 @@ public class Config {
         public final ForgeConfigSpec.ConfigValue<String> defaultIslandResource;
 
         Islands() {
-            SERVER_BUILDER.push("islands");
+            COMMON_BUILDER.push("islands");
 
-            this.height = SERVER_BUILDER
+            this.height = COMMON_BUILDER
                 .comment("Height at which the islands will generate.", "-1 = auto, on top of highest block in world")
                 .defineInRange("height", 80, -1, 255);
 
-            this.autoClaimChunkRadius = SERVER_BUILDER
+            this.autoClaimChunkRadius = COMMON_BUILDER
                 .comment("Radius of the chunks to automatically claim if FTBUtilities is installed.", "-1 = disabled", "0 = 1x1", "1 = 3x3", "4 = 9x9")
                 .defineInRange("autoClaimChunkRadius", 4, -1, 100);
 
-            this.selectIslands = SERVER_BUILDER
+            this.selectIslands = COMMON_BUILDER
                 .comment("Allow selection of the island type, if set to false, then islands will be randomized.")
                 .define("selectIslands", true);
 
-            this.distanceBetweenIslands = SERVER_BUILDER
+            this.distanceBetweenIslands = COMMON_BUILDER
                 .comment("Distance put between new islands in regions, 1 being a single region")
                 .defineInRange("distanceBetweenIslandsInRegions", 3, 3, 100);
 
-            this.defaultIslandResource = SERVER_BUILDER
+            this.defaultIslandResource = COMMON_BUILDER
                 .comment("The default island.", "Must be resource location and within the structures folder of data")
                 .define("defaultIslands", "ftbteamislands:teamislands_island");
 
-            SERVER_BUILDER.pop();
+            COMMON_BUILDER.pop();
         }
     }
 }

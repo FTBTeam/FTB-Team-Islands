@@ -56,7 +56,7 @@ dependencies {
     modCompile "dev.ftb.mods:ftb-chunks:$ftb_mods_chunks"
     modCompile "dev.ftb.mods:ftb-teams-forge:$ftb_mods_teams"
 
-    modCompile "curse.maven:architectury-forge-419699:3243901"
+    modCompile "curse.maven:architectury-forge-419699:3248258"
 }
 
 processResources {

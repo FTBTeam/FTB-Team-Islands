@@ -3,6 +3,7 @@ package dev.ftb.mods.ftbteamislands.screens;
 import com.mojang.blaze3d.vertex.PoseStack;
 import dev.ftb.mods.ftbteamislands.FTBTeamIslands;
 import dev.ftb.mods.ftbteamislands.islands.PrebuiltIslands;
+import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.AbstractSelectionList;
@@ -46,7 +47,6 @@ public class IslandDirectoryScreen extends Screen {
                 return;
             }
 
-            this.onClose();
             Minecraft.getInstance().setScreen(new IslandSelectScreen(this.islandDirectoryList.getSelected().islandDir, IslandDirectoryScreen.this.islands));
         }));
 
@@ -122,6 +122,7 @@ public class IslandDirectoryScreen extends Screen {
         public class DirectoryEntry extends AbstractSelectionList.Entry<DirectoryList.DirectoryEntry> {
             private final ResourceLocation fileIcon = new ResourceLocation(FTBTeamIslands.MOD_ID, "textures/screens/foldericon.png");
             private final PrebuiltIslands islandDir;
+            private long lastClickTime;
 
             public DirectoryEntry(PrebuiltIslands islandDir) {
                 this.islandDir = islandDir;
@@ -130,7 +131,14 @@ public class IslandDirectoryScreen extends Screen {
             @Override
             public boolean mouseClicked(double x, double y, int partialTick) {
                 DirectoryList.this.setSelected(this);
-                return super.mouseClicked(x, y, partialTick);
+
+                if (Util.getMillis() - this.lastClickTime < 250L) {
+                    Minecraft.getInstance().setScreen(new IslandSelectScreen(this.islandDir, IslandDirectoryScreen.this.islands));
+                    return true;
+                } else {
+                    this.lastClickTime = Util.getMillis();
+                    return false;
+                }
             }
 
             @Override

@@ -5,6 +5,7 @@ import dev.ftb.mods.ftbteamislands.FTBTeamIslands;
 import dev.ftb.mods.ftbteamislands.islands.PrebuiltIslands;
 import dev.ftb.mods.ftbteamislands.network.IslandSelectionPacket;
 import dev.ftb.mods.ftbteamislands.network.NetworkManager;
+import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.AbstractSelectionList;
@@ -42,10 +43,8 @@ public class IslandSelectScreen extends Screen {
         this.searchBox = new EditBox(this.font, this.width / 2 - 160 / 2, 40, 160, 20, TextComponent.EMPTY);
         this.searchBox.setResponder(this.islandList::searchList);
 
-        this.addButton(new Button(this.width / 2 - 130, this.height - 30, 100, 20, new TranslatableComponent("screens.ftbteamislands.back"), btn -> {
-            this.onClose();
-            Minecraft.getInstance().setScreen(new IslandDirectoryScreen(this.previousScreenData));
-        }));
+        this.addButton(new Button(this.width / 2 - 130, this.height - 30, 100, 20, new TranslatableComponent("screens.ftbteamislands.back"), btn ->
+            Minecraft.getInstance().setScreen(new IslandDirectoryScreen(this.previousScreenData))));
 
         this.addButton(this.createButton = new Button(this.width / 2 - 20, this.height - 30, 150, 20, new TranslatableComponent("screens.ftbteamislands.create"), btn -> {
             if (this.islandList.getSelected() == null) {
@@ -123,6 +122,7 @@ public class IslandSelectScreen extends Screen {
 
         public class Entry extends AbstractSelectionList.Entry<IslandList.Entry> {
             private final PrebuiltIslands.PrebuiltIsland islandDir;
+            private long lastClickTime;
 
             public Entry(PrebuiltIslands.PrebuiltIsland island) {
                 this.islandDir = island;
@@ -131,7 +131,15 @@ public class IslandSelectScreen extends Screen {
             @Override
             public boolean mouseClicked(double x, double y, int partialTick) {
                 IslandList.this.setSelected(this);
-                return super.mouseClicked(x, y, partialTick);
+
+                if (Util.getMillis() - this.lastClickTime < 250L) {
+                    IslandSelectScreen.this.onClose();
+                    NetworkManager.sendToServer(new IslandSelectionPacket(this.islandDir.getStructureFileLocation()));
+                    return true;
+                } else {
+                    this.lastClickTime = Util.getMillis();
+                    return false;
+                }
             }
 
             @Override

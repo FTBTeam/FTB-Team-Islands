@@ -18,12 +18,10 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.LevelResource;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fml.loading.FMLLoader;
 
 import javax.annotation.Nullable;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -67,6 +65,32 @@ public class IslandsManager {
         return server.isDedicatedServer()
             ? Config.general.enableMultiplayer.get()
             : Config.general.enableSinglePlayer.get();
+    }
+
+    /**
+     * Generates an empty config if one does not already exist in the config/ftbteamislands/ folder
+     */
+    public static void createEmptyJson() {
+        Path gamePath = FMLLoader.getGamePath();
+        File file = new File(gamePath + PREBUILT_ISLANDS_PATH);
+        if (file.exists()) {
+            return;
+        }
+
+        try {
+            file.mkdirs();
+            File jsonFile = new File(file.getAbsolutePath() + "/islands.json");
+            boolean didCreate = jsonFile.createNewFile();
+            new File(gamePath + PREBUILT_ISLANDS_PATH + "structures/").mkdir();
+
+            if (didCreate) {
+                FileWriter fileWriter = new FileWriter(jsonFile);
+                fileWriter.write("[]");
+                fileWriter.close();
+            }
+        } catch (IOException e) {
+            FTBTeamIslands.LOGGER.error("Failed to auto generate islands json file [{}]", gamePath + PREBUILT_ISLANDS_JSON);
+        }
     }
 
     /**
