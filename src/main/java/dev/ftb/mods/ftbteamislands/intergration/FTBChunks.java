@@ -13,14 +13,11 @@ import java.time.Instant;
 public class FTBChunks {
 
     public static void claimChunks(ServerPlayer player, Level level, ChunkPos pos) {
-        int claimRadius = Config.islands.autoClaimChunkRadius.get();
-        int startX = pos.x - claimRadius / 2;
-        int startZ = pos.z - claimRadius / 2;
+        int radius = Config.islands.autoClaimChunkRadius.get();
 
         Instant time = Instant.now();
-
-        for (int x = startX; x < startX + claimRadius; x++) {
-            for (int z = startZ; z < startZ + claimRadius; z++) {
+        for (int x = pos.x - radius; x <= pos.x + radius; x++) {
+            for (int z = pos.z - radius; z <= pos.z + radius; z++) {
                 ClaimResult claimResult = FTBChunksAPI.claimAsPlayer(player, level.dimension(), new ChunkPos(x, z), false);
                 if (claimResult.isSuccess()) {
                     claimResult.setClaimedTime(time);

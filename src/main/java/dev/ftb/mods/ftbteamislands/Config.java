@@ -74,7 +74,7 @@ public class Config {
                 .defineInRange("height", 80, -1, 255);
 
             this.autoClaimChunkRadius = COMMON_BUILDER
-                .comment("Radius of the chunks to automatically claim if FTBUtilities is installed.", "-1 = disabled", "0 = 1x1", "1 = 3x3", "4 = 9x9")
+                .comment("Radius of the chunks to automatically claim if FTB Chunks is installed.", "-1 = disabled", "0 = 1x1", "1 = 3x3", "4 = 9x9")
                 .defineInRange("autoClaimChunkRadius", 4, -1, 100);
 
             this.selectIslands = COMMON_BUILDER
