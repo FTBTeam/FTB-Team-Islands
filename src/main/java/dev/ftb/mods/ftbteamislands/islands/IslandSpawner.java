@@ -58,7 +58,7 @@ public class IslandSpawner {
         int distanceInRegions = Config.islands.distanceBetweenIslands.get();
 
         boolean result = worker
-            .setSpawnAt(new BlockPos(256 + (index % 1024) * distanceInRegions * 512, Config.islands.height.get(), 256 + (index % 1024) * distanceInRegions * 512))
+            .setSpawnAt(new BlockPos(256 + (index % 1024) * distanceInRegions * 512, Config.islands.height.get(), 256 + (index / 1024) * distanceInRegions * 512))
             .setGlobalSpawns(!IslandsManager.get().getLobby().isPresent() && IslandsManager.get().getIslands().size() == 0)
             .claimChunks(true)
             .yOffset(yOffset)
