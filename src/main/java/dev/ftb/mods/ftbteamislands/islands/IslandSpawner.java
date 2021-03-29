@@ -21,6 +21,7 @@ import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlac
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.ModList;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -57,8 +58,10 @@ public class IslandSpawner {
         int index = Math.max(1, IslandsManager.get().getIslandsEverCreated());
         int distanceInRegions = Config.islands.distanceBetweenIslands.get();
 
+        Pair<Integer, Integer> spiralLoc = calculateSpiral(index);
+
         boolean result = worker
-            .setSpawnAt(new BlockPos(256 + (index % 1024) * distanceInRegions * 512, Config.islands.height.get(), 256 + (index / 1024) * distanceInRegions * 512))
+            .setSpawnAt(new BlockPos(256 + spiralLoc.getLeft() * distanceInRegions * 512, Config.islands.height.get(), 256 + spiralLoc.getRight() * distanceInRegions * 512))
             .setGlobalSpawns(!IslandsManager.get().getLobby().isPresent() && IslandsManager.get().getIslands().size() == 0)
             .claimChunks(true)
             .yOffset(yOffset)
@@ -87,6 +90,41 @@ public class IslandSpawner {
 
     public static void spawnIsland(ResourceLocation islandName, ServerLevel level, Team team, ServerPlayer player, MinecraftServer server, int yOffset) {
         spawnIsland(new Worker(level, islandName), team, player, server, yOffset);
+    }
+
+    // Slightly modified version of https://stackoverflow.com/a/45333503/6543961
+    private static Pair<Integer, Integer> calculateSpiral(int index) {
+        if (index == 0) {
+            return Pair.of(0, 0);
+        }
+
+        // current position (x, z) and how much of current segment we passed
+        int x = 0, z = 0;
+
+        int dx = 0, dz = 1;
+        int segmentLength = 1, segmentPassed = 0;
+
+        for (int n = 0; n < index; n++) {
+            x += dx;
+            z += dz;
+            segmentPassed++;
+
+            if (segmentPassed == segmentLength) {
+                segmentPassed = 0;
+
+                // 'rotate' directions
+                int buffer = dz;
+                dz = -dx;
+                dx = buffer;
+
+                // increase segment length if necessary
+                if (dx == 0) {
+                    segmentLength++;
+                }
+            }
+        }
+
+        return Pair.of(x, z);
     }
 
     public static class Worker {

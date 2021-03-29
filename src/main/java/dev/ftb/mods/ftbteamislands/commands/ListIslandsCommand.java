@@ -39,7 +39,7 @@ public class ListIslandsCommand {
             Island island = islands.get(islandTeam.getId());
             MutableComponent text = new TranslatableComponent("commands.ftbteamislands.response.islands")
                 .append(new TextComponent(islandTeam.getDisplayName()).withStyle(ChatFormatting.LIGHT_PURPLE))
-                .append(new TranslatableComponent("commands.ftbteamislands.response.found_at", island.spawnPos.toShortString()));
+                .append(new TranslatableComponent("commands.ftbteamislands.response.found_at", island.spawnPos.getX() + ", " + island.spawnPos.getY() + ", " + island.spawnPos.getZ()));
 
             if (!island.active) {
                 text.append(new TranslatableComponent("commands.ftbteamislands.response.is_inactive"));
