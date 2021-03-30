@@ -3,15 +3,19 @@ package dev.ftb.mods.ftbteamislands.commands;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import dev.ftb.mods.ftbteamislands.Config;
 import dev.ftb.mods.ftbteamislands.islands.Island;
 import dev.ftb.mods.ftbteamislands.islands.IslandsManager;
-import dev.ftb.mods.ftbteams.data.TeamManager;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.level.storage.LevelResource;
 
 import java.io.File;
-import java.util.Optional;
+import java.nio.file.Path;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 
 /**
  * Delete region of island
@@ -25,32 +29,41 @@ public class DeleteUnusedIslandsCommand {
 
     private static int execute(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         CommandsHelper.exceptionIfDisabled(context); // throw if the mod is not enabled
-        
-        //        Set<Map.Entry<UUID, Island>> unclaimedIslands = IslandsManager.get().getUnclaimedIslands();
-        //        int islandsToDelete = unclaimedIslands.size();
-        //
-        //        unclaimedIslands.forEach(island -> {
-        //            int regionX = island.getValue().pos.x >> 5;
-        //            int regionZ = island.getValue().pos.z >> 5;
-        //
-        //
-        //        });
-        //
-        Optional<Island> island = IslandsManager.get().getIsland(TeamManager.INSTANCE.getPlayerTeam(context.getSource().getPlayerOrException()));
-        island.ifPresent(i -> {
-            i.active = false;
 
-            int regionX = i.pos.x >> 5;
-            int regionZ = i.pos.z >> 5;
+        Set<Map.Entry<UUID, Island>> unclaimedIslands = IslandsManager.get().getUnclaimedIslands();
 
-            String fileName = String.format("r.%d.%d.mca", regionX, regionZ);
-            String pathWithName = String.format("%s/region/%s", context.getSource().getServer().getWorldPath(LevelResource.ROOT), fileName);
+        int islandsToDelete = unclaimedIslands.size(), islandsDeleted = 0;
+        int regionRadius = Config.islands.distanceBetweenIslands.get() / 2;
 
-            System.out.println(pathWithName);
-            System.out.println(fileName);
+        for (Map.Entry<UUID, Island> map : unclaimedIslands) {
+            Island island = map.getValue();
 
-            new File(pathWithName).deleteOnExit();
-        });
+            int posX = island.pos.x >> 5;
+            int posZ = island.pos.z >> 5;
+
+            // Delete a 3x3 (by default) region file area around the island. This should never delete other users islands (tm)
+            boolean regionDeleted = false;
+            for (int x = posX - regionRadius; x <= posX + regionRadius; x++) {
+                for (int z = posZ - regionRadius; z <= posZ + regionRadius; z++) {
+                    Path worldPath = context.getSource().getServer().getWorldPath(LevelResource.ROOT);
+                    File region = new File(String.format("%s/region/r.%d.%d.mca", worldPath, x, z));
+
+                    if (!regionDeleted && region.exists()) {
+                        regionDeleted = true;
+                        islandsDeleted++;
+                    }
+
+                    // Delete the file on a server restart.
+                    region.deleteOnExit();
+                }
+            }
+
+            if (regionDeleted) {
+                IslandsManager.get().removeIsland(map.getKey());
+            }
+        }
+
+        context.getSource().sendSuccess(new TranslatableComponent("commands.ftbteamislands.success.islands_deleted", islandsDeleted, islandsToDelete, islandsToDelete - islandsDeleted), false);
 
         return 0;
     }

@@ -37,6 +37,7 @@ public class IslandsManager {
 
     public final MinecraftServer server;
     private final HashMap<UUID, Island> islands = new HashMap<>();
+    private final HashMap<UUID, Island> deletedIslands = new HashMap<>();
     private final List<PrebuiltIslands> availableIslands = new ArrayList<>();
     private int islandsEverCreated = 1;
     private boolean shouldSave;
@@ -94,6 +95,20 @@ public class IslandsManager {
         }
     }
 
+    public static ListTag writeIslandsToTag(HashMap<UUID, Island> islands) {
+        ListTag list = new ListTag();
+
+        for (Map.Entry<UUID, Island> island : islands.entrySet()) {
+            CompoundTag tag = new CompoundTag();
+            tag.putUUID("key", island.getKey());
+            tag.put("island", island.getValue().write());
+
+            list.add(tag);
+        }
+
+        return list;
+    }
+
     /**
      * Loads and populates the availableIslands from the json
      */
@@ -130,6 +145,9 @@ public class IslandsManager {
         this.save();
     }
 
+    /**
+     * Wrap with optional. Get the island from the Teams UUID
+     */
     public Optional<Island> getIsland(Team team) {
         Island island = this.islands.get(team.getId());
         return island == null
@@ -153,6 +171,12 @@ public class IslandsManager {
     }
 
     public void removeIsland(UUID teamId) {
+        Island island = this.islands.get(teamId);
+        if (island == null) {
+            return;
+        }
+
+        this.deletedIslands.put(teamId, island);
         this.islands.remove(teamId);
         this.save();
     }
@@ -190,8 +214,13 @@ public class IslandsManager {
         CompoundTag compound = this.getSaveCompound();
 
         if (compound.contains("islands")) {
-            ListTag islands = compound.getList("islands", Constants.NBT.TAG_COMPOUND);
-            islands.forEach(island -> this.islands.put(((CompoundTag) island).getUUID("key"), Island.read(((CompoundTag) island).getCompound("island"))));
+            compound.getList("islands", Constants.NBT.TAG_COMPOUND)
+                .forEach(island -> this.islands.put(((CompoundTag) island).getUUID("key"), Island.read(((CompoundTag) island).getCompound("island"))));
+        }
+
+        if (compound.contains("deletedIslands")) {
+            compound.getList("deletedIslands", Constants.NBT.TAG_COMPOUND)
+                .forEach(island -> this.deletedIslands.put(((CompoundTag) island).getUUID("key"), Island.read(((CompoundTag) island).getCompound("island"))));
         }
 
         if (compound.contains("lobby")) {
@@ -207,6 +236,9 @@ public class IslandsManager {
         this.shouldSave = true;
     }
 
+    /**
+     * Save the current data to a compound nbt file in the main worlds path.
+     */
     public void saveNow() {
         Path directory = this.server.getWorldPath(FOLDER_NAME);
 
@@ -226,20 +258,8 @@ public class IslandsManager {
                 }
 
                 compound.putInt("islandsEverCreated", this.islandsEverCreated);
-
-                if (this.islands.size() > 0) {
-                    ListTag list = new ListTag();
-
-                    for (Map.Entry<UUID, Island> island : this.islands.entrySet()) {
-                        CompoundTag tag = new CompoundTag();
-                        tag.putUUID("key", island.getKey());
-                        tag.put("island", island.getValue().write());
-
-                        list.add(tag);
-                    }
-
-                    compound.put("islands", list);
-                }
+                compound.put("islands", writeIslandsToTag(this.islands));
+                compound.put("deletedIslands", writeIslandsToTag(this.deletedIslands));
 
                 NbtIo.writeCompressed(compound, stream);
                 this.shouldSave = false;

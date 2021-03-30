@@ -5,6 +5,7 @@ import dev.ftb.mods.ftbteamislands.islands.IslandSpawner;
 import dev.ftb.mods.ftbteamislands.islands.IslandsManager;
 import dev.ftb.mods.ftbteams.data.Team;
 import dev.ftb.mods.ftbteams.data.TeamManager;
+import dev.ftb.mods.ftbteams.data.TeamType;
 import dev.ftb.mods.ftbteams.event.PlayerChangedTeamEvent;
 import dev.ftb.mods.ftbteams.event.TeamCreatedEvent;
 import dev.ftb.mods.ftbteams.event.TeamDeletedEvent;
@@ -54,6 +55,16 @@ public class Events {
             return;
         }
 
+        // If the player left their own team and their team has an island, mark their old island as unused.
+        // NOTE: this isn't used atm due to the PARTY requirement.
+        event.getPreviousTeam().ifPresent(e -> {
+            if (e.getType() != TeamType.PLAYER || e.getMembers().size() > 0 || !IslandsManager.get().getIsland(e).isPresent()) {
+                return;
+            }
+
+            IslandsManager.get().markUnclaimed(e.getId());
+        });
+
         // Don't act if this is their first team.
         ServerPlayer player = event.getPlayer();
         if (!event.getPreviousTeam().isPresent() || player == null) {
@@ -75,8 +86,7 @@ public class Events {
             return;
         }
 
-        // Flag unused
-        // TODO: FIXME: broken. won't remove from the list rip...
+        System.out.println("MARKED UNCLAIMED");
         IslandsManager.get().markUnclaimed(team.getId());
     }
 

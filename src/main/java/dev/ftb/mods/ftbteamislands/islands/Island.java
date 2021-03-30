@@ -24,10 +24,6 @@ public class Island {
     public boolean spawned;
     public boolean active; // false = No one owns and is unclaimed
 
-    public Island(ChunkPos pos, BlockPos spawnPos, String templateId, UUID creator) {
-        this(pos, spawnPos, creator, false, true);
-    }
-
     public Island(ChunkPos pos, BlockPos spawnPos, @Nullable UUID creator, boolean spawned, boolean active) {
         this.templateId = UUID.randomUUID();
         this.pos = pos;

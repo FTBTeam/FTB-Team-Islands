@@ -1,6 +1,5 @@
 package dev.ftb.mods.ftbteamislands.commands;
 
-
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import dev.ftb.mods.ftbteamislands.FTBTeamIslands;
