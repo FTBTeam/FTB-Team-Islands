@@ -11,6 +11,7 @@ import dev.ftb.mods.ftbteamislands.network.NetworkManager;
 import dev.ftb.mods.ftbteamislands.network.OpenSelectionScreenPacket;
 import dev.ftb.mods.ftbteams.data.Team;
 import dev.ftb.mods.ftbteams.data.TeamManager;
+import dev.ftb.mods.ftbteams.data.TeamType;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.TranslatableComponent;
@@ -35,13 +36,13 @@ public class CreateIslandCommand {
 
         // Only party teams can have an island
         Team playerTeam = TeamManager.INSTANCE.getPlayerTeam(player);
-        //        if (playerTeam.getType() != TeamType.PARTY) {
-        //            throw PARTY_REQUIRED.create();
-        //        }
+        if (playerTeam.getType() != TeamType.PARTY) {
+            throw PARTY_REQUIRED.create();
+        }
 
-        //        if (manager.getIsland(playerTeam).isPresent()) {
-        //            throw ALREADY_OWN_ISLAND.create();
-        //        }
+        if (manager.getIsland(playerTeam).isPresent()) {
+            throw ALREADY_OWN_ISLAND.create();
+        }
 
         if (manager.getAvailableIslands().size() > 0) {
             NetworkManager.sendTo(new OpenSelectionScreenPacket(manager.getAvailableIslands()), player);

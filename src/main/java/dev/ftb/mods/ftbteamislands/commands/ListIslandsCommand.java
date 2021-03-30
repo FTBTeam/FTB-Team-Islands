@@ -32,7 +32,7 @@ public class ListIslandsCommand {
     private static int execute(CommandContext<CommandSourceStack> context) {
         HashMap<UUID, Island> islands = IslandsManager.get().getIslands();
         Set<Team> islandTeams = islands.keySet().stream()
-            .map(uuid -> TeamManager.INSTANCE.getPlayerTeam(uuid))
+            .map(TeamManager.INSTANCE::getTeamByID)
             .collect(Collectors.toSet());
 
         for (Team islandTeam : islandTeams) {
@@ -45,7 +45,7 @@ public class ListIslandsCommand {
                 text.append(new TranslatableComponent("commands.ftbteamislands.response.is_inactive"));
             }
 
-            text.setStyle(text.getStyle().withClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, String.format("/%s islands %s", FTBTeamIslands.MOD_ID, islandTeam.getDisplayName()))));
+            text.setStyle(text.getStyle().withClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, String.format("/%s islands %s", FTBTeamIslands.MOD_ID, islandTeam.getDisplayName() + "#" + islandTeam.getId().toString().substring(0, 8)))));
             context.getSource().sendSuccess(text, false);
         }
 
