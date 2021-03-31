@@ -118,3 +118,8 @@ No images are supported for this method of using the mod.
 As well as changing those config options, you can also override the data files in our mod using a data pack. Our files
 are called
 `default_lobby.nbt` and `teamislands_island.nbt`. They are held in the `resources.data.ftbteamislands.structures`.
+
+### Spawn point
+
+Each island either prebuilts or set via the config will require a single structure block where you wish the player to
+spawn. This spawn point is set via the Metadata of the structure block by putting `SPAWN_POINT` on the structure block.
