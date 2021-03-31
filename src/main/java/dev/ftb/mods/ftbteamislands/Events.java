@@ -16,6 +16,8 @@ import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
+import java.util.Optional;
+
 @Mod.EventBusSubscriber(modid = FTBTeamIslands.MOD_ID)
 public class Events {
     public static void onTeamCreated(TeamCreatedEvent event) {
@@ -57,7 +59,8 @@ public class Events {
 
         // If the player left their own team and their team has an island, mark their old island as unused.
         // NOTE: this isn't used atm due to the PARTY requirement.
-        event.getPreviousTeam().ifPresent(e -> {
+        Optional<Team> previousTeam = event.getPreviousTeam();
+        previousTeam.ifPresent(e -> {
             if (e.getType() != TeamType.PLAYER || e.getMembers().size() > 0 || !IslandsManager.get().getIsland(e).isPresent()) {
                 return;
             }
@@ -67,13 +70,17 @@ public class Events {
 
         // Don't act if this is their first team.
         ServerPlayer player = event.getPlayer();
-        if (!event.getPreviousTeam().isPresent() || player == null) {
+        if (!previousTeam.isPresent() || player == null) {
             return;
         }
 
         // Clear the inventory if the player leaves their team (island)
         if (Config.general.clearInvWhenTeamLeft.get()) {
             player.inventory.clearContent();
+        }
+
+        if (previousTeam.get().getType() == TeamType.PARTY && event.getTeam().getType() == TeamType.PLAYER) {
+            IslandsManager.get().getLobby().ifPresent(e -> e.teleportPlayerTo(player, server));
         }
     }
 
@@ -86,7 +93,6 @@ public class Events {
             return;
         }
 
-        System.out.println("MARKED UNCLAIMED");
         IslandsManager.get().markUnclaimed(team.getId());
     }
 
