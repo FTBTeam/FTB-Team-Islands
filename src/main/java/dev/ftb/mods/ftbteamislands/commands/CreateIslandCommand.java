@@ -19,7 +19,14 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 
+import java.time.Instant;
+import java.util.HashMap;
+import java.util.UUID;
+
 public class CreateIslandCommand {
+    // TODO: add timeout
+    static final HashMap<UUID, Instant> playersTimeout = new HashMap<>();
+
     private static final SimpleCommandExceptionType ALREADY_OWN_ISLAND = new SimpleCommandExceptionType(new TranslatableComponent("commands.ftbteamislands.error.already_have_island"));
     private static final SimpleCommandExceptionType PARTY_REQUIRED = new SimpleCommandExceptionType(new TranslatableComponent("commands.ftbteamislands.error.must_be_party"));
 
