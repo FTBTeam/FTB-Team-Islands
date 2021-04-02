@@ -2,8 +2,10 @@ package dev.ftb.mods.ftbteamislands.islands;
 
 import dev.ftb.mods.ftbteamislands.Config;
 import dev.ftb.mods.ftbteamislands.FTBTeamIslands;
+import dev.ftb.mods.ftbteamislands.FTBTeamIslandsEvents;
 import dev.ftb.mods.ftbteamislands.intergration.FTBChunks;
 import dev.ftb.mods.ftbteams.data.Team;
+import dev.ftb.mods.ftbteams.data.TeamManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtIo;
@@ -19,6 +21,7 @@ import net.minecraft.world.level.block.entity.StructureBlockEntity;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.ModList;
 import org.apache.commons.lang3.tuple.Pair;
@@ -65,7 +68,10 @@ public class IslandSpawner {
             .setGlobalSpawns(!IslandsManager.get().getLobby().isPresent() && IslandsManager.get().getIslands().size() == 0)
             .claimChunks(true)
             .yOffset(yOffset)
-            .onCreation((island -> IslandsManager.get().registerIsland(team, island)))
+            .onCreation((island -> {
+                IslandsManager.get().registerIsland(team, island);
+                MinecraftForge.EVENT_BUS.post(new FTBTeamIslandsEvents.IslandJoined(team, island, player));
+            }))
             .create(server, player);
 
         if (!result) {
@@ -216,8 +222,11 @@ public class IslandSpawner {
                 true
             );
 
+            MinecraftForge.EVENT_BUS.post(new FTBTeamIslandsEvents.IslandCreated(TeamManager.INSTANCE.getPlayerTeam(player), island));
+
             // Teleport the player to the new island.
             island.teleportPlayerTo(player, server);
+            MinecraftForge.EVENT_BUS.post(new FTBTeamIslandsEvents.FirstTeleportTo(TeamManager.INSTANCE.getPlayerTeam(player), island, player));
 
             // Set the global spawn
             if (this.setsGlobalSpawn) {

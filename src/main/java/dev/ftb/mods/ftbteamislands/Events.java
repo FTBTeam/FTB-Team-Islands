@@ -12,6 +12,7 @@ import dev.ftb.mods.ftbteams.event.TeamDeletedEvent;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -61,6 +62,7 @@ public class Events {
         // NOTE: this isn't used atm due to the PARTY requirement.
         Optional<Team> previousTeam = event.getPreviousTeam();
         previousTeam.ifPresent(e -> {
+            IslandsManager.get().getIsland(e).ifPresent(island -> MinecraftForge.EVENT_BUS.post(new FTBTeamIslandsEvents.IslandLeft(e, island, event.getPlayer())));
             if (e.getType() != TeamType.PLAYER || e.getMembers().size() > 0 || !IslandsManager.get().getIsland(e).isPresent()) {
                 return;
             }
@@ -93,6 +95,7 @@ public class Events {
             return;
         }
 
+        IslandsManager.get().getIsland(team).ifPresent(island -> MinecraftForge.EVENT_BUS.post(new FTBTeamIslandsEvents.IslandMarkForDeletion(team, island)));
         IslandsManager.get().markUnclaimed(team.getId());
     }
 
