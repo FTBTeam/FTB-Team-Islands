@@ -21,6 +21,7 @@ public class Config {
     }
 
     public static class General {
+        public final ForgeConfigSpec.BooleanValue creationTimeout;
         public final ForgeConfigSpec.BooleanValue enableSinglePlayer;
         public final ForgeConfigSpec.BooleanValue enableMultiplayer;
         public final ForgeConfigSpec.BooleanValue enableMyIslandCommand;
@@ -29,6 +30,10 @@ public class Config {
 
         General() {
             COMMON_BUILDER.push("general");
+
+            this.creationTimeout = COMMON_BUILDER
+                .comment("Enables a 5 minute timeout on the `ftbteamislands create` command")
+                .define("creationTimeout", true);
 
             this.enableSinglePlayer = COMMON_BUILDER.define("enableSingleplayer", false);
             this.enableMultiplayer = COMMON_BUILDER.define("enableMultiplayer", true);

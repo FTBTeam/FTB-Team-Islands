@@ -42,6 +42,8 @@ public class IslandsManager {
     private int islandsEverCreated = 1;
     private boolean shouldSave;
 
+    private Set<Path> islandsToDelete = new HashSet<>();
+
     @Nullable
     private Island lobby;
 
@@ -287,6 +289,14 @@ public class IslandsManager {
         }
 
         return new CompoundTag();
+    }
+
+    public void addRegionToDelete(Path file) {
+        this.islandsToDelete.add(file);
+    }
+
+    public Set<Path> getIslandsToDelete() {
+        return this.islandsToDelete;
     }
 
     public int getIslandsEverCreated() {

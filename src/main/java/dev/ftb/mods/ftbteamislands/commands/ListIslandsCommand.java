@@ -30,6 +30,8 @@ public class ListIslandsCommand {
     // TODO: complete
     private static int execute(CommandContext<CommandSourceStack> context) {
         HashMap<UUID, Island> islands = IslandsManager.get().getIslands();
+        System.out.println(islands);
+        System.out.println(TeamManager.INSTANCE.getTeamMap());
         Set<Team> islandTeams = islands.keySet().stream()
             .map(TeamManager.INSTANCE::getTeamByID)
             .collect(Collectors.toSet());
