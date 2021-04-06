@@ -16,9 +16,8 @@ import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 
 import java.util.HashMap;
-import java.util.Set;
+import java.util.Map;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 public class ListIslandsCommand {
     public static LiteralArgumentBuilder<CommandSourceStack> register() {
@@ -30,23 +29,22 @@ public class ListIslandsCommand {
     // TODO: complete
     private static int execute(CommandContext<CommandSourceStack> context) {
         HashMap<UUID, Island> islands = IslandsManager.get().getIslands();
-        System.out.println(islands);
-        System.out.println(TeamManager.INSTANCE.getTeamMap());
-        Set<Team> islandTeams = islands.keySet().stream()
-            .map(TeamManager.INSTANCE::getTeamByID)
-            .collect(Collectors.toSet());
 
-        for (Team islandTeam : islandTeams) {
-            Island island = islands.get(islandTeam.getId());
-            MutableComponent text = new TranslatableComponent("commands.ftbteamislands.response.islands")
-                .append(new TextComponent(islandTeam.getDisplayName()).withStyle(ChatFormatting.LIGHT_PURPLE))
-                .append(new TranslatableComponent("commands.ftbteamislands.response.found_at", island.spawnPos.getX() + ", " + island.spawnPos.getY() + ", " + island.spawnPos.getZ()));
+        for (Map.Entry<UUID, Island> entry : islands.entrySet()) {
+            Island island = islands.get(entry.getKey());
 
-            if (!island.active) {
-                text.append(new TranslatableComponent("commands.ftbteamislands.response.is_inactive"));
+            MutableComponent text;
+            Team team = TeamManager.INSTANCE.getTeamByID(entry.getKey());
+            if (!island.active && team != null) {
+                text = new TranslatableComponent("commands.ftbteamislands.response.islands")
+                    .append(new TextComponent(team.getDisplayName()).withStyle(ChatFormatting.LIGHT_PURPLE))
+                    .append(new TranslatableComponent("commands.ftbteamislands.response.found_at", island.spawnPos.getX() + ", " + island.spawnPos.getY() + ", " + island.spawnPos.getZ()));
+
+                text.setStyle(text.getStyle().withClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, String.format("/%s islands %s", FTBTeamIslands.MOD_ID, team.getDisplayName() + "#" + team.getId().toString().substring(0, 8)))));
+            } else {
+                text = new TranslatableComponent("commands.ftbteamislands.response.inactive_island", String.format("x: %d, y: %d, z: %d", island.getSpawnPos().getX(), island.getSpawnPos().getY(), island.getSpawnPos().getZ()));
             }
 
-            text.setStyle(text.getStyle().withClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, String.format("/%s islands %s", FTBTeamIslands.MOD_ID, islandTeam.getDisplayName() + "#" + islandTeam.getId().toString().substring(0, 8)))));
             context.getSource().sendSuccess(text, false);
         }
 

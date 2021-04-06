@@ -58,6 +58,11 @@ public class CreateIslandCommand {
             throw ALREADY_OWN_ISLAND.create();
         }
 
+        spawnIslandWithRateLimit(player, manager, context.getSource().getServer(), playerTeam);
+        return 0;
+    }
+
+    public static void spawnIslandWithRateLimit(ServerPlayer player, IslandsManager manager, MinecraftServer server, Team team) throws CommandSyntaxException {
         // Ensure they're not spamming the island creation
         if (Config.general.creationTimeout.get()) {
             Instant instant = playersTimeout.get(player.getUUID());
@@ -71,19 +76,16 @@ public class CreateIslandCommand {
 
         if (manager.getAvailableIslands().size() > 0) {
             NetworkManager.sendTo(new OpenSelectionScreenPacket(manager.getAvailableIslands()), player);
-            return 0;
+            return;
         }
 
-        MinecraftServer server = context.getSource().getServer();
         IslandSpawner.spawnIsland(
             new ResourceLocation(Config.islands.defaultIslandResource.get()),
             server.getLevel(IslandsManager.getTargetIsland()),
-            playerTeam,
+            team,
             player,
             server,
             Config.islands.defaultIslandResourceYOffset.get()
         );
-
-        return 0;
     }
 }

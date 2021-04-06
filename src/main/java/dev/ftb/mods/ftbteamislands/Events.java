@@ -1,6 +1,7 @@
 package dev.ftb.mods.ftbteamislands;
 
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import dev.ftb.mods.ftbteamislands.commands.CreateIslandCommand;
 import dev.ftb.mods.ftbteamislands.islands.Island;
 import dev.ftb.mods.ftbteamislands.islands.IslandSpawner;
 import dev.ftb.mods.ftbteamislands.islands.IslandsManager;
@@ -8,6 +9,7 @@ import dev.ftb.mods.ftbteams.data.*;
 import dev.ftb.mods.ftbteams.event.PlayerChangedTeamEvent;
 import dev.ftb.mods.ftbteams.event.TeamCreatedEvent;
 import dev.ftb.mods.ftbteams.event.TeamDeletedEvent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
@@ -71,8 +73,18 @@ public class Events {
                     server,
                     Config.islands.defaultIslandResourceYOffset.get()
                 );
-            } catch (CommandSyntaxException e) {
+            } catch (CommandSyntaxException ignored) {
+            }
 
+            return;
+        }
+
+        // If we're in MP and they have just created a team, show a list of islands or spawn the island.
+        if (server.isDedicatedServer() && team.getType() == TeamType.PARTY && !IslandsManager.get().getIsland(team).isPresent()) {
+            try {
+                CreateIslandCommand.spawnIslandWithRateLimit(event.getCreator(), IslandsManager.get(), event.getCreator().server, event.getTeam());
+            } catch (CommandSyntaxException e) {
+                event.getCreator().displayClientMessage(new TranslatableComponent("commands.ftbteamislands.error.to_quick"), false);
             }
         }
     }
