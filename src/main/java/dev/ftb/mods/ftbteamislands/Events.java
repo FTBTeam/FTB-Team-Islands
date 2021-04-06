@@ -1,14 +1,14 @@
 package dev.ftb.mods.ftbteamislands;
 
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import dev.ftb.mods.ftbteamislands.islands.Island;
 import dev.ftb.mods.ftbteamislands.islands.IslandSpawner;
 import dev.ftb.mods.ftbteamislands.islands.IslandsManager;
-import dev.ftb.mods.ftbteams.data.Team;
-import dev.ftb.mods.ftbteams.data.TeamManager;
-import dev.ftb.mods.ftbteams.data.TeamType;
+import dev.ftb.mods.ftbteams.data.*;
 import dev.ftb.mods.ftbteams.event.PlayerChangedTeamEvent;
 import dev.ftb.mods.ftbteams.event.TeamCreatedEvent;
 import dev.ftb.mods.ftbteams.event.TeamDeletedEvent;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -16,11 +16,27 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.Optional;
 
 @Mod.EventBusSubscriber(modid = FTBTeamIslands.MOD_ID)
 public class Events {
+    /**
+     * If the player is logging in and they've been kicked from a team, we will check their flag and
+     * remove their inventory if we need to then reset the flag.
+     */
+    @SubscribeEvent
+    public static void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
+        PlayerTeam internalPlayerTeam = TeamManager.INSTANCE.getInternalPlayerTeam(event.getPlayer().getUUID());
+        boolean removeInventory = internalPlayerTeam.getExtraData().getBoolean("removeInventory");
+        if (removeInventory) {
+            event.getPlayer().inventory.clearContent();
+            internalPlayerTeam.getExtraData().putBoolean("removeInventory", false);
+            internalPlayerTeam.save();
+        }
+    }
+
     public static void onTeamCreated(TeamCreatedEvent event) {
         Team team = event.getTeam();
         MinecraftServer server = team.manager.getServer();
@@ -38,8 +54,26 @@ public class Events {
 
         // If we're a server, attempt to spawn a lobby
         // Bypass lobby spawning if we're spawning into a single player world and there is only a single island
-        if (!islandsManager.getLobby().isPresent()) {
+        if (!islandsManager.getLobby().isPresent() && (server.isDedicatedServer() || IslandsManager.get().getAvailableIslands().size() > 0)) {
             IslandSpawner.spawnLobby(level, event.getCreator());
+        }
+
+        // If single player and no prebuilts and no islands have been created
+        if (!server.isDedicatedServer() && IslandsManager.get().getAvailableIslands().size() == 0 && IslandsManager.get().getIslandsEverCreated() == 1 && team.getType() == TeamType.PLAYER) {
+            try {
+                Pair<Integer, PartyTeam> partyTeam = TeamManager.INSTANCE.createParty(event.getCreator(), "");
+
+                IslandSpawner.spawnIsland(
+                    new ResourceLocation(Config.islands.defaultIslandResource.get()),
+                    server.getLevel(IslandsManager.getTargetIsland()),
+                    partyTeam.getValue(),
+                    event.getCreator(),
+                    server,
+                    Config.islands.defaultIslandResourceYOffset.get()
+                );
+            } catch (CommandSyntaxException e) {
+
+            }
         }
     }
 
@@ -73,6 +107,12 @@ public class Events {
         // Don't act if this is their first team.
         ServerPlayer player = event.getPlayer();
         if (!previousTeam.isPresent() || player == null) {
+            if (player == null) {
+                // Flag the player so we can remove inventory when the join the game again.
+                PlayerTeam internalPlayerTeam = TeamManager.INSTANCE.getInternalPlayerTeam(event.getPlayerId());
+                internalPlayerTeam.getExtraData().putBoolean("removeInventory", true);
+                internalPlayerTeam.save();
+            }
             return;
         }
 

@@ -10,7 +10,7 @@
   "commands.ftbteamislands.success.islands_deleted": "%d island(s) flagged for deletion out of %d inactive islands, %d failed to delete. They will be deleted on a server restart",
   "commands.ftbteamislands.response.islands": "Island: ",
   "commands.ftbteamislands.response.found_at": " found at (%s)",
-  "commands.ftbteamislands.response.is_inactive": " and is inactive",
+  "commands.ftbteamislands.response.inactive_island": "Inactive island at (%s)",
   "screens.ftbteamislands.select_island_category": "Select an island category",
   "screens.ftbteamislands.select_island": "Select an island",
   "screens.ftbteamislands.by": "By: %s",
