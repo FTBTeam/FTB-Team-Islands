@@ -1,7 +1,6 @@
 package dev.ftb.mods.ftbteamislands;
 
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import dev.ftb.mods.ftbteamislands.commands.CreateIslandCommand;
 import dev.ftb.mods.ftbteamislands.islands.Island;
 import dev.ftb.mods.ftbteamislands.islands.IslandSpawner;
 import dev.ftb.mods.ftbteamislands.islands.IslandsManager;
@@ -9,7 +8,6 @@ import dev.ftb.mods.ftbteams.data.*;
 import dev.ftb.mods.ftbteams.event.PlayerChangedTeamEvent;
 import dev.ftb.mods.ftbteams.event.TeamCreatedEvent;
 import dev.ftb.mods.ftbteams.event.TeamDeletedEvent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
@@ -75,17 +73,6 @@ public class Events {
                 );
             } catch (CommandSyntaxException ignored) {
             }
-
-            return;
-        }
-
-        // If we're in MP and they have just created a team, show a list of islands or spawn the island.
-        if (server.isDedicatedServer() && team.getType() == TeamType.PARTY && !IslandsManager.get().getIsland(team).isPresent()) {
-            try {
-                CreateIslandCommand.spawnIslandWithRateLimit(event.getCreator(), IslandsManager.get(), event.getCreator().server, event.getTeam());
-            } catch (CommandSyntaxException e) {
-                event.getCreator().displayClientMessage(new TranslatableComponent("commands.ftbteamislands.error.to_quick"), false);
-            }
         }
     }
 
@@ -104,17 +91,19 @@ public class Events {
             return;
         }
 
-        // If the player left their own team and their team has an island, mark their old island as unused.
-        // NOTE: this isn't used atm due to the PARTY requirement.
+        //        // If the player left their own team and their team has an island, mark their old island as unused.
+        //        // NOTE: this isn't used atm due to the PARTY requirement.
         Optional<Team> previousTeam = event.getPreviousTeam();
-        previousTeam.ifPresent(e -> {
-            IslandsManager.get().getIsland(e).ifPresent(island -> MinecraftForge.EVENT_BUS.post(new FTBTeamIslandsEvents.IslandLeft(e, island, event.getPlayer())));
-            if (e.getType() != TeamType.PLAYER || e.getMembers().size() > 0 || !IslandsManager.get().getIsland(e).isPresent()) {
-                return;
-            }
-
-            IslandsManager.get().markUnclaimed(e.getId());
-        });
+        //        previousTeam.ifPresent(e -> {
+        //            IslandsManager.get().getIsland(e).ifPresent(island -> MinecraftForge.EVENT_BUS.post(new FTBTeamIslandsEvents.IslandLeft(e, island, event.getPlayer())));
+        //            if (e.getType() != TeamType.PLAYER || e.getMembers().size() > 0 || !IslandsManager.get().getIsland(e).isPresent()) {
+        //                FTBTeamIslands.LOGGER.warn("FAILED TO MARK UNUSED WITH {} {} {}", e.getType() != TeamType.PLAYER, e.getMembers().size() > 0, !IslandsManager.get().getIsland(e).isPresent());
+        //                return;
+        //            }
+        //
+        //            FTBTeamIslands.LOGGER.warn("REMOVING CLAIM UUID {}", e.getId());
+        //            IslandsManager.get().markUnclaimed(e.getId());
+        //        });
 
         // Don't act if this is their first team.
         ServerPlayer player = event.getPlayer();

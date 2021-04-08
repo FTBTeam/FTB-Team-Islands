@@ -9,6 +9,7 @@ import dev.ftb.mods.ftbteamislands.islands.IslandSpawner;
 import dev.ftb.mods.ftbteamislands.islands.IslandsManager;
 import dev.ftb.mods.ftbteamislands.network.NetworkManager;
 import dev.ftb.mods.ftbteamislands.network.OpenSelectionScreenPacket;
+import dev.ftb.mods.ftbteams.data.PartyTeam;
 import dev.ftb.mods.ftbteams.data.Team;
 import dev.ftb.mods.ftbteams.data.TeamManager;
 import dev.ftb.mods.ftbteams.data.TeamType;
@@ -18,6 +19,7 @@ import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -46,7 +48,8 @@ public class CreateIslandCommand {
         Team playerTeam = TeamManager.INSTANCE.getPlayerTeam(player);
         if (playerTeam.getType() != TeamType.PARTY) {
             // Creates a team for the player if they don't have a party.
-            TeamManager.INSTANCE.createParty(player, "");
+            Pair<Integer, PartyTeam> party = TeamManager.INSTANCE.createParty(player, "");
+            playerTeam = party.getValue();
 
             // Ensure it's actually been created
             if (TeamManager.INSTANCE.getPlayerTeam(player).getType() != TeamType.PARTY) {

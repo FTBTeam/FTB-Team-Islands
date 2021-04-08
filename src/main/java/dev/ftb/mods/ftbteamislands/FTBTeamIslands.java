@@ -6,7 +6,6 @@ import dev.ftb.mods.ftbteamislands.network.NetworkManager;
 import dev.ftb.mods.ftbteams.event.PlayerChangedTeamEvent;
 import dev.ftb.mods.ftbteams.event.TeamCreatedEvent;
 import dev.ftb.mods.ftbteams.event.TeamDeletedEvent;
-import net.minecraft.Util;
 import net.minecraft.commands.Commands;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegisterCommandsEvent;
@@ -75,14 +74,14 @@ public class FTBTeamIslands {
      */
     @SubscribeEvent
     public void onServerShutdown(FMLServerStoppedEvent event) {
-        Util.ioPool().execute(() -> IslandsManager.get().getIslandsToDelete().forEach(island -> {
+        IslandsManager.get().getIslandsToDelete().forEach(island -> {
             try {
                 Files.deleteIfExists(island);
                 FTBTeamIslands.LOGGER.error("Deleted {}", island.toString());
             } catch (IOException e) {
                 FTBTeamIslands.LOGGER.error("Failed to delete {}", island.toString());
             }
-        }));
+        });
     }
 
     @SubscribeEvent
