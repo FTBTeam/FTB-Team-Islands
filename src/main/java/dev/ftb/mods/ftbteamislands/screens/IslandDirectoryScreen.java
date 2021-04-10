@@ -16,6 +16,7 @@ import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public class IslandDirectoryScreen extends Screen {
@@ -24,10 +25,14 @@ public class IslandDirectoryScreen extends Screen {
 
     private EditBox searchBox;
     private Button selectButton;
+    private Consumer<PrebuiltIslands.PrebuiltIsland> onPrebuiltSelect;
+    private Screen previousScreen;
 
-    public IslandDirectoryScreen(List<PrebuiltIslands> islands) {
+    public IslandDirectoryScreen(List<PrebuiltIslands> islands, Consumer<PrebuiltIslands.PrebuiltIsland> onPrebuiltSelect, Screen previousScreen) {
         super(TextComponent.EMPTY);
         this.islands = islands;
+        this.onPrebuiltSelect = onPrebuiltSelect;
+        this.previousScreen = previousScreen;
     }
 
     @Override
@@ -39,7 +44,11 @@ public class IslandDirectoryScreen extends Screen {
         this.searchBox.setResponder(value -> this.islandDirectoryList.searchList(value));
 
         this.addButton(new Button(this.width / 2 - 130, this.height - 30, 100, 20, new TranslatableComponent("screens.ftbteamislands.close"), btn -> {
-            this.onClose();
+            if (this.previousScreen == null) {
+                this.onClose();
+            } else {
+                this.getMinecraft().setScreen(this.previousScreen);
+            }
         }));
 
         this.addButton(this.selectButton = new Button(this.width / 2 - 20, this.height - 30, 150, 20, new TranslatableComponent("screens.ftbteamislands.select"), btn -> {
@@ -47,7 +56,7 @@ public class IslandDirectoryScreen extends Screen {
                 return;
             }
 
-            Minecraft.getInstance().setScreen(new IslandSelectScreen(this.islandDirectoryList.getSelected().islandDir, IslandDirectoryScreen.this.islands));
+            Minecraft.getInstance().setScreen(new IslandSelectScreen(this.islandDirectoryList.getSelected().islandDir, IslandDirectoryScreen.this.islands, this.onPrebuiltSelect, this.previousScreen));
         }));
 
         this.children.add(this.searchBox);
@@ -133,7 +142,7 @@ public class IslandDirectoryScreen extends Screen {
                 DirectoryList.this.setSelected(this);
 
                 if (Util.getMillis() - this.lastClickTime < 250L) {
-                    Minecraft.getInstance().setScreen(new IslandSelectScreen(this.islandDir, IslandDirectoryScreen.this.islands));
+                    Minecraft.getInstance().setScreen(new IslandSelectScreen(this.islandDir, IslandDirectoryScreen.this.islands, IslandDirectoryScreen.this.onPrebuiltSelect, IslandDirectoryScreen.this.previousScreen));
                     return true;
                 } else {
                     this.lastClickTime = Util.getMillis();

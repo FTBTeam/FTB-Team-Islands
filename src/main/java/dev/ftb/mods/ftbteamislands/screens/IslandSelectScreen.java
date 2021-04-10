@@ -3,8 +3,6 @@ package dev.ftb.mods.ftbteamislands.screens;
 import com.mojang.blaze3d.vertex.PoseStack;
 import dev.ftb.mods.ftbteamislands.FTBTeamIslands;
 import dev.ftb.mods.ftbteamislands.islands.PrebuiltIslands;
-import dev.ftb.mods.ftbteamislands.network.IslandSelectionPacket;
-import dev.ftb.mods.ftbteamislands.network.NetworkManager;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -17,22 +15,26 @@ import net.minecraft.network.chat.TranslatableComponent;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public class IslandSelectScreen extends Screen {
     // Store this so we don't have to ask the server for it again in-case we need to go back.
     private final List<PrebuiltIslands> previousScreenData;
     private final PrebuiltIslands selectedIslandDir;
-
+    public Consumer<PrebuiltIslands.PrebuiltIsland> onSelect;
     private IslandList islandList;
     private EditBox searchBox;
     private Button createButton;
+    private Screen previousScreen;
 
-    public IslandSelectScreen(PrebuiltIslands selected, List<PrebuiltIslands> previousScreenData) {
+    public IslandSelectScreen(PrebuiltIslands selected, List<PrebuiltIslands> previousScreenData, Consumer<PrebuiltIslands.PrebuiltIsland> onSelect, Screen previousScreen) {
         super(TextComponent.EMPTY);
 
         this.selectedIslandDir = selected;
         this.previousScreenData = previousScreenData;
+        this.onSelect = onSelect;
+        this.previousScreen = previousScreen;
     }
 
     @Override
@@ -44,15 +46,15 @@ public class IslandSelectScreen extends Screen {
         this.searchBox.setResponder(this.islandList::searchList);
 
         this.addButton(new Button(this.width / 2 - 130, this.height - 30, 100, 20, new TranslatableComponent("screens.ftbteamislands.back"), btn ->
-            Minecraft.getInstance().setScreen(new IslandDirectoryScreen(this.previousScreenData))));
+            Minecraft.getInstance().setScreen(new IslandDirectoryScreen(this.previousScreenData, this.onSelect, this.previousScreen))));
 
         this.addButton(this.createButton = new Button(this.width / 2 - 20, this.height - 30, 150, 20, new TranslatableComponent("screens.ftbteamislands.create"), btn -> {
             if (this.islandList.getSelected() == null) {
                 return;
             }
 
+            this.onSelect.accept(this.islandList.getSelected().islandDir);
             this.onClose();
-            NetworkManager.sendToServer(new IslandSelectionPacket(this.islandList.getSelected().islandDir.getStructureFileLocation(), this.islandList.getSelected().islandDir.yOffset()));
         }));
 
         this.createButton.active = false;
@@ -134,7 +136,7 @@ public class IslandSelectScreen extends Screen {
 
                 if (Util.getMillis() - this.lastClickTime < 250L) {
                     IslandSelectScreen.this.onClose();
-                    NetworkManager.sendToServer(new IslandSelectionPacket(this.islandDir.getStructureFileLocation(), this.islandDir.yOffset()));
+                    IslandSelectScreen.this.onSelect.accept(this.islandDir);
                     return true;
                 } else {
                     this.lastClickTime = Util.getMillis();

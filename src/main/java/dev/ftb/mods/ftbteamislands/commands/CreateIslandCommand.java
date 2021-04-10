@@ -77,8 +77,8 @@ public class CreateIslandCommand {
             playersTimeout.put(player.getUUID(), Instant.now());
         }
 
-        if (manager.getAvailableIslands().size() > 0) {
-            NetworkManager.sendTo(new OpenSelectionScreenPacket(manager.getAvailableIslands()), player);
+        if (IslandsManager.getAvailableIslands().size() > 0) {
+            NetworkManager.sendTo(new OpenSelectionScreenPacket(IslandsManager.getAvailableIslands()), player);
             return;
         }
 

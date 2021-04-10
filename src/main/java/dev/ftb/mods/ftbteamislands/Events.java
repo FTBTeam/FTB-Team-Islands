@@ -29,6 +29,10 @@ public class Events {
     @SubscribeEvent
     public static void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
         PlayerTeam internalPlayerTeam = TeamManager.INSTANCE.getInternalPlayerTeam(event.getPlayer().getUUID());
+        if (internalPlayerTeam == null) {
+            return;
+        }
+
         boolean removeInventory = internalPlayerTeam.getExtraData().getBoolean("removeInventory");
         if (removeInventory) {
             event.getPlayer().inventory.clearContent();
@@ -54,23 +58,38 @@ public class Events {
 
         // If we're a server, attempt to spawn a lobby
         // Bypass lobby spawning if we're spawning into a single player world and there is only a single island
-        if (!islandsManager.getLobby().isPresent() && (server.isDedicatedServer() || IslandsManager.get().getAvailableIslands().size() > 0)) {
+        if (!islandsManager.getLobby().isPresent() && (server.isDedicatedServer() || (IslandsManager.getAvailableIslands().size() > 0 && ClientHandler.selectedIsland == null))) {
             IslandSpawner.spawnLobby(level, event.getCreator());
         }
 
         // If single player and no prebuilts and no islands have been created
-        if (!server.isDedicatedServer() && IslandsManager.get().getAvailableIslands().size() == 0 && IslandsManager.get().getIslandsEverCreated() == 1 && team.getType() == TeamType.PLAYER) {
+        if (!server.isDedicatedServer() && IslandsManager.get().getIslandsEverCreated() == 1 && team.getType() == TeamType.PLAYER) {
             try {
                 Pair<Integer, PartyTeam> partyTeam = TeamManager.INSTANCE.createParty(event.getCreator(), "");
 
-                IslandSpawner.spawnIsland(
-                    new ResourceLocation(Config.islands.defaultIslandResource.get()),
-                    server.getLevel(IslandsManager.getTargetIsland()),
-                    partyTeam.getValue(),
-                    event.getCreator(),
-                    server,
-                    Config.islands.defaultIslandResourceYOffset.get()
-                );
+                // If the player has created the world using the gui, spawn that island by default.
+                if (ClientHandler.selectedIsland != null) {
+                    IslandSpawner.spawnIsland(
+                        ClientHandler.selectedIsland.getStructureFileLocation(),
+                        server.getLevel(IslandsManager.getTargetIsland()),
+                        partyTeam.getValue(),
+                        event.getCreator(),
+                        server,
+                        ClientHandler.selectedIsland.yOffset()
+                    );
+                    ClientHandler.selectedIsland = null;
+                } else if (IslandsManager.getAvailableIslands().size() == 0) {
+                    // Logically this shouldn't be able to happen but you never know who might override our override.
+                    // Only spawn a truely default island on single player spawn if the selected island is null and there is no prebuilt islands
+                    IslandSpawner.spawnIsland(
+                        new ResourceLocation(Config.islands.defaultIslandResource.get()),
+                        server.getLevel(IslandsManager.getTargetIsland()),
+                        partyTeam.getValue(),
+                        event.getCreator(),
+                        server,
+                        Config.islands.defaultIslandResourceYOffset.get()
+                    );
+                }
             } catch (CommandSyntaxException ignored) {
             }
         }

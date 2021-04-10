@@ -9,7 +9,7 @@ sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
 
 def ENV = System.getenv()
-version = "${mod_version}${ENV.BUILD_NUMBER ? "-build.${ENV.BUILD_NUMBER}" : "-snapshot-9"}"
+version = "${mod_version}${ENV.BUILD_NUMBER ? "-build.${ENV.BUILD_NUMBER}" : "-snapshot-11"}"
 archivesBaseName = project.archives_base_name
 group = project.maven_group
 

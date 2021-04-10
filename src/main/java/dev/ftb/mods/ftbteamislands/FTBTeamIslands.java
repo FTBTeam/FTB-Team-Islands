@@ -47,6 +47,7 @@ public class FTBTeamIslands {
     private void setup(final FMLCommonSetupEvent event) {
         IslandsManager.createEmptyJson();
         NetworkManager.register();
+        IslandsManager.findAndLoadPrebuilts();
     }
 
     // You can use SubscribeEvent and let the Event Bus discover methods to call
