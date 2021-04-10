@@ -5,6 +5,7 @@ import dev.ftb.mods.ftbteamislands.islands.IslandSpawner;
 import dev.ftb.mods.ftbteamislands.islands.IslandsManager;
 import dev.ftb.mods.ftbteams.data.TeamManager;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.fml.network.NetworkDirection;
 import net.minecraftforge.fml.network.NetworkEvent;
@@ -42,6 +43,7 @@ public class IslandSelectionPacket {
                 return;
             }
 
+            player.displayClientMessage(new TranslatableComponent("commands.ftbteamislands.response.island_creating"), false);
             IslandSpawner.spawnIsland(
                 this.islandNbtFile,
                 player.getServer().getLevel(IslandsManager.getTargetIsland()),
@@ -50,6 +52,7 @@ public class IslandSelectionPacket {
                 player.getServer(),
                 this.yOffset
             );
+            player.displayClientMessage(new TranslatableComponent("commands.ftbteamislands.response.island_creating_finished"), false);
         });
         ctx.setPacketHandled(true);
     }
