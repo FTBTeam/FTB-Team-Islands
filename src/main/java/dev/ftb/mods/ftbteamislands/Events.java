@@ -58,7 +58,7 @@ public class Events {
 
         // If we're a server, attempt to spawn a lobby
         // Bypass lobby spawning if we're spawning into a single player world and there is only a single island
-        if (!islandsManager.getLobby().isPresent() && (server.isDedicatedServer() || (IslandsManager.getAvailableIslands().size() > 0 && ClientHandler.selectedIsland == null))) {
+        if (!islandsManager.getLobby().isPresent() && (server.isDedicatedServer() || (IslandsManager.getAvailableIslands().size() > 0 && ClientHandler.selectedIsland == null && IslandsManager.get().getIslandsEverCreated() == 1))) {
             IslandSpawner.spawnLobby(level, event.getCreator());
         }
 

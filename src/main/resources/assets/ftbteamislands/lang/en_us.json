@@ -11,6 +11,8 @@
   "commands.ftbteamislands.response.islands": "Island: ",
   "commands.ftbteamislands.response.islands_header": "Active Islands:",
   "commands.ftbteamislands.response.islands_header_inactive": "Inactive Islands:",
+  "commands.ftbteamislands.response.island_creating": "Creating Island...",
+  "commands.ftbteamislands.response.island_creating_finished": "Island created!",
   "commands.ftbteamislands.response.found_at": " found at (%s)",
   "commands.ftbteamislands.response.inactive_island": "Inactive island at (%s)",
   "screens.ftbteamislands.select_island_category": "Select an island category",

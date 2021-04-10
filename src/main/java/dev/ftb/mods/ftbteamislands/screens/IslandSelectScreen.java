@@ -54,7 +54,9 @@ public class IslandSelectScreen extends Screen {
             }
 
             this.onSelect.accept(this.islandList.getSelected().islandDir);
-            this.onClose();
+            if (this.getMinecraft().level != null) {
+                this.onClose();
+            }
         }));
 
         this.createButton.active = false;

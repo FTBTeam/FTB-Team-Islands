@@ -76,15 +76,13 @@ public class ClientHandler {
     }
 
     private static void replaceSingleplayerButton(GuiScreenEvent.InitGuiEvent.Post event) {
-        if (levels == null) {
-            LevelStorageSource lv = Minecraft.getInstance().getLevelSource();
-            try {
-                levels = lv.getLevelList();
-            } catch (LevelStorageException var7) {
-                FTBTeamIslands.LOGGER.error("Couldn't load level list", var7);
-                Minecraft.getInstance().setScreen(new ErrorScreen(new TranslatableComponent("selectWorld.unable_to_load"), new TextComponent(var7.getMessage())));
-                return;
-            }
+        LevelStorageSource lv = Minecraft.getInstance().getLevelSource();
+        try {
+            levels = lv.getLevelList();
+        } catch (LevelStorageException var7) {
+            FTBTeamIslands.LOGGER.error("Couldn't load level list", var7);
+            Minecraft.getInstance().setScreen(new ErrorScreen(new TranslatableComponent("selectWorld.unable_to_load"), new TextComponent(var7.getMessage())));
+            return;
         }
 
         // Replace the single player button with our own

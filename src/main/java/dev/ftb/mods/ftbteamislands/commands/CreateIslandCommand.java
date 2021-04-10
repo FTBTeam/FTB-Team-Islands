@@ -61,7 +61,9 @@ public class CreateIslandCommand {
             throw ALREADY_OWN_ISLAND.create();
         }
 
+        context.getSource().sendSuccess(new TranslatableComponent("commands.ftbteamislands.response.island_creating"), false);
         spawnIslandWithRateLimit(player, manager, context.getSource().getServer(), playerTeam);
+        context.getSource().sendSuccess(new TranslatableComponent("commands.ftbteamislands.response.island_creating_finished"), false);
         return 0;
     }
 

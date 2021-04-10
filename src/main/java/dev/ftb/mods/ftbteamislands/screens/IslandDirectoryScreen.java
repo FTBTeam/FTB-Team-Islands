@@ -1,6 +1,7 @@
 package dev.ftb.mods.ftbteamislands.screens;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import dev.ftb.mods.ftbteamislands.ClientHandler;
 import dev.ftb.mods.ftbteamislands.FTBTeamIslands;
 import dev.ftb.mods.ftbteamislands.islands.PrebuiltIslands;
 import net.minecraft.Util;
@@ -33,6 +34,8 @@ public class IslandDirectoryScreen extends Screen {
         this.islands = islands;
         this.onPrebuiltSelect = onPrebuiltSelect;
         this.previousScreen = previousScreen;
+
+        ClientHandler.selectedIsland = null;
     }
 
     @Override
