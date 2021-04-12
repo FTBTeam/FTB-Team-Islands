@@ -9,7 +9,7 @@ sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
 
 def ENV = System.getenv()
-version = "${mod_version}${ENV.BUILD_NUMBER ? "-build.${ENV.BUILD_NUMBER}" : "-snapshot-13"}"
+version = "${mod_version}${ENV.BUILD_NUMBER ? "-build.${ENV.BUILD_NUMBER}" : "-build.1"}"
 archivesBaseName = project.archives_base_name
 group = project.maven_group
 
@@ -107,6 +107,7 @@ publishing {
         mavenJava(MavenPublication) {
             // add all the jars that should be included when publishing to maven
             artifact(remapJar) {
+                artifactId
                 builtBy remapJar
             }
         }
@@ -114,10 +115,7 @@ publishing {
 
     // See https://docs.gradle.org/current/userguide/publishing_maven.html for information on how to set up publishing.
     repositories {
-        // Add repositories to publish to here.
-        // Notice: This block does NOT have the same function as the block in the top level.
-        // The repositories here will be used for publishing your artifact, not for
-        // retrieving dependencies.
+        
     }
 }
 
