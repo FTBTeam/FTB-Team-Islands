@@ -108,7 +108,7 @@ jar.finalizedBy('reobfJar')
 publishing {
     publications {
         mavenJava(MavenPublication) {
-            artifact(remapJar) {
+            artifact(jar) {
                 artifactId = archivesBaseName + "-forge"
                 classifier null
             }
