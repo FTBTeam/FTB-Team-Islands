@@ -3,13 +3,11 @@ plugins {
     id 'maven-publish'
 }
 
-apply from: 'private.gradle'
-
 sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
 
 def ENV = System.getenv()
-version = "${mod_version}${ENV.BUILD_NUMBER ? "-build.${ENV.BUILD_NUMBER}" : "-build.1"}"
+version = "${mod_version}-build.${ENV.GITHUB_RUN_NUMBER ?: 9999}"
 archivesBaseName = project.archives_base_name
 group = project.maven_group
 
@@ -34,16 +32,6 @@ repositories {
     maven { url "https://www.cursemaven.com" }
     maven { url "https://maven.saps.dev" }
     maven { url "https://maven.latvian.dev" }
-    maven {
-        url "https://git.ftb.dev/api/v4/groups/156/-/packages/maven"
-        credentials(HttpHeaderCredentials) {
-            name = 'Private-Token'
-            value = ftbMavenToken
-        }
-        authentication {
-            header(HttpHeaderAuthentication)
-        }
-    }
 }
 
 dependencies {
@@ -101,24 +89,6 @@ jar {
     classifier "dev"
 }
 
-// configure the maven publication
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            // add all the jars that should be included when publishing to maven
-            artifact(remapJar) {
-                artifactId
-                builtBy remapJar
-            }
-        }
-    }
-
-    // See https://docs.gradle.org/current/userguide/publishing_maven.html for information on how to set up publishing.
-    repositories {
-        
-    }
-}
-
 //if (ENV.CURSEFORGE_KEY) {
 //    curseforge {
 //        apiKey = ENV.CURSEFORGE_KEY
@@ -134,16 +104,32 @@ publishing {
 //    }
 //}
 
-//jar.finalizedBy('reobfJar')
+jar.finalizedBy('reobfJar')
 publishing {
     publications {
         mavenJava(MavenPublication) {
-            artifact jar
+            artifact(remapJar) {
+                artifactId = archivesBaseName + "-forge"
+                classifier null
+            }
         }
     }
+
     repositories {
-        maven {
-            url "file:///${project.projectDir}/mcmodsrepo"
+        if (ENV.LOCAL_MAVEN) {
+            maven {
+                url = "file://${ENV.LOCAL_MAVEN}"
+            }
+        }
+
+        if (ENV.SAPS_TOKEN) {
+            maven {
+                url "https://maven.saps.dev/minecraft"
+                credentials {
+                    username = "ftb"
+                    password = "${ENV.SAPS_TOKEN}"
+                }
+            }
         }
     }
 }
