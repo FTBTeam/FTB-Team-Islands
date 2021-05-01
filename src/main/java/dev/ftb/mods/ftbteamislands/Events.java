@@ -7,7 +7,7 @@ import dev.ftb.mods.ftbteamislands.islands.IslandsManager;
 import dev.ftb.mods.ftbteams.data.*;
 import dev.ftb.mods.ftbteams.event.PlayerChangedTeamEvent;
 import dev.ftb.mods.ftbteams.event.TeamCreatedEvent;
-import dev.ftb.mods.ftbteams.event.TeamDeletedEvent;
+import dev.ftb.mods.ftbteams.event.TeamEvent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
@@ -149,7 +149,7 @@ public class Events {
     /**
      * Upon deletion, validate against any existing islands and mark them as unused.
      */
-    public static void onTeamDeleted(TeamDeletedEvent event) {
+    public static void onTeamDeleted(TeamEvent event) {
         Team team = event.getTeam();
         if (!IslandsManager.isEnabled(team.manager.getServer())) {
             return;

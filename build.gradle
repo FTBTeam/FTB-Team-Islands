@@ -32,6 +32,7 @@ repositories {
     maven { url "https://www.cursemaven.com" }
     maven { url "https://maven.saps.dev" }
     maven { url "https://maven.latvian.dev" }
+    maven { url "https://maven.shedaniel.me" }
 }
 
 dependencies {
@@ -40,12 +41,11 @@ dependencies {
     mappings minecraft.officialMojangMappings()
     forge "net.minecraftforge:forge:${project.minecraft_version}-${project.forge_version}"
 
-    modRuntime "dev.ftb.mods:ftb-chunks:$ftb_mods_chunks"
-    modRuntime "dev.ftb.mods:ftb-gui-library:$ftb_mods_gui_lib"
-    modCompile "dev.ftb.mods:ftb-chunks:$ftb_mods_chunks"
+    modCompile "dev.ftb.mods:ftb-library-forge:$ftb_mods_lib2"
+    modCompile "dev.ftb.mods:ftb-chunks-forge:$ftb_mods_chunks"
     modCompile "dev.ftb.mods:ftb-teams-forge:$ftb_mods_teams"
 
-    modCompile "curse.maven:architectury-forge-419699:3254875"
+    modCompile "me.shedaniel:architectury-forge:$arch_version"
 }
 
 processResources {

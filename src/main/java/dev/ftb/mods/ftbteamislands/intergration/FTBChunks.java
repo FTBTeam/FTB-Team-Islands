@@ -20,7 +20,7 @@ public class FTBChunks {
             for (int z = pos.z - radius; z <= pos.z + radius; z++) {
                 ClaimResult claimResult = FTBChunksAPI.claimAsPlayer(player, level.dimension(), new ChunkPos(x, z), false);
                 if (claimResult.isSuccess()) {
-                    claimResult.setClaimedTime(time);
+                    claimResult.setClaimedTime(time.toEpochMilli());
                 }
 
                 if (claimResult == ClaimResults.NOT_ENOUGH_POWER || claimResult == ClaimResults.DIMENSION_FORBIDDEN) {

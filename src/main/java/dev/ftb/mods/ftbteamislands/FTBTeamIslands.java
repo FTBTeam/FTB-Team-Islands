@@ -4,8 +4,7 @@ import dev.ftb.mods.ftbteamislands.commands.*;
 import dev.ftb.mods.ftbteamislands.islands.IslandsManager;
 import dev.ftb.mods.ftbteamislands.network.NetworkManager;
 import dev.ftb.mods.ftbteams.event.PlayerChangedTeamEvent;
-import dev.ftb.mods.ftbteams.event.TeamCreatedEvent;
-import dev.ftb.mods.ftbteams.event.TeamDeletedEvent;
+import dev.ftb.mods.ftbteams.event.TeamEvent;
 import net.minecraft.commands.Commands;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegisterCommandsEvent;
@@ -37,9 +36,9 @@ public class FTBTeamIslands {
 
         eventBus.addListener(this::setup);
 
-        PlayerChangedTeamEvent.EVENT.register(Events::onChangedTeamEvent);
-        TeamCreatedEvent.EVENT.register(Events::onTeamCreated);
-        TeamDeletedEvent.EVENT.register(Events::onTeamDeleted);
+        TeamEvent.DELETED.register(Events::onTeamDeleted);
+        TeamEvent.CREATED.register(Events::onTeamCreated);
+        PlayerChangedTeamEvent.PLAYER_CHANGED.register(Events::onChangedTeamEvent);
 
         MinecraftForge.EVENT_BUS.register(this);
     }
