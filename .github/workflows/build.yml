@@ -1,5 +1,6 @@
 name: Java CI
 
+# Made by max, modified by me
 on:
   push:
     branches: [ main, dev ]
@@ -24,7 +25,6 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
         with:
           fetch-depth: 30 # Gets the last 20 commits so the changelog might work
