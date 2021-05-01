@@ -104,11 +104,12 @@ jar {
 //    }
 //}
 
-jar.finalizedBy('reobfJar')
+//jar.finalizedBy('reobfJar')
 publishing {
     publications {
         mavenJava(MavenPublication) {
-            artifact(jar) {
+            artifact(remapJar) {
+                builtBy remapJar
                 artifactId = archivesBaseName + "-forge"
                 classifier null
             }
