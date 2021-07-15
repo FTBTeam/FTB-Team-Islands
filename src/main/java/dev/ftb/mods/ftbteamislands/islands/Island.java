@@ -69,12 +69,10 @@ public class Island {
     public void teleportPlayerTo(ServerPlayer player, MinecraftServer server) {
         ServerLevel level = server.getLevel(IslandsManager.getTargetIsland());
 
-        if (player.level.dimension() != IslandsManager.getTargetIsland()) {
-            player.changeDimension(level);
-        }
-
+        int lvl = player.experienceLevel;
         Vec3 spawnPos = Vec3.atBottomCenterOf(new Vec3i(this.getSpawnPos().getX(), this.getSpawnPos().getY(), this.getSpawnPos().getZ()));
-        player.teleportTo(spawnPos.x, spawnPos.y, spawnPos.z);
+        player.teleportTo(level, spawnPos.x + .5D, spawnPos.y + .1D, spawnPos.z + .5D, player.yRot, player.xRot);
+        player.setExperienceLevels(lvl);
     }
 
     public CompoundTag write() {
