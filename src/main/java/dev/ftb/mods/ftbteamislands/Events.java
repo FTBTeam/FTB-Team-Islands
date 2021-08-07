@@ -176,7 +176,7 @@ public class Events {
 
         // Handle custom respawn logic
         IslandsManager islandsManager = IslandsManager.get();
-        if (event.getPlayer().getSleepingPos().isPresent()) {
+        if (((ServerPlayer) event.getPlayer()).getRespawnPosition() != null) {
             // If the player already has a sleeping position, just use it and return.
             return;
         }
@@ -188,5 +188,6 @@ public class Events {
         }
 
         island.teleportPlayerTo((ServerPlayer) event.getPlayer(), event.getPlayer().getServer());
+        event.setCanceled(true);
     }
 }
