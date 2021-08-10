@@ -188,6 +188,5 @@ public class Events {
         }
 
         island.teleportPlayerTo((ServerPlayer) event.getPlayer(), event.getPlayer().getServer());
-        event.setCanceled(true);
     }
 }
