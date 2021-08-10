@@ -15,13 +15,13 @@ import net.minecraft.server.level.ServerPlayer;
 
 import java.util.Optional;
 
-public class MyIslandCommand {
+public class HomeCommand {
     private static final SimpleCommandExceptionType NO_ISLAND_ERROR = new SimpleCommandExceptionType(new TranslatableComponent("commands.ftbteamislands.error.no_island"));
     private static final SimpleCommandExceptionType DISABLED = new SimpleCommandExceptionType(new TranslatableComponent("commands.ftbteamislands.error.my_island_disabled"));
 
     public static LiteralArgumentBuilder<CommandSourceStack> register() {
-        return Commands.literal("myisland")
-            .executes(MyIslandCommand::execute);
+        return Commands.literal("home")
+            .executes(HomeCommand::execute);
     }
 
     private static int execute(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {

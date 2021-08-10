@@ -57,10 +57,11 @@ public class FTBTeamIslands {
                 .then(JumpToIslandCommand.register())
                 .then(ListIslandsCommand.register())
                 .then(LobbyCommand.register())
-                .then(MyIslandCommand.register())
+                .then(HomeCommand.register())
                 .then(DeleteUnusedIslandsCommand.register())
                 .then(CreateIslandCommand.register())
                 .then(ReloadIslandsJsonCommand.register())
+                .then(ChangeIslandSpawnPoint.register())
         );
     }
 

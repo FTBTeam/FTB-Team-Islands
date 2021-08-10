@@ -15,6 +15,7 @@
   "commands.ftbteamislands.response.island_creating_finished": "Island created!",
   "commands.ftbteamislands.response.found_at": " found at (%s)",
   "commands.ftbteamislands.response.inactive_island": "Inactive island at (%s)",
+  "commands.ftbteamislands.response.spawn_changed": "Island spawn point changed to [%s]",
   "screens.ftbteamislands.select_island_category": "Select an island category",
   "screens.ftbteamislands.select_island": "Select an island",
   "screens.ftbteamislands.by": "By: %s",

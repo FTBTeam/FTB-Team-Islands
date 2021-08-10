@@ -190,6 +190,7 @@ public class IslandSpawner {
             BoundingBox inWorldBoundingBox = this.template.getBoundingBox(new StructurePlaceSettings(), this.spawnAt.offset(-boundingBox.x1 / 2, this.yOffset, -boundingBox.z1 / 2));
 
             // Spawn the template in the world at the offered block pos.
+
             this.template.placeInWorldChunk(this.level, this.spawnAt.offset(-boundingBox.x1 / 2, this.yOffset, -boundingBox.z1 / 2), new StructurePlaceSettings(), this.level.getRandom());
 
             // TODO: find a better way of doing this!
