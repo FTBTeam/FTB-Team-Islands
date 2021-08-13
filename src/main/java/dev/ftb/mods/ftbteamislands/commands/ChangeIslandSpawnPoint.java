@@ -36,6 +36,7 @@ public class ChangeIslandSpawnPoint {
         }
 
         island.get().spawnPos = player.blockPosition();
+        IslandsManager.get().save();
 
         context.getSource().sendSuccess(new TranslatableComponent("commands.ftbteamislands.response.spawn_changed", "x: " + player.blockPosition().getX() + "; y: " + player.blockPosition().getY() + "; z: " + player.blockPosition().getZ()), false);
         return 0;

@@ -63,6 +63,11 @@ public class FTBTeamIslands {
                 .then(ReloadIslandsJsonCommand.register())
                 .then(ChangeIslandSpawnPoint.register())
         );
+
+        // Simpler command
+        event.getDispatcher().register(
+                Commands.literal("myisland").executes(HomeCommand::execute)
+        );
     }
 
     @SubscribeEvent

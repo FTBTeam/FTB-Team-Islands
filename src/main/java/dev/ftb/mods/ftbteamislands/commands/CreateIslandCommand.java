@@ -5,6 +5,7 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import dev.ftb.mods.ftbteamislands.Config;
+import dev.ftb.mods.ftbteamislands.FTBTeamIslands;
 import dev.ftb.mods.ftbteamislands.islands.IslandSpawner;
 import dev.ftb.mods.ftbteamislands.islands.IslandsManager;
 import dev.ftb.mods.ftbteamislands.network.NetworkManager;
@@ -35,7 +36,25 @@ public class CreateIslandCommand {
 
     public static LiteralArgumentBuilder<CommandSourceStack> register() {
         return Commands.literal("create")
-            .executes(CreateIslandCommand::execute);
+                .requires(CreateIslandCommand::notHasIsland)
+                .executes(CreateIslandCommand::execute);
+    }
+
+    private static boolean notHasIsland(CommandSourceStack commandSourceStack) {
+        ServerPlayer player;
+
+        try {
+            player = commandSourceStack.getPlayerOrException();
+        } catch (CommandSyntaxException e) {
+            return false;
+        }
+
+        Team playerTeam = TeamManager.INSTANCE.getPlayerTeam(player.getUUID());
+        if (playerTeam == null) {
+            return true;
+        }
+
+        return !IslandsManager.get().getIsland(playerTeam).isPresent();
     }
 
     private static int execute(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
@@ -61,11 +80,11 @@ public class CreateIslandCommand {
             throw ALREADY_OWN_ISLAND.create();
         }
 
-        spawnIslandWithRateLimit(player, manager, context.getSource().getServer(), playerTeam);
+        spawnIslandWithRateLimit(player, context.getSource().getServer(), playerTeam);
         return 0;
     }
 
-    public static void spawnIslandWithRateLimit(ServerPlayer player, IslandsManager manager, MinecraftServer server, Team team) throws CommandSyntaxException {
+    public static void spawnIslandWithRateLimit(ServerPlayer player, MinecraftServer server, Team team) throws CommandSyntaxException {
         // Ensure they're not spamming the island creation
         if (Config.general.creationTimeout.get()) {
             Instant instant = playersTimeout.get(player.getUUID());
@@ -83,12 +102,12 @@ public class CreateIslandCommand {
         }
 
         IslandSpawner.spawnIsland(
-            new ResourceLocation(Config.islands.defaultIslandResource.get()),
-            server.getLevel(IslandsManager.getTargetIsland()),
-            team,
-            player,
-            server,
-            Config.islands.defaultIslandResourceYOffset.get()
+                new ResourceLocation(Config.islands.defaultIslandResource.get()),
+                server.getLevel(IslandsManager.getTargetIsland()),
+                team,
+                player,
+                server,
+                Config.islands.defaultIslandResourceYOffset.get()
         );
     }
 }
