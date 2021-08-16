@@ -1,5 +1,6 @@
 package dev.ftb.mods.ftbteamislands;
 
+import com.mojang.blaze3d.vertex.PoseStack;
 import dev.ftb.mods.ftbteamislands.islands.IslandsManager;
 import dev.ftb.mods.ftbteamislands.islands.PrebuiltIslands;
 import dev.ftb.mods.ftbteamislands.network.IslandSelectionPacket;
@@ -8,7 +9,9 @@ import dev.ftb.mods.ftbteamislands.screens.IslandDirectoryScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.MultiLineLabel;
 import net.minecraft.client.gui.screens.ErrorScreen;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.TitleScreen;
 import net.minecraft.client.gui.screens.worldselection.CreateWorldScreen;
 import net.minecraft.client.gui.screens.worldselection.SelectWorldScreen;
@@ -56,8 +59,21 @@ public class ClientHandler {
 
         Font font = Minecraft.getInstance().font;
         if (selectedIsland != null) {
-            font.drawShadow(event.getMatrixStack(), "Selected island", 0, 0, 0xFFFFFF);
-            font.drawShadow(event.getMatrixStack(), selectedIsland.getName(), 0, 20, 0xFFFFFF);
+            PoseStack matrixStack = event.getMatrixStack();
+
+            Minecraft.getInstance().textureManager.bind(selectedIsland.getImage());
+            Screen.blit(matrixStack, 10, 10, 0f, 0f, 112, 64, 112, 64);
+            Screen.fill(matrixStack, 10, 10, 10 + 112, 74, 0x93000000);
+
+            matrixStack.pushPose();
+            matrixStack.scale(.8F, .8F, .8F);
+            matrixStack.translate((55 + 112) / 2f, 20f, 0);
+            Screen.drawCenteredString(matrixStack, font, "Selected island", 0, 0, 0xD1D1D1);
+            matrixStack.popPose();
+
+            MultiLineLabel
+                    .create(font, new TextComponent(selectedIsland.getName()), 100)
+                    .renderCentered(matrixStack, (20 + 112) / 2, 28);
         }
     }
 

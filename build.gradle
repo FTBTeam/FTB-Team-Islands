@@ -1,5 +1,5 @@
 plugins {
-    id 'forgified-fabric-loom' version '0.6.79'
+    id 'dev.architectury.loom' version '0.7.3-SNAPSHOT'
     id 'maven-publish'
 }
 
@@ -29,9 +29,8 @@ loom {
 }
 
 repositories {
-    maven { url "https://www.cursemaven.com" }
-    maven { url "https://maven.saps.dev" }
-    maven { url "https://maven.latvian.dev" }
+    maven { url "https://cursemaven.com" }
+    maven { url "https://maven.saps.dev/minecraft" }
     maven { url "https://maven.shedaniel.me" }
 }
 
@@ -41,11 +40,11 @@ dependencies {
     mappings minecraft.officialMojangMappings()
     forge "net.minecraftforge:forge:${project.minecraft_version}-${project.forge_version}"
 
-    modCompile "dev.ftb.mods:ftb-library-forge:$ftb_mods_lib2"
-    modCompile "dev.ftb.mods:ftb-chunks-forge:$ftb_mods_chunks"
-    modCompile "dev.ftb.mods:ftb-teams-forge:$ftb_mods_teams"
+    modImplementation "dev.ftb.mods:ftb-library-forge:$ftb_mods_lib2"
+    modImplementation "dev.ftb.mods:ftb-chunks-forge:$ftb_mods_chunks"
+    modImplementation "dev.ftb.mods:ftb-teams-forge:$ftb_mods_teams"
 
-    modCompile "me.shedaniel:architectury-forge:$arch_version"
+    modImplementation "me.shedaniel:architectury-forge:$arch_version"
 }
 
 processResources {
