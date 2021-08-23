@@ -26,15 +26,13 @@ public class IslandSelectScreen extends Screen {
     private IslandList islandList;
     private EditBox searchBox;
     private Button createButton;
-    private Screen previousScreen;
 
-    public IslandSelectScreen(PrebuiltIslands selected, List<PrebuiltIslands> previousScreenData, Consumer<PrebuiltIslands.PrebuiltIsland> onSelect, Screen previousScreen) {
+    public IslandSelectScreen(PrebuiltIslands selected, List<PrebuiltIslands> previousScreenData, Consumer<PrebuiltIslands.PrebuiltIsland> onSelect) {
         super(TextComponent.EMPTY);
 
         this.selectedIslandDir = selected;
         this.previousScreenData = previousScreenData;
         this.onSelect = onSelect;
-        this.previousScreen = previousScreen;
     }
 
     @Override
@@ -46,7 +44,7 @@ public class IslandSelectScreen extends Screen {
         this.searchBox.setResponder(this.islandList::searchList);
 
         this.addButton(new Button(this.width / 2 - 130, this.height - 30, 100, 20, new TranslatableComponent("screens.ftbteamislands.back"), btn ->
-            Minecraft.getInstance().setScreen(new IslandDirectoryScreen(this.previousScreenData, this.onSelect, this.previousScreen))));
+            Minecraft.getInstance().setScreen(new IslandDirectoryScreen(this.previousScreenData, this.onSelect))));
 
         this.addButton(this.createButton = new Button(this.width / 2 - 20, this.height - 30, 150, 20, new TranslatableComponent("screens.ftbteamislands.create"), btn -> {
             if (this.islandList.getSelected() == null) {
