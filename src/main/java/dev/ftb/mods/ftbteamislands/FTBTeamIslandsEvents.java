@@ -18,7 +18,7 @@ public class FTBTeamIslandsEvents {
     }
 
     public static class IslandJoined extends IslandEvent {
-        ServerPlayer player;
+        public ServerPlayer player;
 
         public IslandJoined(Team team, Island island, ServerPlayer player) {
             super(team, island);
@@ -26,15 +26,12 @@ public class FTBTeamIslandsEvents {
         }
     }
 
-    public static class IslandLeft extends IslandJoined {
-        public IslandLeft(Team team, Island island, ServerPlayer player) {
-            super(team, island, player);
-        }
-    }
+    public static class FirstTeleportTo extends IslandEvent {
+        public ServerPlayer player;
 
-    public static class FirstTeleportTo extends IslandJoined {
         public FirstTeleportTo(Team team, Island island, ServerPlayer player) {
-            super(team, island, player);
+            super(team, island);
+            this.player = player;
         }
     }
 
