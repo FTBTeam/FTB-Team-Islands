@@ -18,7 +18,7 @@ public class FTBTeamIslandsEvents {
     }
 
     public static class IslandJoined extends IslandEvent {
-        public ServerPlayer player;
+        public final ServerPlayer player;
 
         public IslandJoined(Team team, Island island, ServerPlayer player) {
             super(team, island);
