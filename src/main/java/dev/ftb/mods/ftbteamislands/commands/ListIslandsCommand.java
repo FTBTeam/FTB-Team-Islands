@@ -54,7 +54,7 @@ public class ListIslandsCommand {
                     .append(new TextComponent(team.getDisplayName()).withStyle(ChatFormatting.LIGHT_PURPLE))
                     .append(new TranslatableComponent("commands.ftbteamislands.response.found_at", island.spawnPos.getX() + ", " + island.spawnPos.getY() + ", " + island.spawnPos.getZ()));
 
-                text.setStyle(text.getStyle().withClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, String.format("/%s islands %s", FTBTeamIslands.MOD_ID, team.getStringID() + "#" + team.getId().toString().substring(0, 8)))));
+                text.setStyle(text.getStyle().withClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, String.format("/%s islands %s", FTBTeamIslands.MOD_ID, team.getStringID()))));
                 context.getSource().sendSuccess(text, false);
             }
         }
