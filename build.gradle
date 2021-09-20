@@ -1,7 +1,10 @@
 plugins {
     id 'dev.architectury.loom' version '0.7.3-SNAPSHOT'
     id 'maven-publish'
+    id "com.matthewprenger.cursegradle" version "1.4.0"
 }
+
+apply from: 'https://files.latmod.com/public/markdown-git-changelog.gradle'
 
 sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
@@ -88,40 +91,19 @@ jar {
     classifier "dev"
 }
 
-//if (ENV.CURSEFORGE_KEY) {
-//    curseforge {
-//        apiKey = ENV.CURSEFORGE_KEY
-//        project {
-//            id = project.curseforge_id
-//            releaseType = "release"
-//            addGameVersion "Forge"
-//            addGameVersion "1.16.5"
-//            mainArtifact(remapJar.archivePath)
-//            changelog = getGitChangelog
-//            changelogType = 'markdown'
-//        }
-//    }
-//}
-
 //jar.finalizedBy('reobfJar')
 publishing {
     publications {
         mavenJava(MavenPublication) {
             artifact(remapJar) {
                 builtBy remapJar
-                artifactId = archivesBaseName + "-forge"
+                artifactId = archivesBaseName
                 classifier null
             }
         }
     }
 
     repositories {
-        if (ENV.LOCAL_MAVEN) {
-            maven {
-                url = "file://${ENV.LOCAL_MAVEN}"
-            }
-        }
-
         if (ENV.SAPS_TOKEN) {
             maven {
                 url "https://maven.saps.dev/minecraft"
@@ -130,6 +112,31 @@ publishing {
                     password = "${ENV.SAPS_TOKEN}"
                 }
             }
+        }
+
+        if (ENV.FTB_MAVEN_TOKEN) {
+            maven {
+                url "https://maven.ftb.dev/release"
+                credentials {
+                    username = "ftb"
+                    password = "${ENV.FTB_MAVEN_TOKEN}"
+                }
+            }
+        }
+    }
+}
+
+if (ENV.CURSEFORGE_KEY) {
+    curseforge {
+        apiKey = ENV.CURSEFORGE_KEY
+        project {
+            id = project.curseforge_id
+            releaseType = "release"
+            addGameVersion "Forge"
+            addGameVersion "1.16.5"
+            mainArtifact(remapJar.archivePath)
+            changelog = getGitChangelog
+            changelogType = 'markdown'
         }
     }
 }
