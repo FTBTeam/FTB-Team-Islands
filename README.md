@@ -25,7 +25,7 @@ You can only use this command if you have a permission level of 2 or more.
 
 Will take you back to the worlds lobby if one exists.
 
-### `/ftbteamislands myisland`
+### `/myisland`
 
 Will take you back to your islands spawn point. Don't delete the block under it or you're in for a long fall! This
 command can be disabled from the config.
