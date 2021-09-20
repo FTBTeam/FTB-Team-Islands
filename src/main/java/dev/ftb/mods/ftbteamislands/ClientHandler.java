@@ -41,6 +41,10 @@ public class ClientHandler {
             return;
         }
 
+        if (!(event.getGui() instanceof CreateWorldScreen) && selectedIsland != null) {
+            selectedIsland = null;
+        }
+
         if (event.getGui() instanceof CreateWorldScreen && selectedIsland == null) {
             Minecraft.getInstance().setScreen(new IslandDirectoryScreen(IslandsManager.getAvailableIslands(), island -> {
                 selectedIsland = island;
