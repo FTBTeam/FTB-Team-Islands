@@ -41,14 +41,28 @@ public class ClientHandler {
             return;
         }
 
-        if (!(event.getGui() instanceof CreateWorldScreen) && selectedIsland != null) {
-            selectedIsland = null;
-        }
-
         if (event.getGui() instanceof CreateWorldScreen && selectedIsland == null) {
             Minecraft.getInstance().setScreen(new IslandDirectoryScreen(IslandsManager.getAvailableIslands(), island -> {
                 selectedIsland = island;
                 Minecraft.getInstance().setScreen(CreateWorldScreen.create(null));
+            }));
+        }
+    }
+
+    @SubscribeEvent
+    public static void screenEventPost(GuiScreenEvent.InitGuiEvent.Post event) {
+        Screen gui = event.getGui();
+        if (IslandsManager.getAvailableIslands().size() == 0 || !(gui instanceof CreateWorldScreen)) {
+            return;
+        }
+
+        if (selectedIsland != null) {
+            event.addWidget(new Button(gui.width / 2 - (310 / 2), 212, 310, 20, new TextComponent("FTB Team Islands: Clear selected island"), (b) -> {
+                selectedIsland = null;
+                Minecraft.getInstance().setScreen(new IslandDirectoryScreen(IslandsManager.getAvailableIslands(), island -> {
+                    selectedIsland = island;
+                    Minecraft.getInstance().setScreen(CreateWorldScreen.create(null));
+                }));
             }));
         }
     }
