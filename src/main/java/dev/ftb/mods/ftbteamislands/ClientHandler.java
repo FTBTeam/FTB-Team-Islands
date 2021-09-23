@@ -57,7 +57,7 @@ public class ClientHandler {
         }
 
         if (selectedIsland != null) {
-            event.addWidget(new Button(gui.width / 2 - (310 / 2), 212, 310, 20, new TextComponent("FTB Team Islands: Clear selected island"), (b) -> {
+            event.addWidget(new Button(10, 74, 112, 20, new TextComponent("Select island"), (b) -> {
                 selectedIsland = null;
                 Minecraft.getInstance().setScreen(new IslandDirectoryScreen(IslandsManager.getAvailableIslands(), island -> {
                     selectedIsland = island;
