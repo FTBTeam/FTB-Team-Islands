@@ -1,5 +1,7 @@
 # FTB Team Islands
 
+Use https://github.com/FTBTeam/FTB-Mods-Issues for any mod issues
+
 ## FTB Teams
 
 This mod relies heavily on FTB Teams(teams), you must have teams installed. Teams is used as the core of how the Islands
