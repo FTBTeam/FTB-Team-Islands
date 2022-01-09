@@ -1,5 +1,6 @@
 package dev.ftb.mods.ftbteamislands;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import dev.ftb.mods.ftbteamislands.islands.IslandsManager;
 import dev.ftb.mods.ftbteamislands.islands.PrebuiltIslands;
@@ -21,7 +22,7 @@ import net.minecraft.world.level.storage.LevelStorageException;
 import net.minecraft.world.level.storage.LevelStorageSource;
 import net.minecraft.world.level.storage.LevelSummary;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.GuiScreenEvent;
+import net.minecraftforge.client.event.ScreenEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
@@ -36,12 +37,12 @@ public class ClientHandler {
     }
 
     @SubscribeEvent
-    public static void screenEventPre(GuiScreenEvent.InitGuiEvent.Pre event) {
+    public static void screenEventPre(ScreenEvent.InitScreenEvent.Pre event) {
         if (IslandsManager.getAvailableIslands().size() == 0) {
             return;
         }
 
-        if (event.getGui() instanceof CreateWorldScreen && selectedIsland == null) {
+        if (event.getScreen() instanceof CreateWorldScreen && selectedIsland == null) {
             Minecraft.getInstance().setScreen(new IslandDirectoryScreen(IslandsManager.getAvailableIslands(), island -> {
                 selectedIsland = island;
                 Minecraft.getInstance().setScreen(CreateWorldScreen.create(null));
@@ -50,14 +51,14 @@ public class ClientHandler {
     }
 
     @SubscribeEvent
-    public static void screenEventPost(GuiScreenEvent.InitGuiEvent.Post event) {
-        Screen gui = event.getGui();
+    public static void screenEventPost(ScreenEvent.InitScreenEvent.Post event) {
+        Screen gui = event.getScreen();
         if (IslandsManager.getAvailableIslands().size() == 0 || !(gui instanceof CreateWorldScreen)) {
             return;
         }
 
         if (selectedIsland != null) {
-            event.addWidget(new Button(10, 74, 112, 20, new TextComponent("Select island"), (b) -> {
+            event.addListener(new Button(10, 74, 112, 20, new TextComponent("Select island"), (b) -> {
                 selectedIsland = null;
                 Minecraft.getInstance().setScreen(new IslandDirectoryScreen(IslandsManager.getAvailableIslands(), island -> {
                     selectedIsland = island;
@@ -68,16 +69,16 @@ public class ClientHandler {
     }
 
     @SubscribeEvent
-    public static void screenRender(GuiScreenEvent.DrawScreenEvent.Post event) {
-        if (!(event.getGui() instanceof CreateWorldScreen)) {
+    public static void screenRender(ScreenEvent.DrawScreenEvent.Post event) {
+        if (!(event.getScreen() instanceof CreateWorldScreen)) {
             return;
         }
 
         Font font = Minecraft.getInstance().font;
         if (selectedIsland != null) {
-            PoseStack matrixStack = event.getMatrixStack();
+            PoseStack matrixStack = event.getPoseStack();
 
-            Minecraft.getInstance().textureManager.bind(selectedIsland.getImage());
+            RenderSystem.setShaderTexture(0, selectedIsland.getImage());
             Screen.blit(matrixStack, 10, 10, 0f, 0f, 112, 64, 112, 64);
             Screen.fill(matrixStack, 10, 10, 10 + 112, 74, 0x93000000);
 
