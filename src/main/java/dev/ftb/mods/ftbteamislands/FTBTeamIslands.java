@@ -8,6 +8,8 @@ import dev.ftb.mods.ftbteams.event.TeamEvent;
 import net.minecraft.commands.Commands;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegisterCommandsEvent;
+import net.minecraftforge.event.server.ServerAboutToStartEvent;
+import net.minecraftforge.event.server.ServerStoppedEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -15,8 +17,6 @@ import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.event.server.FMLServerAboutToStartEvent;
-import net.minecraftforge.fml.event.server.FMLServerStoppedEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -71,7 +71,7 @@ public class FTBTeamIslands {
     }
 
     @SubscribeEvent
-    public void onServerAboutToStart(FMLServerAboutToStartEvent event) {
+    public void onServerAboutToStart(ServerAboutToStartEvent event) {
         IslandsManager.setup(event.getServer());
     }
 
@@ -79,7 +79,7 @@ public class FTBTeamIslands {
      * Attempts to delete the islands after the server has shut down
      */
     @SubscribeEvent
-    public void onServerShutdown(FMLServerStoppedEvent event) {
+    public void onServerShutdown(ServerStoppedEvent event) {
         IslandsManager.get().getIslandsToDelete().forEach(island -> {
             try {
                 Files.deleteIfExists(island);

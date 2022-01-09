@@ -17,7 +17,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.LevelResource;
-import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.loading.FMLLoader;
 
 import javax.annotation.Nullable;
@@ -27,6 +26,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static net.minecraft.nbt.Tag.TAG_COMPOUND;
 
 public class IslandsManager {
     public static final LevelResource FOLDER_NAME = new LevelResource("ftbteamislands");
@@ -215,12 +216,12 @@ public class IslandsManager {
         CompoundTag compound = this.getSaveCompound();
 
         if (compound.contains("islands")) {
-            compound.getList("islands", Constants.NBT.TAG_COMPOUND)
+            compound.getList("islands", TAG_COMPOUND)
                 .forEach(island -> this.islands.put(((CompoundTag) island).getUUID("key"), Island.read(((CompoundTag) island).getCompound("island"))));
         }
 
         if (compound.contains("deletedIslands")) {
-            compound.getList("deletedIslands", Constants.NBT.TAG_COMPOUND)
+            compound.getList("deletedIslands", TAG_COMPOUND)
                 .forEach(island -> this.deletedIslands.put(((CompoundTag) island).getUUID("key"), Island.read(((CompoundTag) island).getCompound("island"))));
         }
 

@@ -4,11 +4,12 @@ import com.google.gson.*;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.common.util.Constants;
 
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static net.minecraft.nbt.Tag.TAG_COMPOUND;
 
 // Wrapper for our json format to help with reading and deserializing
 public class PrebuiltIslands {
@@ -29,7 +30,7 @@ public class PrebuiltIslands {
             compound.getString("name"),
             compound.getString("author"),
             compound.getString("desc"),
-            compound.getList("islands", Constants.NBT.TAG_COMPOUND).stream()
+            compound.getList("islands", TAG_COMPOUND).stream()
                 .map(tag -> PrebuiltIsland.read((CompoundTag) tag))
                 .collect(Collectors.toList())
         );

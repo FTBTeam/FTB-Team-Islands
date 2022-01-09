@@ -1,5 +1,6 @@
 package dev.ftb.mods.ftbteamislands.screens;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import dev.ftb.mods.ftbteamislands.FTBTeamIslands;
 import dev.ftb.mods.ftbteamislands.islands.PrebuiltIslands;
@@ -9,6 +10,7 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.AbstractSelectionList;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
@@ -43,10 +45,10 @@ public class IslandSelectScreen extends Screen {
         this.searchBox = new EditBox(this.font, this.width / 2 - 160 / 2, 40, 160, 20, TextComponent.EMPTY);
         this.searchBox.setResponder(this.islandList::searchList);
 
-        this.addButton(new Button(this.width / 2 - 130, this.height - 30, 100, 20, new TranslatableComponent("screens.ftbteamislands.back"), btn ->
+        this.addRenderableWidget(new Button(this.width / 2 - 130, this.height - 30, 100, 20, new TranslatableComponent("screens.ftbteamislands.back"), btn ->
             Minecraft.getInstance().setScreen(new IslandDirectoryScreen(this.previousScreenData, this.onSelect))));
 
-        this.addButton(this.createButton = new Button(this.width / 2 - 20, this.height - 30, 150, 20, new TranslatableComponent("screens.ftbteamislands.create"), btn -> {
+        this.addRenderableWidget(this.createButton = new Button(this.width / 2 - 20, this.height - 30, 150, 20, new TranslatableComponent("screens.ftbteamislands.create"), btn -> {
             if (this.islandList.getSelected() == null) {
                 return;
             }
@@ -59,8 +61,8 @@ public class IslandSelectScreen extends Screen {
 
         this.createButton.active = false;
 
-        this.children.add(this.searchBox);
-        this.children.add(this.islandList);
+        this.addRenderableWidget(this.searchBox);
+        this.addRenderableWidget(this.islandList);
 
         this.setInitialFocus(this.searchBox);
     }
@@ -122,6 +124,11 @@ public class IslandSelectScreen extends Screen {
             );
         }
 
+        @Override
+        public void updateNarration(NarrationElementOutput arg) {
+
+        }
+
         public class Entry extends AbstractSelectionList.Entry<IslandList.Entry> {
             private final PrebuiltIslands.PrebuiltIsland islandDir;
             private long lastClickTime;
@@ -153,7 +160,7 @@ public class IslandSelectScreen extends Screen {
                 font.drawShadow(matrices, this.islandDir.getDesc(), startX, top + 26, 0xFFFFFF);
 
                 try {
-                    Minecraft.getInstance().textureManager.bind(this.islandDir.getImage());
+                    RenderSystem.setShaderTexture(0, this.islandDir.getImage());
                     blit(matrices, left + 7, top + 7, 0f, 0f, 56, 32, 56, 32);
                 } catch (Exception ex) {
                     FTBTeamIslands.LOGGER.warn("{} not found in resources", this.islandDir.getImage());

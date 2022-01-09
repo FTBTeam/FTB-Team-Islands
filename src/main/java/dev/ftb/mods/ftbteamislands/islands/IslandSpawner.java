@@ -3,7 +3,6 @@ package dev.ftb.mods.ftbteamislands.islands;
 import dev.ftb.mods.ftbteamislands.Config;
 import dev.ftb.mods.ftbteamislands.FTBTeamIslands;
 import dev.ftb.mods.ftbteamislands.FTBTeamIslandsEvents;
-import dev.ftb.mods.ftbteamislands.intergration.FTBChunks;
 import dev.ftb.mods.ftbteams.data.Team;
 import dev.ftb.mods.ftbteams.data.TeamManager;
 import net.minecraft.core.BlockPos;
@@ -14,6 +13,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.StructureBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -22,14 +22,13 @@ import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.fml.ModList;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
+import java.util.Random;
 import java.util.function.Consumer;
 
 public class IslandSpawner {
@@ -145,7 +144,7 @@ public class IslandSpawner {
         private int yOffset = 0;
 
         public Worker(ServerLevel level, ResourceLocation nbtLocation) {
-            this.template = level.getStructureManager().get(nbtLocation);
+            this.template = level.getStructureManager().get(nbtLocation).get();
             this.level = level;
         }
 
@@ -187,11 +186,12 @@ public class IslandSpawner {
 
             // Create a ZERO based bounding box and an in-world bounding box for future selections
             BoundingBox boundingBox = this.template.getBoundingBox(new StructurePlaceSettings(), BlockPos.ZERO);
-            BoundingBox inWorldBoundingBox = this.template.getBoundingBox(new StructurePlaceSettings(), this.spawnAt.offset(-boundingBox.x1 / 2, this.yOffset, -boundingBox.z1 / 2));
+            BoundingBox inWorldBoundingBox = this.template.getBoundingBox(new StructurePlaceSettings(), this.spawnAt.offset(-boundingBox.maxX() / 2, this.yOffset, -boundingBox.maxZ() / 2));
 
             // Spawn the template in the world at the offered block pos.
 
-            this.template.placeInWorldChunk(this.level, this.spawnAt.offset(-boundingBox.x1 / 2, this.yOffset, -boundingBox.z1 / 2), new StructurePlaceSettings(), this.level.getRandom());
+            BlockPos offset = this.spawnAt.offset(-boundingBox.maxX() / 2, this.yOffset, -boundingBox.maxZ() / 2);
+            this.template.placeInWorld(this.level, offset, offset, new StructurePlaceSettings(), this.level.getRandom(), 2);
 
             // TODO: find a better way of doing this!
             // Find the spawn pos and remove any remaining structure blocks
@@ -207,7 +207,7 @@ public class IslandSpawner {
 
                         // Fix dirt if the structure block removed it's grass
                         if (this.level.getBlockState(next.below()).getBlock() == Blocks.DIRT) {
-                            this.level.setBlock(next.below(), Blocks.GRASS_BLOCK.defaultBlockState(), Constants.BlockFlags.DEFAULT);
+                            this.level.setBlock(next.below(), Blocks.GRASS_BLOCK.defaultBlockState(), 2);
                         }
                     } else {
                         this.level.removeBlock(next, false);
@@ -235,9 +235,9 @@ public class IslandSpawner {
             }
 
             // If chunks is loaded and the chunks can be claimed, try and claim them.
-            if (ModList.get().isLoaded("ftbchunks") && this.claimChunks && Config.islands.autoClaimChunkRadius.get() != -1) {
-                FTBChunks.claimChunks(player, player.getLevel(), island.pos);
-            }
+//            if (ModList.get().isLoaded("ftbchunks") && this.claimChunks && Config.islands.autoClaimChunkRadius.get() != -1) {
+//                FTBChunks.claimChunks(player, player.getLevel(), island.pos);
+//            }
 
             // Return true and call a finishing up consumer
             this.onCreation.accept(island);

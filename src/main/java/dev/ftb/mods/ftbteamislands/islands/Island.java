@@ -71,7 +71,7 @@ public class Island {
 
         int lvl = player.experienceLevel;
         Vec3 spawnPos = Vec3.atBottomCenterOf(new Vec3i(this.getSpawnPos().getX(), this.getSpawnPos().getY(), this.getSpawnPos().getZ()));
-        player.teleportTo(level, spawnPos.x + .5D, spawnPos.y + .1D, spawnPos.z + .5D, player.yRot, player.xRot);
+        player.teleportTo(level, spawnPos.x + .5D, spawnPos.y + .1D, spawnPos.z + .5D, player.getYRot(), player.getXRot());
         player.setExperienceLevels(lvl);
     }
 

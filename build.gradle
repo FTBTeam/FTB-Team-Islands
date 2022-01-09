@@ -1,13 +1,13 @@
 plugins {
-    id 'dev.architectury.loom' version '0.7.3-SNAPSHOT'
+    id 'dev.architectury.loom' version '0.10.0-SNAPSHOT'
     id 'maven-publish'
     id "com.matthewprenger.cursegradle" version "1.4.0"
 }
 
 apply from: 'https://files.latmod.com/public/markdown-git-changelog.gradle'
 
-sourceCompatibility = JavaVersion.VERSION_1_8
-targetCompatibility = JavaVersion.VERSION_1_8
+sourceCompatibility = JavaVersion.VERSION_17
+targetCompatibility = JavaVersion.VERSION_17
 
 def ENV = System.getenv()
 version = "${mod_version}-build.${ENV.GITHUB_RUN_NUMBER ?: 9999}"
@@ -17,24 +17,32 @@ group = project.maven_group
 loom {
     silentMojangMappingsLicense()
 
-    mixinConfigs = []
-    useFabricMixin = true
+    forge {
+        mixinConfigs = [
+        ]
 
-    dataGen {
-        mod project.mod_id
-    }
+        dataGen {
+            mod project.mod_id
+        }
 
-    launches {
-        data {
-            arg "--existing", file("src/main/resources").absolutePath
+        launches {
+            data {
+                arg "--existing", file("src/main/resources").absolutePath
+            }
         }
     }
 }
 
 repositories {
-    maven { url "https://cursemaven.com" }
+    maven {
+        url "https://www.cursemaven.com"
+        content {
+            includeGroup "curse.maven"
+        }
+    }
+
     maven { url "https://maven.saps.dev/minecraft" }
-    maven { url "https://maven.shedaniel.me" }
+    maven { url "https://maven.architectury.dev" }
 }
 
 dependencies {
@@ -44,10 +52,10 @@ dependencies {
     forge "net.minecraftforge:forge:${project.minecraft_version}-${project.forge_version}"
 
     modImplementation "dev.ftb.mods:ftb-library-forge:$ftb_mods_lib2"
-    modImplementation "dev.ftb.mods:ftb-chunks-forge:$ftb_mods_chunks"
+//    modImplementation "dev.ftb.mods:ftb-chunks-forge:$ftb_mods_chunks"
     modImplementation "dev.ftb.mods:ftb-teams-forge:$ftb_mods_teams"
 
-    modImplementation "me.shedaniel:architectury-forge:$arch_version"
+    modImplementation "dev.architectury:architectury-forge:$arch_version"
 }
 
 processResources {
@@ -131,9 +139,9 @@ if (ENV.CURSEFORGE_KEY) {
         apiKey = ENV.CURSEFORGE_KEY
         project {
             id = project.curseforge_id
-            releaseType = "release"
+            releaseType = "alpha"
             addGameVersion "Forge"
-            addGameVersion "1.16.5"
+            addGameVersion "1.18.1"
             mainArtifact(remapJar.archivePath)
             changelog = getGitChangelog
             changelogType = 'markdown'

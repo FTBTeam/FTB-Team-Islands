@@ -35,7 +35,7 @@ public class Events {
 
         boolean removeInventory = internalPlayerTeam.getExtraData().getBoolean("removeInventory");
         if (removeInventory) {
-            event.getPlayer().inventory.clearContent();
+            event.getPlayer().getInventory().clearContent();
             internalPlayerTeam.getExtraData().putBoolean("removeInventory", false);
             internalPlayerTeam.save();
         }
@@ -138,7 +138,7 @@ public class Events {
 
         // Clear the inventory if the player leaves their team (island)
         if (Config.general.clearInvWhenTeamLeft.get()) {
-            player.inventory.clearContent();
+            player.getInventory().clearContent();
         }
 
         if (previousTeam.get().getType() == TeamType.PARTY && event.getTeam().getType() == TeamType.PLAYER) {
