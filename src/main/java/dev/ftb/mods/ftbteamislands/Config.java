@@ -35,7 +35,7 @@ public class Config {
                 .comment("Enables a 5 minute timeout on the `ftbteamislands create` command")
                 .define("creationTimeout", true);
 
-            this.enableSinglePlayer = COMMON_BUILDER.define("enableSingleplayer", false);
+            this.enableSinglePlayer = COMMON_BUILDER.define("enableSingleplayer", true);
             this.enableMultiplayer = COMMON_BUILDER.define("enableMultiplayer", true);
             this.clearInvWhenTeamLeft = COMMON_BUILDER.define("clearInvWhenTeamLeft", true);
             this.enableMyIslandCommand = COMMON_BUILDER.define("enableMyIslandCommand", true);
