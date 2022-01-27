@@ -201,13 +201,16 @@ public class IslandSpawner {
                 BlockPos next = iterator.next();
                 if (this.level.getBlockState(next).getBlock() instanceof StructureBlock) {
                     BlockEntity blockEntity = this.level.getBlockEntity(next);
-                    if (blockEntity instanceof StructureBlockEntity && blockEntity.save(new CompoundTag()).getString("metadata").startsWith("SPAWN_POINT")) {
-                        playerSpawnPoint = next.mutable();
-                        this.level.removeBlock(next, false);
+                    if (blockEntity instanceof StructureBlockEntity) {
+                        CompoundTag tag = blockEntity.saveWithFullMetadata();
+                        if (tag.getString("metadata").startsWith("SPAWN_POINT")) {
+                            playerSpawnPoint = next.mutable();
+                            this.level.removeBlock(next, false);
 
-                        // Fix dirt if the structure block removed it's grass
-                        if (this.level.getBlockState(next.below()).getBlock() == Blocks.DIRT) {
-                            this.level.setBlock(next.below(), Blocks.GRASS_BLOCK.defaultBlockState(), 2);
+                            // Fix dirt if the structure block removed it's grass
+                            if (this.level.getBlockState(next.below()).getBlock() == Blocks.DIRT) {
+                                this.level.setBlock(next.below(), Blocks.GRASS_BLOCK.defaultBlockState(), 2);
+                            }
                         }
                     } else {
                         this.level.removeBlock(next, false);
