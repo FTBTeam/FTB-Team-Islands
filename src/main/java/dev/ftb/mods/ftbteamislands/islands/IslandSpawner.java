@@ -3,6 +3,7 @@ package dev.ftb.mods.ftbteamislands.islands;
 import dev.ftb.mods.ftbteamislands.Config;
 import dev.ftb.mods.ftbteamislands.FTBTeamIslands;
 import dev.ftb.mods.ftbteamislands.FTBTeamIslandsEvents;
+import dev.ftb.mods.ftbteamislands.intergration.FTBChunks;
 import dev.ftb.mods.ftbteams.data.Team;
 import dev.ftb.mods.ftbteams.data.TeamManager;
 import net.minecraft.core.BlockPos;
@@ -22,6 +23,7 @@ import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.ModList;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.io.FileInputStream;
@@ -203,6 +205,7 @@ public class IslandSpawner {
                     BlockEntity blockEntity = this.level.getBlockEntity(next);
                     if (blockEntity instanceof StructureBlockEntity) {
                         CompoundTag tag = blockEntity.saveWithFullMetadata();
+
                         if (tag.getString("metadata").startsWith("SPAWN_POINT")) {
                             playerSpawnPoint = next.mutable();
                             this.level.removeBlock(next, false);
@@ -238,9 +241,9 @@ public class IslandSpawner {
             }
 
             // If chunks is loaded and the chunks can be claimed, try and claim them.
-//            if (ModList.get().isLoaded("ftbchunks") && this.claimChunks && Config.islands.autoClaimChunkRadius.get() != -1) {
-//                FTBChunks.claimChunks(player, player.getLevel(), island.pos);
-//            }
+            if (ModList.get().isLoaded("ftbchunks") && this.claimChunks && Config.islands.autoClaimChunkRadius.get() != -1) {
+                FTBChunks.claimChunks(player, player.getLevel(), island.pos);
+            }
 
             // Return true and call a finishing up consumer
             this.onCreation.accept(island);
