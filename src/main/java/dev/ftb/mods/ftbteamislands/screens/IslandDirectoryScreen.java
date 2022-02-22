@@ -13,6 +13,7 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -58,15 +59,13 @@ public class IslandDirectoryScreen extends Screen {
             Minecraft.getInstance().setScreen(new IslandSelectScreen(this.islandDirectoryList.getSelected().islandDir, IslandDirectoryScreen.this.islands, this.onPrebuiltSelect));
         }));
 
-        this.addRenderableWidget(this.searchBox);
-        this.addRenderableWidget(this.islandDirectoryList);
+        this.addWidget(this.searchBox);
+        this.addWidget(this.islandDirectoryList);
         this.setInitialFocus(this.searchBox);
     }
 
     @Override
     public void render(PoseStack matrices, int mouseX, int mouseY, float partialTicks) {
-        this.renderBackground(matrices);
-
         this.islandDirectoryList.render(matrices, mouseX, mouseY, partialTicks);
         this.searchBox.render(matrices, mouseX, mouseY, partialTicks);
 

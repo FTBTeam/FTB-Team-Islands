@@ -61,19 +61,18 @@ public class IslandSelectScreen extends Screen {
 
         this.createButton.active = false;
 
-        this.addRenderableWidget(this.searchBox);
-        this.addRenderableWidget(this.islandList);
+        this.addWidget(this.searchBox);
+        this.addWidget(this.islandList);
 
         this.setInitialFocus(this.searchBox);
     }
 
     @Override
     public void render(PoseStack matrices, int mouseX, int mouseY, float partialTick) {
-        this.renderBackground(matrices);
-
         this.islandList.render(matrices, mouseX, mouseY, partialTick);
-        super.render(matrices, mouseX, mouseY, partialTick);
         this.searchBox.render(matrices, mouseX, mouseY, partialTick);
+
+        super.render(matrices, mouseX, mouseY, partialTick);
 
         String value = new TranslatableComponent("screens.ftbteamislands.select_island").getString();
         this.font.drawShadow(matrices, value, this.width / 2f - this.font.width(value) / 2f, 20, 0xFFFFFF);
