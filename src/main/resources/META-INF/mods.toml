@@ -1,5 +1,5 @@
 modLoader = "javafml" #mandatory
-loaderVersion = "[36,)" #mandatory This is typically bumped every Minecraft version by Forge. See our download page for lists of versions.
+loaderVersion = "[40,)" #mandatory This is typically bumped every Minecraft version by Forge. See our download page for lists of versions.
 license = "All rights reserved"
 [[mods]] #mandatory
 modId = "ftbteamislands" #mandatory
@@ -14,7 +14,7 @@ Void world island management mod
 [[dependencies.ftbteamislands]] #optional
 modId = "forge" #mandatory
 mandatory = true #mandatory
-versionRange = "[36,)" #mandatory
+versionRange = "[40,)" #mandatory
 ordering = "NONE"
 side = "BOTH"
 

@@ -45,7 +45,7 @@ public class ClientHandler {
         if (event.getScreen() instanceof CreateWorldScreen && selectedIsland == null) {
             Minecraft.getInstance().setScreen(new IslandDirectoryScreen(IslandsManager.getAvailableIslands(), island -> {
                 selectedIsland = island;
-                Minecraft.getInstance().setScreen(CreateWorldScreen.create(null));
+                Minecraft.getInstance().setScreen(CreateWorldScreen.createFresh(null));
             }));
         }
     }
@@ -62,7 +62,7 @@ public class ClientHandler {
                 selectedIsland = null;
                 Minecraft.getInstance().setScreen(new IslandDirectoryScreen(IslandsManager.getAvailableIslands(), island -> {
                     selectedIsland = island;
-                    Minecraft.getInstance().setScreen(CreateWorldScreen.create(null));
+                    Minecraft.getInstance().setScreen(CreateWorldScreen.createFresh(null));
                 }));
             }));
         }

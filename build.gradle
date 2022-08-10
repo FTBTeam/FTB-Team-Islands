@@ -1,7 +1,8 @@
 plugins {
-    id 'maven-publish'
-    id 'dev.architectury.loom' version '0.10.0-SNAPSHOT'
+    id "dev.architectury.loom" version "0.12.0-SNAPSHOT"
+    id "io.github.juuxel.loom-quiltflower" version "1.7.2"
     id "com.matthewprenger.cursegradle" version "1.4.0"
+    id "maven-publish"
 }
 
 apply from: 'https://files.latmod.com/public/markdown-git-changelog.gradle'
@@ -48,14 +49,14 @@ repositories {
 dependencies {
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
 
-    mappings minecraft.officialMojangMappings()
+    mappings loom.officialMojangMappings()
     forge "net.minecraftforge:forge:${project.minecraft_version}-${project.forge_version}"
 
-    modApi "dev.ftb.mods:ftb-library-forge:$ftb_mods_lib2" transitive false
-    modApi "dev.ftb.mods:ftb-chunks-forge:$ftb_mods_chunks" transitive false
-    modApi "dev.ftb.mods:ftb-teams-forge:$ftb_mods_teams" transitive false
-
     modApi "dev.architectury:architectury-forge:$arch_version"
+
+    modApi "dev.ftb.mods:ftb-teams-forge:$ftb_mods_teams"
+    modImplementation "dev.ftb.mods:ftb-chunks-forge:$ftb_mods_chunks"
+
 }
 
 processResources {
@@ -67,12 +68,9 @@ processResources {
     }
 }
 
-tasks.withType(JavaCompile).configureEach {
-    it.options.encoding = "UTF-8"
-    def targetVersion = 8
-    if (JavaVersion.current().isJava9Compatible()) {
-        it.options.release = targetVersion
-    }
+tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
+    options.release = 17
 }
 
 java {
@@ -139,9 +137,9 @@ if (ENV.CURSEFORGE_KEY) {
         apiKey = ENV.CURSEFORGE_KEY
         project {
             id = project.curseforge_id
-            releaseType = "alpha"
+            releaseType = "beta"
             addGameVersion "Forge"
-            addGameVersion "1.18.1"
+            addGameVersion "1.18.2"
             mainArtifact(remapJar.archivePath)
             changelog = getGitChangelog
             changelogType = 'markdown'
