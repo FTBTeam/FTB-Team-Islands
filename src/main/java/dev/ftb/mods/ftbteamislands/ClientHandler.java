@@ -38,7 +38,7 @@ public class ClientHandler {
 
     @SubscribeEvent
     public static void screenEventPre(ScreenEvent.InitScreenEvent.Pre event) {
-        if (IslandsManager.getAvailableIslands().size() == 0) {
+        if (IslandsManager.getAvailableIslands().size() == 0 || !Config.general.forceSinglePlayerIslandSelection.get()) {
             return;
         }
 

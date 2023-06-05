@@ -23,6 +23,7 @@ public class Config {
     public static class General {
         public final ForgeConfigSpec.BooleanValue creationTimeout;
         public final ForgeConfigSpec.BooleanValue enableSinglePlayer;
+        public final ForgeConfigSpec.BooleanValue forceSinglePlayerIslandSelection;
         public final ForgeConfigSpec.BooleanValue enableMultiplayer;
         public final ForgeConfigSpec.BooleanValue enableMyIslandCommand;
         public final ForgeConfigSpec.BooleanValue clearInvWhenTeamLeft;
@@ -36,6 +37,7 @@ public class Config {
                 .define("creationTimeout", true);
 
             this.enableSinglePlayer = COMMON_BUILDER.define("enableSingleplayer", true);
+            this.forceSinglePlayerIslandSelection = COMMON_BUILDER.define("forceSinglePlayerIslandSelection", true);
             this.enableMultiplayer = COMMON_BUILDER.define("enableMultiplayer", true);
             this.clearInvWhenTeamLeft = COMMON_BUILDER.define("clearInvWhenTeamLeft", true);
             this.enableMyIslandCommand = COMMON_BUILDER.define("enableMyIslandCommand", true);
