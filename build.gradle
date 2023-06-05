@@ -5,7 +5,7 @@ plugins {
     id "maven-publish"
 }
 
-apply from: 'https://files.latmod.com/public/markdown-git-changelog.gradle'
+apply from: "https://raw.githubusercontent.com/FTBTeam/mods-meta/main/gradle/git-md-changelog.gradle"
 
 sourceCompatibility = JavaVersion.VERSION_17
 targetCompatibility = JavaVersion.VERSION_17
