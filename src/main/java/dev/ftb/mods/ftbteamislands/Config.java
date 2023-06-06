@@ -33,7 +33,7 @@ public class Config {
             COMMON_BUILDER.push("general");
 
             this.creationTimeout = COMMON_BUILDER
-                .comment("Enables a 5 minute timeout on the `ftbteamislands create` command")
+                .comment("Enables a 5 minute timeout on the `ftbteamislands create` command (op-level players are exempt)")
                 .define("creationTimeout", true);
 
             this.enableSinglePlayer = COMMON_BUILDER.define("enableSingleplayer", true);

@@ -88,7 +88,7 @@ public class CreateIslandCommand {
         // Ensure they're not spamming the island creation
         if (Config.general.creationTimeout.get()) {
             Instant instant = playersTimeout.get(player.getUUID());
-            if (instant != null && !instant.plus(5, ChronoUnit.MINUTES).isBefore(Instant.now())) {
+            if (instant != null && !instant.plus(5, ChronoUnit.MINUTES).isBefore(Instant.now()) && !player.hasPermissions(2)) {
                 throw TO_QUICK.create();
             }
 
