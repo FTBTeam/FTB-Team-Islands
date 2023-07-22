@@ -66,12 +66,12 @@ public class IslandSpawner {
 
         boolean result = worker
             .setSpawnAt(new BlockPos(256 + spiralLoc.getLeft() * distanceInRegions * 512, Config.islands.height.get(), 256 + spiralLoc.getRight() * distanceInRegions * 512))
-            .setGlobalSpawns(!IslandsManager.get().getLobby().isPresent() && IslandsManager.get().getIslands().size() == 0)
+            .setGlobalSpawns(IslandsManager.get().getLobby().isEmpty() && IslandsManager.get().getIslands().size() == 0)
             .claimChunks(true)
             .yOffset(yOffset)
             .onCreation((island -> {
                 IslandsManager.get().registerIsland(team, island);
-                MinecraftForge.EVENT_BUS.post(new FTBTeamIslandsEvents.IslandJoined(team, island, player));
+                MinecraftForge.EVENT_BUS.post(new FTBTeamIslandsEvents.IslandJoined(team, island, player, worker.structureLocation));
             }))
             .create(server, player);
 
@@ -89,7 +89,7 @@ public class IslandSpawner {
                 return;
             }
 
-            spawnIsland(new Worker(level, compoundTag), team, player, server, yOffset);
+            spawnIsland(new Worker(level, compoundTag, new ResourceLocation("ftbteamislands", "structures/" + islandName)), team, player, server, yOffset);
         } catch (IOException e) {
             FTBTeamIslands.LOGGER.error("Failed to find `{}` island in the prebuilt structures folder `{}/structures`", islandName, IslandsManager.PREBUILT_ISLANDS_PATH);
         }
@@ -137,6 +137,7 @@ public class IslandSpawner {
     public static class Worker {
         private final StructureTemplate template;
         private final ServerLevel level;
+        public final ResourceLocation structureLocation;
 
         private BlockPos spawnAt = BlockPos.ZERO;
         private boolean setsGlobalSpawn = false;
@@ -147,11 +148,13 @@ public class IslandSpawner {
 
         public Worker(ServerLevel level, ResourceLocation nbtLocation) {
             this.template = level.getStructureManager().get(nbtLocation).get();
+            this.structureLocation = nbtLocation;
             this.level = level;
         }
 
-        public Worker(ServerLevel level, CompoundTag templateCompound) {
+        public Worker(ServerLevel level, CompoundTag templateCompound, ResourceLocation structureLocation) {
             this.template = level.getStructureManager().readStructure(templateCompound);
+            this.structureLocation = structureLocation;
             this.level = level;
         }
 
@@ -229,11 +232,11 @@ public class IslandSpawner {
                 true
             );
 
-            MinecraftForge.EVENT_BUS.post(new FTBTeamIslandsEvents.IslandCreated(TeamManager.INSTANCE.getPlayerTeam(player), island));
+            MinecraftForge.EVENT_BUS.post(new FTBTeamIslandsEvents.IslandCreated(TeamManager.INSTANCE.getPlayerTeam(player), island, structureLocation));
 
             // Teleport the player to the new island.
             island.teleportPlayerTo(player, server);
-            MinecraftForge.EVENT_BUS.post(new FTBTeamIslandsEvents.FirstTeleportTo(TeamManager.INSTANCE.getPlayerTeam(player), island, player));
+            MinecraftForge.EVENT_BUS.post(new FTBTeamIslandsEvents.FirstTeleportTo(TeamManager.INSTANCE.getPlayerTeam(player), island, player, structureLocation));
 
             // Set the global spawn
             if (this.setsGlobalSpawn) {
